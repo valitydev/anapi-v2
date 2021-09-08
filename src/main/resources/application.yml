@@ -25,6 +25,11 @@ management:
       exposure:
         include: health,info,prometheus
 
+service:
+  magista:
+    url: http://magista:8022/stat
+    networkTimeout: 5000
+
 spring:
   application:
     name: '@project.name@'
