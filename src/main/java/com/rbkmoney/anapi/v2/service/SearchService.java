@@ -18,7 +18,7 @@ public class SearchService {
 
     private final MerchantStatisticsServiceSrv.Iface magistaClient;
 
-    public InlineResponse20010 search(PaymentSearchQuery searchQuery) {
+    public InlineResponse20010 findPayments(PaymentSearchQuery searchQuery) {
         try {
             StatPaymentResponse magistaResponse = magistaClient.searchPayments(searchQuery);
             List<PaymentSearchResult> results = new ArrayList<>(magistaResponse.getPaymentsSize());
@@ -59,6 +59,22 @@ public class SearchService {
             e.printStackTrace();
         }
         //TODO: Error processing;
+        return null;
+    }
+
+    public InlineResponse2008 findChargebacks(ChargebackSearchQuery query) {
+        return null;
+    }
+
+    public InlineResponse2009 findInvoices(InvoiceSearchQuery query) {
+        return null;
+    }
+
+    public InlineResponse20011 findPayouts(PayoutSearchQuery query) {
+        return null;
+    }
+
+    public InlineResponse20012 findRefunds(RefundSearchQuery query) {
         return null;
     }
 
