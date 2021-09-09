@@ -23,7 +23,6 @@ public class SearchService {
             StatPaymentResponse magistaResponse = magistaClient.searchPayments(searchQuery);
             List<PaymentSearchResult> results = new ArrayList<>(magistaResponse.getPaymentsSize());
             for (StatPayment payment : magistaResponse.getPayments()) {
-
                 PaymentSearchResult result = new PaymentSearchResult()
                         .amount(payment.getAmount())
                         .createdAt(TypeUtil.stringToInstant(payment.getCreatedAt()).atOffset(ZoneOffset.UTC))
@@ -51,7 +50,6 @@ public class SearchService {
                         );
                 results.add(result);
             }
-
             return new InlineResponse20010()
                     .result(results)
                     .continuationToken(magistaResponse.getContinuationToken());

@@ -1,20 +1,10 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.service.SearchService;
-import com.rbkmoney.damsel.domain.BankCard;
-import com.rbkmoney.damsel.domain.InvoicePaymentCancelled;
-import com.rbkmoney.damsel.domain.InvoicePaymentCaptured;
-import com.rbkmoney.damsel.domain.InvoicePaymentFailed;
-import com.rbkmoney.damsel.domain.InvoicePaymentFlow;
-import com.rbkmoney.damsel.domain.InvoicePaymentFlowHold;
-import com.rbkmoney.damsel.domain.InvoicePaymentFlowInstant;
-import com.rbkmoney.damsel.domain.InvoicePaymentPending;
-import com.rbkmoney.damsel.domain.InvoicePaymentProcessed;
-import com.rbkmoney.damsel.domain.InvoicePaymentRefunded;
-import com.rbkmoney.damsel.domain.PaymentTerminal;
-import com.rbkmoney.damsel.domain.PaymentTool;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import com.rbkmoney.anapi.v2.util.DamselUtil;
+import com.rbkmoney.damsel.domain.LegacyBankCardPaymentSystem;
+import com.rbkmoney.damsel.domain.LegacyBankCardTokenProvider;
+import com.rbkmoney.damsel.domain.LegacyTerminalPaymentProvider;
 import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
 import com.rbkmoney.openapi.anapi_v2.model.*;
@@ -24,14 +14,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.rbkmoney.anapi.v2.util.CommonUtil.merge;
+import static com.rbkmoney.anapi.v2.util.DamselUtil.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -75,7 +66,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Min(1L) @Valid Long paymentAmountTo,
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
-        //TODO: clearify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline
+        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline
         PaymentSearchQuery query = new PaymentSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
@@ -107,62 +98,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
         return ResponseEntity.ok(searchService.findPayments(query));
     }
 
-    private PaymentTool mapToPaymentTool(String paymentMethod) {
-        var paymentTool = new PaymentTool();
-        switch (paymentMethod) {
-            case "bankCard" -> paymentTool.setBankCard(new BankCard());
-            case "paymentTerminal" -> paymentTool.setPaymentTerminal(new PaymentTerminal());
-            default -> throw new IllegalArgumentException("");
-        }
-
-        return paymentTool;
-    }
-
-    private List<String> merge(@Nullable String id, @Nullable List<String> ids) {
-        if (id != null) {
-            if (ids == null) {
-                ids = new ArrayList<>();
-            }
-            ids.add(id);
-        }
-        return ids;
-    }
-
-    private InvoicePaymentFlow mapToInvoicePaymentFlow(String paymentFlow) {
-        var invoicePaymentFlow = new InvoicePaymentFlow();
-        switch (paymentFlow) {
-            case "instant" -> invoicePaymentFlow.setInstant(new InvoicePaymentFlowInstant());
-            case "hold" -> invoicePaymentFlow.setHold(new InvoicePaymentFlowHold());
-            default -> throw new IllegalArgumentException("");
-        }
-        return invoicePaymentFlow;
-    }
-
-    private CommonSearchQueryParams fillCommonParams(OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit,
-                                                     String partyId, List<String> shopIDs, String continuationToken) {
-        return new CommonSearchQueryParams()
-                .setContinuationToken(continuationToken)
-                .setFromTime(TypeUtil.temporalToString(fromTime.toLocalDateTime()))
-                .setToTime(TypeUtil.temporalToString(toTime.toLocalDateTime()))
-                .setLimit(limit)
-                .setPartyId(partyId)
-                .setShopIds(shopIDs);
-    }
-
-    private com.rbkmoney.damsel.domain.InvoicePaymentStatus getStatus(String paymentStatus) {
-        var status = Enum.valueOf(PaymentStatus.StatusEnum.class, paymentStatus);
-        var invoicePaymentStatus = new com.rbkmoney.damsel.domain.InvoicePaymentStatus();
-        switch (status) {
-            case PENDING -> invoicePaymentStatus.setPending(new InvoicePaymentPending());
-            case PROCESSED -> invoicePaymentStatus.setProcessed(new InvoicePaymentProcessed());
-            case CAPTURED -> invoicePaymentStatus.setCaptured(new InvoicePaymentCaptured());
-            case CANCELLED -> invoicePaymentStatus.setCancelled(new InvoicePaymentCancelled());
-            case REFUNDED -> invoicePaymentStatus.setRefunded(new InvoicePaymentRefunded());
-            case FAILED -> invoicePaymentStatus.setFailed(new InvoicePaymentFailed());
-        }
-        return invoicePaymentStatus;
-    }
-
     @GetMapping(
             value = "/chargebacks",
             produces = {"application/json; charset=utf-8"}
@@ -185,63 +120,25 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Valid List<String> chargebackStages,
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
+        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, offset
         ChargebackSearchQuery query = new ChargebackSearchQuery()
                 .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
+                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
+                .setInvoiceIds(List.of(invoiceID))
                 .setPaymentId(paymentID)
                 .setChargebackId(chargebackID)
-                .setChargebackCategories(chargebackCategories.stream()
-                        .map(this::mapToDamselCategory)
-                        .collect(Collectors.toList()))
                 .setChargebackStatuses(chargebackStatuses.stream()
-                        .map(this::mapToDamselStatus)
+                        .map(DamselUtil::mapToDamselStatus)
                         .collect(Collectors.toList())
                 )
                 .setChargebackStages(chargebackStages.stream()
-                        .map(this::mapToDamselStage)
+                        .map(DamselUtil::mapToDamselStage)
                         .collect(Collectors.toList())
-                );
+                )
+                .setChargebackCategories(chargebackCategories.stream()
+                        .map(DamselUtil::mapToDamselCategory)
+                        .collect(Collectors.toList()));
         return ResponseEntity.ok(searchService.findChargebacks(query));
-    }
-
-    private InvoicePaymentChargebackStage mapToDamselStage(String stage) {
-        var damselStage = new InvoicePaymentChargebackStage();
-        switch (stage) {
-            case "chargeback" -> damselStage.setChargeback(new InvoicePaymentChargebackStageChargeback());
-            case "pre_arbitration" -> damselStage.setPreArbitration(new InvoicePaymentChargebackStagePreArbitration());
-            case "arbitration" -> damselStage.setArbitration(new InvoicePaymentChargebackStageArbitration());
-            default -> throw new IllegalArgumentException("");
-        }
-
-        return damselStage;
-    }
-
-    private InvoicePaymentChargebackStatus mapToDamselStatus(String status) {
-        var damselStatus = new InvoicePaymentChargebackStatus();
-        switch (status) {
-            case "pending" -> damselStatus.setPending(new InvoicePaymentChargebackPending());
-            case "accepted" -> damselStatus.setAccepted(new InvoicePaymentChargebackAccepted());
-            case "rejected" -> damselStatus.setRejected(new InvoicePaymentChargebackRejected());
-            case "cancelled" -> damselStatus.setCancelled(new InvoicePaymentChargebackCancelled());
-            default -> throw new IllegalArgumentException("");
-        }
-
-        return damselStatus;
-    }
-
-    private InvoicePaymentChargebackCategory mapToDamselCategory(String category) {
-        var damselCategory = new InvoicePaymentChargebackCategory();
-        switch (category) {
-            case "fraud" -> damselCategory.setFraud(new InvoicePaymentChargebackCategoryFraud());
-            case "dispute" -> damselCategory.setDispute(new InvoicePaymentChargebackCategoryDispute());
-            case "authorisation" -> damselCategory
-                    .setAuthorisation(new InvoicePaymentChargebackCategoryAuthorisation());
-            case "processing_error" -> damselCategory
-                    .setProcessingError(new InvoicePaymentChargebackCategoryProcessingError());
-            default -> throw new IllegalArgumentException("");
-        }
-
-        return damselCategory;
     }
 
     @GetMapping(
@@ -266,18 +163,18 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Min(1L) @Valid Long invoiceAmountTo,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
+        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, excludedShops
         InvoiceSearchQuery query = new InvoiceSearchQuery()
                 .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
+                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
                 .setPaymentParams(
                         new PaymentParams()
                                 .setPaymentAmountFrom(invoiceAmountFrom)
                                 .setPaymentAmountTo(invoiceAmountTo)
-                                .setPaymentId(invoiceID)
                                 .setPaymentStatus(getStatus(invoiceStatus))
 
                 )
-                .setInvoiceIds(invoiceIDs)
+                .setInvoiceIds(merge(invoiceID, invoiceIDs))
                 .setExternalId(externalID);
         return ResponseEntity.ok(searchService.findInvoices(query));
     }
@@ -301,9 +198,14 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String payoutToolType,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        return PayoutsApi.super
-                .searchPayouts(xRequestID, partyID, fromTime, toTime, limit, xRequestDeadline, shopID, shopIDs,
-                        paymentInstitutionRealm, offset, payoutID, payoutToolType, excludedShops, continuationToken);
+        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, excludedShops,
+        //offset + setStatuses
+        PayoutSearchQuery query = new PayoutSearchQuery()
+                .setCommonSearchQueryParams(
+                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
+                .setPayoutId(payoutID)
+                .setPayoutType(mapToDamselPayoutToolInfo(payoutToolType));
+        return ResponseEntity.ok(searchService.findPayouts(query));
     }
 
     @GetMapping(
@@ -329,9 +231,15 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String refundStatus,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        return RefundsApi.super
-                .searchRefunds(xRequestID, partyID, fromTime, toTime, limit, xRequestDeadline, shopID, shopIDs,
-                        paymentInstitutionRealm, offset, invoiceIDs, invoiceID, paymentID, refundID, externalID,
-                        refundStatus, excludedShops, continuationToken);
+        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, excludedShops, offset
+        RefundSearchQuery query = new RefundSearchQuery()
+                .setCommonSearchQueryParams(
+                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
+                .setRefundStatus(getRefundStatus(refundStatus))
+                .setInvoiceIds(merge(invoiceID, invoiceIDs))
+                .setExternalId(externalID)
+                .setPaymentId(paymentID)
+                .setRefundId(refundID);
+        return ResponseEntity.ok(searchService.findRefunds(query));
     }
 }
