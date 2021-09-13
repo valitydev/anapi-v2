@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.rbkmoney.anapi.v2.util.OpenApiUtil.mapToCategory;
+
 @Service
 @RequiredArgsConstructor
 public class SearchService {
@@ -92,25 +94,7 @@ public class SearchService {
         return null;
     }
 
-    private ChargebackCategory mapToCategory(InvoicePaymentChargebackCategory chargebackCategory) {
-        if (chargebackCategory.isSetAuthorisation()) {
-            return ChargebackCategory.AUTHORISATION;
-        }
 
-        if (chargebackCategory.isSetDispute()) {
-            return ChargebackCategory.DISPUTE;
-        }
-
-        if (chargebackCategory.isSetFraud()) {
-            return ChargebackCategory.FRAUD;
-        }
-
-        if (chargebackCategory.isSetProcessingError()) {
-            return ChargebackCategory.PROCESSING_ERROR;
-        }
-
-        return null;
-    }
 
     public InlineResponse2009 findInvoices(InvoiceSearchQuery query) {
         try {
@@ -145,26 +129,6 @@ public class SearchService {
         }
         //TODO: Error processing;
         return null;
-    }
-
-    private Invoice.StatusEnum mapToStatus(InvoiceStatus status) {
-        if (status.isSetFulfilled()) {
-            return Invoice.StatusEnum.FULFILLED;
-        }
-
-        if (status.isSetPaid()) {
-            return Invoice.StatusEnum.PAID;
-        }
-
-        if (status.isSetUnpaid()) {
-            return Invoice.StatusEnum.UNPAID;
-        }
-
-        if (status.isSetCancelled()) {
-            return Invoice.StatusEnum.CANCELLED;
-        }
-
-        throw new IllegalArgumentException("");
     }
 
     public InlineResponse20011 findPayouts(PayoutSearchQuery query) {
@@ -288,8 +252,14 @@ public class SearchService {
                         .shopID(refund.getShopId())
                         .status(mapToStatus(refund.getStatus()))
                         .externalID(refund.getExternalId())
-                        .error(new RefundStatusError()
-                                .code());
+                        .error(refund.getStatus().isSetFailed() ?
+                                new RefundStatusError()
+                                        .code(refund.getStatus().getFailed().getFailure().getFailure().getCode())
+                                        .message(refund.getStatus().getFailed().getFailure().getFailure().getReason())
+                                : null)
+                        .invoiceID(refund.getInvoiceId())
+                        .paymentID(refund.getPaymentId())
+                        .reason(refund.getReason());
                 results.add(result);
             }
             return new InlineResponse20012()
