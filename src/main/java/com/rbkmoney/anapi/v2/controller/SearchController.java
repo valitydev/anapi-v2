@@ -9,21 +9,28 @@ import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.rbkmoney.anapi.v2.util.CommonUtil.merge;
 import static com.rbkmoney.anapi.v2.util.DamselUtil.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi {
@@ -67,39 +74,57 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline
-        PaymentSearchQuery query = new PaymentSearchQuery()
-                .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
-                .setPaymentParams(
-                        new PaymentParams()
-                                .setPaymentTool(paymentMethod != null ? mapToPaymentTool(paymentMethod) : null)
-                                .setPaymentFlow(paymentFlow != null ? mapToInvoicePaymentFlow(paymentFlow) : null)
-                                .setPaymentTerminalProvider(
-                                        paymentTerminalProvider != null
-                                                ? LegacyTerminalPaymentProvider.valueOf(paymentTerminalProvider) : null)
-                                .setPaymentTokenProvider(
-                                        bankCardTokenProvider != null
-                                                ?
-                                                LegacyBankCardTokenProvider.valueOf(bankCardTokenProvider.getValue()) :
-                                                null)
-                                .setPaymentAmountFrom(paymentAmountFrom)
-                                .setPaymentAmountTo(paymentAmountTo)
-                                .setPaymentEmail(payerEmail)
-                                .setPaymentApprovalCode(approvalCode)
-                                .setPaymentCustomerId(customerID)
-                                .setPaymentFingerprint(payerFingerprint)
-                                .setPaymentFirst6(first6)
-                                .setPaymentLast4(last4)
-                                .setPaymentId(paymentID)
-                                .setPaymentIp(payerIP)
-                                .setPaymentRrn(rrn)
-                                .setPaymentStatus(paymentStatus != null ? getStatus(paymentStatus) : null)
-                                .setPaymentSystem(bankCardPaymentSystem != null
-                                        ? LegacyBankCardPaymentSystem.valueOf(bankCardPaymentSystem.getValue()) : null)
-                )
-                .setExcludedShopIds(excludedShops)
-                .setExternalId(externalID)
-                .setInvoiceIds(merge(invoiceID, invoiceIDs));
+        PaymentSearchQuery query;
+        try {
+            query = new PaymentSearchQuery()
+                    .setCommonSearchQueryParams(
+                            fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
+                                    continuationToken))
+                    .setExcludedShopIds(excludedShops)
+                    .setExternalId(externalID)
+                    .setInvoiceIds(merge(invoiceID, invoiceIDs));
+
+            PaymentParams paymentParams = new PaymentParams()
+                    .setPaymentTool(paymentMethod != null ? mapToPaymentTool(paymentMethod) : null)
+                    .setPaymentFlow(paymentFlow != null ? mapToInvoicePaymentFlow(paymentFlow) : null)
+                    .setPaymentTerminalProvider(
+                            paymentTerminalProvider != null
+                                    ? LegacyTerminalPaymentProvider.valueOf(paymentTerminalProvider) :
+                                    null)
+                    .setPaymentTokenProvider(
+                            bankCardTokenProvider != null
+                                    ?
+                                    LegacyBankCardTokenProvider
+                                            .valueOf(bankCardTokenProvider.getValue()) :
+                                    null)
+                    .setPaymentEmail(payerEmail)
+                    .setPaymentApprovalCode(approvalCode)
+                    .setPaymentCustomerId(customerID)
+                    .setPaymentFingerprint(payerFingerprint)
+                    .setPaymentFirst6(first6)
+                    .setPaymentLast4(last4)
+                    .setPaymentId(paymentID)
+                    .setPaymentIp(payerIP)
+                    .setPaymentRrn(rrn)
+                    .setPaymentStatus(paymentStatus != null ? getStatus(paymentStatus) : null)
+                    .setPaymentSystem(bankCardPaymentSystem != null
+                            ? LegacyBankCardPaymentSystem.valueOf(bankCardPaymentSystem.getValue()) :
+                            null);
+            if (paymentAmountFrom != null) {
+                paymentParams.setPaymentAmountFrom(paymentAmountFrom);
+            }
+            if (paymentAmountTo != null) {
+                paymentParams.setPaymentAmountTo(paymentAmountTo);
+            }
+            query.setPaymentParams(paymentParams);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity(
+                    new DefaultLogicError()
+                            .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                            .message(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(searchService.findPayments(query));
     }
 
@@ -121,29 +146,45 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Size(min = 1, max = 40) @Valid String invoiceID,
                                                                 @Size(min = 1, max = 40) @Valid String paymentID,
                                                                 @Size(min = 1, max = 40) @Valid String chargebackID,
-                                                                //TODO: checkIF null or empty list
                                                                 @Valid List<String> chargebackStatuses,
                                                                 @Valid List<String> chargebackStages,
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, offset
-        ChargebackSearchQuery query = new ChargebackSearchQuery()
-                .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
-                .setInvoiceIds(invoiceID != null ? List.of(invoiceID) : null)
-                .setPaymentId(paymentID)
-                .setChargebackId(chargebackID)
-                .setChargebackStatuses(chargebackStatuses.stream()
-                        .map(DamselUtil::mapToDamselStatus)
-                        .collect(Collectors.toList())
-                )
-                .setChargebackStages(chargebackStages.stream()
-                        .map(DamselUtil::mapToDamselStage)
-                        .collect(Collectors.toList())
-                )
-                .setChargebackCategories(chargebackCategories.stream()
-                        .map(DamselUtil::mapToDamselCategory)
-                        .collect(Collectors.toList()));
+        ChargebackSearchQuery query;
+        try {
+            query = new ChargebackSearchQuery()
+                    .setCommonSearchQueryParams(
+                            fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
+                                    continuationToken))
+                    .setInvoiceIds(invoiceID != null ? List.of(invoiceID) : null)
+                    .setPaymentId(paymentID)
+                    .setChargebackId(chargebackID)
+                    .setChargebackStatuses(chargebackStatuses != null
+                            ? chargebackStatuses.stream()
+                            .map(DamselUtil::mapToDamselStatus)
+                            .collect(Collectors.toList())
+                            : null
+                    )
+                    .setChargebackStages(chargebackStages != null
+                            ? chargebackStages.stream()
+                            .map(DamselUtil::mapToDamselStage)
+                            .collect(Collectors.toList())
+                            : null
+                    )
+                    .setChargebackCategories(chargebackCategories != null
+                            ? chargebackCategories.stream()
+                            .map(DamselUtil::mapToDamselCategory)
+                            .collect(Collectors.toList())
+                            : null);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity(
+                    new DefaultLogicError()
+                            .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                            .message(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(searchService.findChargebacks(query));
     }
 
@@ -170,17 +211,28 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops
-        InvoiceSearchQuery query = new InvoiceSearchQuery()
-                .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
-                .setPaymentParams(
-                        new PaymentParams()
-                                .setPaymentAmountFrom(invoiceAmountFrom)
-                                .setPaymentAmountTo(invoiceAmountTo)
-                                .setPaymentStatus(invoiceStatus != null ? getStatus(invoiceStatus) : null)
-                )
-                .setInvoiceIds(merge(invoiceID, invoiceIDs))
-                .setExternalId(externalID);
+        InvoiceSearchQuery query;
+        try {
+            query = new InvoiceSearchQuery()
+                    .setCommonSearchQueryParams(
+                            fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
+                                    continuationToken))
+                    .setPaymentParams(
+                            new PaymentParams()
+                                    .setPaymentAmountFrom(invoiceAmountFrom)
+                                    .setPaymentAmountTo(invoiceAmountTo)
+                                    .setPaymentStatus(invoiceStatus != null ? getStatus(invoiceStatus) : null)
+                    )
+                    .setInvoiceIds(merge(invoiceID, invoiceIDs))
+                    .setExternalId(externalID);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity(
+                    new DefaultLogicError()
+                            .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                            .message(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(searchService.findInvoices(query));
     }
 
@@ -205,11 +257,22 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops,
         //offset + setStatuses
-        PayoutSearchQuery query = new PayoutSearchQuery()
-                .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
-                .setPayoutId(payoutID)
-                .setPayoutType(payoutToolType != null ? mapToDamselPayoutToolInfo(payoutToolType) : null);
+        PayoutSearchQuery query;
+        try {
+            query = new PayoutSearchQuery()
+                    .setCommonSearchQueryParams(
+                            fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
+                                    continuationToken))
+                    .setPayoutId(payoutID)
+                    .setPayoutType(payoutToolType != null ? mapToDamselPayoutToolInfo(payoutToolType) : null);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity(
+                    new DefaultLogicError()
+                            .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                            .message(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(searchService.findPayouts(query));
     }
 
@@ -237,14 +300,38 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops, offset
-        RefundSearchQuery query = new RefundSearchQuery()
-                .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
-                .setRefundStatus(refundStatus != null ? getRefundStatus(refundStatus) : null)
-                .setInvoiceIds(merge(invoiceID, invoiceIDs))
-                .setExternalId(externalID)
-                .setPaymentId(paymentID)
-                .setRefundId(refundID);
+        RefundSearchQuery query;
+        try {
+            query = new RefundSearchQuery()
+                    .setCommonSearchQueryParams(
+                            fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
+                                    continuationToken))
+                    .setRefundStatus(refundStatus != null ? getRefundStatus(refundStatus) : null)
+                    .setInvoiceIds(merge(invoiceID, invoiceIDs))
+                    .setExternalId(externalID)
+                    .setPaymentId(paymentID)
+                    .setRefundId(refundID);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return new ResponseEntity(
+                    new DefaultLogicError()
+                            .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                            .message(e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(searchService.findRefunds(query));
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<DefaultLogicError> handleConstraintViolation(Exception ex) {
+        Set<ConstraintViolation<?>> constraintViolations =
+                ((ConstraintViolationException) ex).getConstraintViolations();
+        String errorMessage =
+                constraintViolations.stream()
+                        .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
+                        .collect(Collectors.joining(", "));
+        return new ResponseEntity<>(new DefaultLogicError()
+                .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                .message(errorMessage), HttpStatus.BAD_REQUEST);
     }
 }
