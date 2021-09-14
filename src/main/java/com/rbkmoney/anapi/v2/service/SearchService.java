@@ -1,22 +1,20 @@
 package com.rbkmoney.anapi.v2.service;
 
-import com.rbkmoney.damsel.domain.InvoicePaymentChargebackCategory;
-import com.rbkmoney.damsel.domain.PayoutToolInfo;
+import com.rbkmoney.anapi.v2.util.OpenApiUtil;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.InvoiceStatus;
 import com.rbkmoney.magista.*;
-import com.rbkmoney.openapi.anapi_v2.model.Payer;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.rbkmoney.anapi.v2.util.OpenApiUtil.mapToCategory;
+import static com.rbkmoney.anapi.v2.util.OpenApiUtil.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,22 +36,22 @@ public class SearchService {
                         .flow(new PaymentFlow()
                                 .type(payment.getFlow().isSetHold() ? PaymentFlow.TypeEnum.PAYMENTFLOWHOLD :
                                         PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT))
-                        .geoLocationInfo(new GeoLocationInfo()
+                        .geoLocationInfo(payment.getLocationInfo() != null ? new GeoLocationInfo()
                                 .cityGeoID(payment.getLocationInfo().getCityGeoId())
-                                .countryGeoID(payment.getLocationInfo().getCountryGeoId()))
+                                .countryGeoID(payment.getLocationInfo().getCountryGeoId())
+                                : null)
                         .id(payment.getId())
                         .invoiceID(payment.getInvoiceId())
                         .makeRecurrent(payment.isMakeRecurrent())
                         .payer(getPayer(payment))
                         .shopID(payment.getShopId())
                         .shortID(payment.getShortId())
-                        .status(getStatus(payment.getStatus()))
-                        .statusChangedAt(TypeUtil.stringToInstant(getAt(payment.getStatus()))
-                                .atOffset(ZoneOffset.UTC))
-                        .transactionInfo(new TransactionInfo()
+                        .transactionInfo(payment.getAdditionalTransactionInfo() != null
+                                ? new TransactionInfo()
                                 .approvalCode(payment.getAdditionalTransactionInfo().getApprovalCode())
                                 .rrn(payment.getAdditionalTransactionInfo().getRrn())
-                        );
+                                : null);
+                fillStatusInfo(payment, result);
                 results.add(result);
             }
             return new InlineResponse20010()
@@ -66,6 +64,59 @@ public class SearchService {
         return null;
     }
 
+    private void fillStatusInfo(StatPayment payment, PaymentSearchResult result) {
+        var status = payment.getStatus();
+        if (status.isSetCancelled()) {
+            OffsetDateTime createdAt = status.getCancelled().getAt() != null
+                    ? TypeUtil.stringToInstant(status.getCancelled().getAt()).atOffset(ZoneOffset.UTC)
+                    : null;
+            result.status(PaymentSearchResult.StatusEnum.CANCELLED)
+                    .createdAt(createdAt);
+        }
+
+        if (status.isSetCaptured()) {
+            OffsetDateTime createdAt = status.getCaptured().getAt() != null
+                    ? TypeUtil.stringToInstant(status.getCaptured().getAt()).atOffset(ZoneOffset.UTC)
+                    : null;
+            result.status(PaymentSearchResult.StatusEnum.CAPTURED)
+                    .createdAt(createdAt);
+        }
+
+        if (status.isSetChargedBack()) {
+            //TODO: Clearify
+        }
+
+        if (status.isSetFailed()) {
+            OffsetDateTime createdAt = status.getFailed().getAt() != null
+                    ? TypeUtil.stringToInstant(status.getFailed().getAt()).atOffset(ZoneOffset.UTC)
+                    : null;
+            result.status(PaymentSearchResult.StatusEnum.FAILED)
+                    .createdAt(createdAt);
+        }
+
+        if (status.isSetPending()) {
+            result.status(PaymentSearchResult.StatusEnum.PENDING);
+        }
+
+        if (status.isSetProcessed()) {
+            OffsetDateTime createdAt = status.getProcessed().getAt() != null
+                    ? TypeUtil.stringToInstant(status.getProcessed().getAt()).atOffset(ZoneOffset.UTC)
+                    : null;
+            result.status(PaymentSearchResult.StatusEnum.PROCESSED)
+                    .createdAt(createdAt);
+        }
+
+        if (status.isSetRefunded()) {
+            OffsetDateTime createdAt = status.getRefunded().getAt() != null
+                    ? TypeUtil.stringToInstant(status.getRefunded().getAt()).atOffset(ZoneOffset.UTC)
+                    : null;
+            result.status(PaymentSearchResult.StatusEnum.REFUNDED)
+                    .createdAt(createdAt);
+        }
+
+        throw new IllegalArgumentException("");
+    }
+
     public InlineResponse2008 findChargebacks(ChargebackSearchQuery query) {
         try {
             StatChargebackResponse magistaResponse = magistaClient.searchChargebacks(query);
@@ -76,11 +127,13 @@ public class SearchService {
                         .createdAt(TypeUtil.stringToInstant(chargeback.getCreatedAt()).atOffset(ZoneOffset.UTC))
                         .chargebackId(chargeback.getChargebackId())
                         .fee(chargeback.getFee())
-                        .chargebackReason(new ChargebackReason()
+                        .chargebackReason(chargeback.getChargebackReason() != null
+                                ? new ChargebackReason()
                                 .category(mapToCategory(chargeback.getChargebackReason().getCategory()))
-                                .code(chargeback.getChargebackReason().getCode()))
-                        .content(new Content().data(chargeback.getContent().getData())
-                                .type(chargeback.getContent().getType()))
+                                .code(chargeback.getChargebackReason().getCode()) : null)
+                        .content(chargeback.getContent() != null
+                                ? new Content().data(chargeback.getContent().getData())
+                                .type(chargeback.getContent().getType()) : null)
                         .bodyCurrency(chargeback.getCurrencyCode().getSymbolicCode());
                 results.add(result);
             }
@@ -95,7 +148,6 @@ public class SearchService {
     }
 
 
-
     public InlineResponse2009 findInvoices(InvoiceSearchQuery query) {
         try {
             StatInvoiceResponse magistaResponse = magistaClient.searchInvoices(query);
@@ -106,19 +158,20 @@ public class SearchService {
                         .createdAt(TypeUtil.stringToInstant(invoice.getCreatedAt()).atOffset(ZoneOffset.UTC))
                         .currency(invoice.getCurrencySymbolicCode())
                         .externalID(invoice.getExternalId())
-                        .cart(invoice.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
+                        .cart(invoice.getCart() != null
+                                ? invoice.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
                                         .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
                                         .price(invoiceLine.getPrice().getAmount())
                                         .product(invoiceLine.getProduct())
                                 //.getTaxMode()
-                        ).collect(Collectors.toList()))
+                        ).collect(Collectors.toList()) : null)
                         .description(invoice.getDescription())
                         .dueDate(TypeUtil.stringToInstant(invoice.getDue()).atOffset(ZoneOffset.UTC))
                         .id(invoice.getId())
                         .product(invoice.getProduct())
                         //.reason()
                         .shopID(invoice.getShopId())
-                        .status(mapToStatus(invoice.getStatus()));
+                        .status(OpenApiUtil.mapToInvoiceStatus(invoice.getStatus()));
                 results.add(result);
             }
             return new InlineResponse2009()
@@ -141,11 +194,10 @@ public class SearchService {
                         .createdAt(TypeUtil.stringToInstant(payout.getCreatedAt()).atOffset(ZoneOffset.UTC))
                         .currency(payout.getCurrencySymbolicCode())
                         .fee(payout.getFee())
-                        // .cancellationDetails
                         .id(payout.getId())
                         .payoutToolDetails(mapToPayoutToolDetails(payout.getPayoutToolInfo()))
                         .shopID(payout.getShopId())
-                        .status(mapToStatus(payout.getStatus()))
+                        .status(OpenApiUtil.mapToPayoutStatus(payout.getStatus()))
                         .cancellationDetails(
                                 payout.getStatus().isSetCancelled() ? payout.getStatus().getCancelled().getDetails() :
                                         null);
@@ -161,83 +213,6 @@ public class SearchService {
         return null;
     }
 
-    private String mapToStatus(PayoutStatus status) {
-        if (status.isSetCancelled()) {
-            return "Cancelled";
-        }
-
-        if (status.isSetPaid()) {
-            return "Paid";
-        }
-
-        if (status.isSetConfirmed()) {
-            return "Confirmed";
-        }
-
-        if (status.isSetUnpaid()) {
-            return "Unpaid";
-        }
-
-        throw new IllegalArgumentException("");
-    }
-
-    private PayoutToolDetails mapToPayoutToolDetails(PayoutToolInfo payoutToolInfo) {
-        if (payoutToolInfo.isSetRussianBankAccount()) {
-            var account = payoutToolInfo.getRussianBankAccount();
-            return new PayoutToolDetailsBankAccount()
-                    .account(account.getAccount())
-                    .bankBik(account.getBankBik())
-                    .bankName(account.getBankName())
-                    .bankPostAccount(account.getBankPostAccount())
-                    .detailsType("PayoutToolDetailsBankAccount");
-        }
-
-        if (payoutToolInfo.isSetInternationalBankAccount()) {
-            var account = payoutToolInfo.getInternationalBankAccount();
-            return new PayoutToolDetailsInternationalBankAccount()
-                    .iban(account.getIban())
-                    .number(account.getNumber())
-                    .bankDetails(new InternationalBankDetails()
-                            .name(account.getBank().getName())
-                            .bic(account.getBank().getBic())
-                            .countryCode(account.getBank().getCountry().name())
-                            .address(account.getBank().getAddress())
-                            .abartn(account.getBank().getAbaRtn()))
-                    .correspondentBankAccount(mapToInternationalCorrespondentBankAccount(account))
-                    .detailsType("PayoutToolDetailsInternationalBankAccount");
-        }
-
-        if (payoutToolInfo.isSetPaymentInstitutionAccount()) {
-            return new PayoutToolDetailsPaymentInstitutionAccount()
-                    .detailsType("PayoutToolDetailsPaymentInstitutionAccount");
-        }
-
-        if (payoutToolInfo.isSetWalletInfo()) {
-            return new PayoutToolDetailsWalletInfo()
-                    .walletID(payoutToolInfo.getWalletInfo().getWalletId())
-                    .detailsType("PayoutToolDetailsWalletInfo");
-        }
-
-        throw new IllegalArgumentException("");
-
-    }
-
-    private InternationalCorrespondentBankAccount mapToInternationalCorrespondentBankAccount(
-            com.rbkmoney.damsel.domain.InternationalBankAccount account) {
-        var details = account.getBank();
-        return new InternationalCorrespondentBankAccount()
-                .bankDetails(new InternationalBankDetails()
-                        .name(details.getName())
-                        .bic(details.getBic())
-                        .countryCode(details.getCountry().name())
-                        .address(details.getAddress())
-                        .abartn(details.getAbaRtn()))
-                .iban(account.getIban())
-                .number(account.getNumber())
-                .correspondentBankAccount(
-                        mapToInternationalCorrespondentBankAccount(account.getCorrespondentAccount()));
-    }
-
     public InlineResponse20012 findRefunds(RefundSearchQuery query) {
         try {
             StatRefundResponse magistaResponse = magistaClient.searchRefunds(query);
@@ -247,15 +222,15 @@ public class SearchService {
                         .amount(refund.getAmount())
                         .createdAt(TypeUtil.stringToInstant(refund.getCreatedAt()).atOffset(ZoneOffset.UTC))
                         .currency(refund.getCurrencySymbolicCode())
-                        // .cancellationDetails
                         .id(refund.getId())
                         .shopID(refund.getShopId())
-                        .status(mapToStatus(refund.getStatus()))
+                        .status(mapToRefundStatus(refund.getStatus()))
                         .externalID(refund.getExternalId())
-                        .error(refund.getStatus().isSetFailed() ?
-                                new RefundStatusError()
-                                        .code(refund.getStatus().getFailed().getFailure().getFailure().getCode())
-                                        .message(refund.getStatus().getFailed().getFailure().getFailure().getReason())
+                        .error(refund.getStatus().isSetFailed()
+                                && refund.getStatus().getFailed().getFailure().isSetFailure()
+                                ? new RefundStatusError()
+                                .code(refund.getStatus().getFailed().getFailure().getFailure().getCode())
+                                .message(refund.getStatus().getFailed().getFailure().getFailure().getReason())
                                 : null)
                         .invoiceID(refund.getInvoiceId())
                         .paymentID(refund.getPaymentId())
@@ -272,100 +247,4 @@ public class SearchService {
         return null;
     }
 
-    private RefundSearchResult.StatusEnum mapToStatus(InvoicePaymentRefundStatus status) {
-        if (status.isSetPending()) {
-            return RefundSearchResult.StatusEnum.PENDING;
-        }
-
-        if (status.isSetFailed()) {
-            return RefundSearchResult.StatusEnum.FAILED;
-        }
-
-        if (status.isSetSucceeded()) {
-            return RefundSearchResult.StatusEnum.SUCCEEDED;
-        }
-
-        throw new IllegalArgumentException("");
-    }
-
-    private Payer getPayer(StatPayment payment) {
-        var statPayer = payment.getPayer();
-        Payer payer = new Payer();
-
-        if (statPayer.isSetCustomer()) {
-            return payer.payerType(Payer.PayerTypeEnum.CUSTOMERPAYER);
-        }
-
-        if (statPayer.isSetPaymentResource()) {
-            return payer.payerType(Payer.PayerTypeEnum.PAYMENTRESOURCEPAYER);
-        }
-
-        if (statPayer.isSetRecurrent()) {
-            return payer.payerType(Payer.PayerTypeEnum.RECURRENTPAYER);
-        }
-
-        return null;
-    }
-
-    private PaymentSearchResult.StatusEnum getStatus(InvoicePaymentStatus status) {
-        if (status.isSetCancelled()) {
-            return PaymentSearchResult.StatusEnum.CANCELLED;
-        }
-
-        if (status.isSetCaptured()) {
-            return PaymentSearchResult.StatusEnum.CAPTURED;
-        }
-
-        if (status.isSetChargedBack()) {
-            //TODO: Clearify
-        }
-
-        if (status.isSetFailed()) {
-            return PaymentSearchResult.StatusEnum.PROCESSED;
-        }
-
-        if (status.isSetPending()) {
-            return PaymentSearchResult.StatusEnum.PENDING;
-        }
-
-        if (status.isSetProcessed()) {
-            return PaymentSearchResult.StatusEnum.PROCESSED;
-        }
-
-        if (status.isSetRefunded()) {
-            return PaymentSearchResult.StatusEnum.REFUNDED;
-        }
-
-        throw new IllegalArgumentException("");
-
-    }
-
-    private String getAt(InvoicePaymentStatus status) {
-        if (status.isSetCancelled()) {
-            return status.getCancelled().getAt();
-        }
-
-        if (status.isSetCaptured()) {
-            return status.getCaptured().getAt();
-        }
-
-        if (status.isSetChargedBack()) {
-            //TODO: Clearify
-        }
-
-        if (status.isSetFailed()) {
-            return status.getFailed().getAt();
-        }
-
-        if (status.isSetProcessed()) {
-            return status.getProcessed().getAt();
-        }
-
-        if (status.isSetRefunded()) {
-            return status.getRefunded().getAt();
-        }
-
-        return null;
-
-    }
 }

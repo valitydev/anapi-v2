@@ -36,12 +36,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
     }
 
     @Override
-    public ResponseEntity<InlineResponse20010> searchPayments(String xRequestID,
+    public ResponseEntity<InlineResponse20010> searchPayments(String xrequestID,
                                                               @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                               @NotNull @Valid OffsetDateTime fromTime,
                                                               @NotNull @Valid OffsetDateTime toTime,
                                                               @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                              String xRequestDeadline,
+                                                              String xrequestDeadline,
                                                               @Size(min = 1, max = 40) @Valid String shopID,
                                                               @Valid List<String> shopIDs,
                                                               @Valid String paymentInstitutionRealm,
@@ -66,18 +66,22 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Min(1L) @Valid Long paymentAmountTo,
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline
+        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline
         PaymentSearchQuery query = new PaymentSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
                 .setPaymentParams(
                         new PaymentParams()
-                                .setPaymentTool(mapToPaymentTool(paymentMethod))
-                                .setPaymentFlow(mapToInvoicePaymentFlow(paymentFlow))
+                                .setPaymentTool(paymentMethod != null ? mapToPaymentTool(paymentMethod) : null)
+                                .setPaymentFlow(paymentFlow != null ? mapToInvoicePaymentFlow(paymentFlow) : null)
                                 .setPaymentTerminalProvider(
-                                        LegacyTerminalPaymentProvider.valueOf(paymentTerminalProvider))
+                                        paymentTerminalProvider != null
+                                                ? LegacyTerminalPaymentProvider.valueOf(paymentTerminalProvider) : null)
                                 .setPaymentTokenProvider(
-                                        LegacyBankCardTokenProvider.valueOf(bankCardTokenProvider.getValue()))
+                                        bankCardTokenProvider != null
+                                                ?
+                                                LegacyBankCardTokenProvider.valueOf(bankCardTokenProvider.getValue()) :
+                                                null)
                                 .setPaymentAmountFrom(paymentAmountFrom)
                                 .setPaymentAmountTo(paymentAmountTo)
                                 .setPaymentEmail(payerEmail)
@@ -89,8 +93,9 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                 .setPaymentId(paymentID)
                                 .setPaymentIp(payerIP)
                                 .setPaymentRrn(rrn)
-                                .setPaymentStatus(getStatus(paymentStatus))
-                                .setPaymentSystem(LegacyBankCardPaymentSystem.valueOf(bankCardPaymentSystem.getValue()))
+                                .setPaymentStatus(paymentStatus != null ? getStatus(paymentStatus) : null)
+                                .setPaymentSystem(bankCardPaymentSystem != null
+                                        ? LegacyBankCardPaymentSystem.valueOf(bankCardPaymentSystem.getValue()) : null)
                 )
                 .setExcludedShopIds(excludedShops)
                 .setExternalId(externalID)
@@ -103,12 +108,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse2008> searchChargebacks(String xRequestID,
+    public ResponseEntity<InlineResponse2008> searchChargebacks(String xrequestID,
                                                                 @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                                 @NotNull @Valid OffsetDateTime fromTime,
                                                                 @NotNull @Valid OffsetDateTime toTime,
                                                                 @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                                String xRequestDeadline,
+                                                                String xrequestDeadline,
                                                                 @Size(min = 1, max = 40) @Valid String shopID,
                                                                 @Valid List<String> shopIDs,
                                                                 @Valid String paymentInstitutionRealm,
@@ -116,15 +121,16 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Size(min = 1, max = 40) @Valid String invoiceID,
                                                                 @Size(min = 1, max = 40) @Valid String paymentID,
                                                                 @Size(min = 1, max = 40) @Valid String chargebackID,
+                                                                //TODO: checkIF null or empty list
                                                                 @Valid List<String> chargebackStatuses,
                                                                 @Valid List<String> chargebackStages,
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, offset
+        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, offset
         ChargebackSearchQuery query = new ChargebackSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
-                .setInvoiceIds(List.of(invoiceID))
+                .setInvoiceIds(invoiceID != null ? List.of(invoiceID) : null)
                 .setPaymentId(paymentID)
                 .setChargebackId(chargebackID)
                 .setChargebackStatuses(chargebackStatuses.stream()
@@ -146,12 +152,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse2009> searchInvoices(String xRequestID,
+    public ResponseEntity<InlineResponse2009> searchInvoices(String xrequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                              @NotNull @Valid OffsetDateTime fromTime,
                                                              @NotNull @Valid OffsetDateTime toTime,
                                                              @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                             String xRequestDeadline,
+                                                             String xrequestDeadline,
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
@@ -163,7 +169,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Min(1L) @Valid Long invoiceAmountTo,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, excludedShops
+        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops
         InvoiceSearchQuery query = new InvoiceSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
@@ -171,8 +177,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                         new PaymentParams()
                                 .setPaymentAmountFrom(invoiceAmountFrom)
                                 .setPaymentAmountTo(invoiceAmountTo)
-                                .setPaymentStatus(getStatus(invoiceStatus))
-
+                                .setPaymentStatus(invoiceStatus != null ? getStatus(invoiceStatus) : null)
                 )
                 .setInvoiceIds(merge(invoiceID, invoiceIDs))
                 .setExternalId(externalID);
@@ -184,12 +189,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse20011> searchPayouts(String xRequestID,
+    public ResponseEntity<InlineResponse20011> searchPayouts(String xrequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                              @NotNull @Valid OffsetDateTime fromTime,
                                                              @NotNull @Valid OffsetDateTime toTime,
                                                              @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                             String xRequestDeadline,
+                                                             String xrequestDeadline,
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
@@ -198,13 +203,13 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String payoutToolType,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, excludedShops,
+        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops,
         //offset + setStatuses
         PayoutSearchQuery query = new PayoutSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
                 .setPayoutId(payoutID)
-                .setPayoutType(mapToDamselPayoutToolInfo(payoutToolType));
+                .setPayoutType(payoutToolType != null ? mapToDamselPayoutToolInfo(payoutToolType) : null);
         return ResponseEntity.ok(searchService.findPayouts(query));
     }
 
@@ -213,12 +218,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse20012> searchRefunds(String xRequestID,
+    public ResponseEntity<InlineResponse20012> searchRefunds(String xrequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                              @NotNull @Valid OffsetDateTime fromTime,
                                                              @NotNull @Valid OffsetDateTime toTime,
                                                              @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                             String xRequestDeadline,
+                                                             String xrequestDeadline,
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
@@ -231,11 +236,11 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String refundStatus,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xRequestID, xRequestDeadline, excludedShops, offset
+        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops, offset
         RefundSearchQuery query = new RefundSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs), continuationToken))
-                .setRefundStatus(getRefundStatus(refundStatus))
+                .setRefundStatus(refundStatus != null ? getRefundStatus(refundStatus) : null)
                 .setInvoiceIds(merge(invoiceID, invoiceIDs))
                 .setExternalId(externalID)
                 .setPaymentId(paymentID)

@@ -56,6 +56,7 @@ public class DamselUtil {
             case CANCELLED -> invoicePaymentStatus.setCancelled(new InvoicePaymentCancelled());
             case REFUNDED -> invoicePaymentStatus.setRefunded(new InvoicePaymentRefunded());
             case FAILED -> invoicePaymentStatus.setFailed(new InvoicePaymentFailed());
+            default -> throw new IllegalArgumentException("");
         }
         return invoicePaymentStatus;
     }
