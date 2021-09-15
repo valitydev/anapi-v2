@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,65 +50,12 @@ public class SearchService {
                             .approvalCode(payment.getAdditionalTransactionInfo().getApprovalCode())
                             .rrn(payment.getAdditionalTransactionInfo().getRrn())
                             : null);
-            fillStatusInfo(payment, result);
+            fillPaymentStatusInfo(payment, result);
             results.add(result);
         }
         return new InlineResponse20010()
                 .result(results)
                 .continuationToken(magistaResponse.getContinuationToken());
-    }
-
-    private void fillStatusInfo(StatPayment payment, PaymentSearchResult result) {
-        var status = payment.getStatus();
-        if (status.isSetCancelled()) {
-            OffsetDateTime createdAt = status.getCancelled().getAt() != null
-                    ? TypeUtil.stringToInstant(status.getCancelled().getAt()).atOffset(ZoneOffset.UTC)
-                    : null;
-            result.status(PaymentSearchResult.StatusEnum.CANCELLED)
-                    .createdAt(createdAt);
-        }
-
-        if (status.isSetCaptured()) {
-            OffsetDateTime createdAt = status.getCaptured().getAt() != null
-                    ? TypeUtil.stringToInstant(status.getCaptured().getAt()).atOffset(ZoneOffset.UTC)
-                    : null;
-            result.status(PaymentSearchResult.StatusEnum.CAPTURED)
-                    .createdAt(createdAt);
-        }
-
-        if (status.isSetChargedBack()) {
-            //TODO: Clearify
-        }
-
-        if (status.isSetFailed()) {
-            OffsetDateTime createdAt = status.getFailed().getAt() != null
-                    ? TypeUtil.stringToInstant(status.getFailed().getAt()).atOffset(ZoneOffset.UTC)
-                    : null;
-            result.status(PaymentSearchResult.StatusEnum.FAILED)
-                    .createdAt(createdAt);
-        }
-
-        if (status.isSetPending()) {
-            result.status(PaymentSearchResult.StatusEnum.PENDING);
-        }
-
-        if (status.isSetProcessed()) {
-            OffsetDateTime createdAt = status.getProcessed().getAt() != null
-                    ? TypeUtil.stringToInstant(status.getProcessed().getAt()).atOffset(ZoneOffset.UTC)
-                    : null;
-            result.status(PaymentSearchResult.StatusEnum.PROCESSED)
-                    .createdAt(createdAt);
-        }
-
-        if (status.isSetRefunded()) {
-            OffsetDateTime createdAt = status.getRefunded().getAt() != null
-                    ? TypeUtil.stringToInstant(status.getRefunded().getAt()).atOffset(ZoneOffset.UTC)
-                    : null;
-            result.status(PaymentSearchResult.StatusEnum.REFUNDED)
-                    .createdAt(createdAt);
-        }
-
-        throw new IllegalArgumentException("");
     }
 
     @SneakyThrows
@@ -124,7 +70,7 @@ public class SearchService {
                     .fee(chargeback.getFee())
                     .chargebackReason(chargeback.getChargebackReason() != null
                             ? new ChargebackReason()
-                            .category(mapToCategory(chargeback.getChargebackReason().getCategory()))
+                            .category(mapToChargebackCategory(chargeback.getChargebackReason().getCategory()))
                             .code(chargeback.getChargebackReason().getCode()) : null)
                     .content(chargeback.getContent() != null
                             ? new Content().data(chargeback.getContent().getData())
@@ -204,7 +150,7 @@ public class SearchService {
                     .currency(refund.getCurrencySymbolicCode())
                     .id(refund.getId())
                     .shopID(refund.getShopId())
-                    .status(mapToRefundStatus(refund.getStatus()))
+                    .status(refund.getStatus() != null ? mapToRefundStatus(refund.getStatus()) : null)
                     .externalID(refund.getExternalId())
                     .error(refund.getStatus().isSetFailed()
                             && refund.getStatus().getFailed().getFailure().isSetFailure()
