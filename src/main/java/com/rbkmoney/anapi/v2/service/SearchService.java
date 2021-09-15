@@ -5,7 +5,7 @@ import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.thrift.TException;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -22,46 +22,41 @@ public class SearchService {
 
     private final MerchantStatisticsServiceSrv.Iface magistaClient;
 
+    @SneakyThrows
     public InlineResponse20010 findPayments(PaymentSearchQuery query) {
-        try {
-            StatPaymentResponse magistaResponse = magistaClient.searchPayments(query);
-            List<PaymentSearchResult> results = new ArrayList<>(magistaResponse.getPaymentsSize());
-            for (StatPayment payment : magistaResponse.getPayments()) {
-                PaymentSearchResult result = new PaymentSearchResult()
-                        .amount(payment.getAmount())
-                        .createdAt(TypeUtil.stringToInstant(payment.getCreatedAt()).atOffset(ZoneOffset.UTC))
-                        .currency(payment.getCurrencySymbolicCode())
-                        .externalID(payment.getExternalId())
-                        .fee(payment.getFee())
-                        .flow(new PaymentFlow()
-                                .type(payment.getFlow().isSetHold() ? PaymentFlow.TypeEnum.PAYMENTFLOWHOLD :
-                                        PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT))
-                        .geoLocationInfo(payment.getLocationInfo() != null ? new GeoLocationInfo()
-                                .cityGeoID(payment.getLocationInfo().getCityGeoId())
-                                .countryGeoID(payment.getLocationInfo().getCountryGeoId())
-                                : null)
-                        .id(payment.getId())
-                        .invoiceID(payment.getInvoiceId())
-                        .makeRecurrent(payment.isMakeRecurrent())
-                        .payer(getPayer(payment))
-                        .shopID(payment.getShopId())
-                        .shortID(payment.getShortId())
-                        .transactionInfo(payment.getAdditionalTransactionInfo() != null
-                                ? new TransactionInfo()
-                                .approvalCode(payment.getAdditionalTransactionInfo().getApprovalCode())
-                                .rrn(payment.getAdditionalTransactionInfo().getRrn())
-                                : null);
-                fillStatusInfo(payment, result);
-                results.add(result);
-            }
-            return new InlineResponse20010()
-                    .result(results)
-                    .continuationToken(magistaResponse.getContinuationToken());
-        } catch (TException e) {
-            e.printStackTrace();
+        StatPaymentResponse magistaResponse = magistaClient.searchPayments(query);
+        List<PaymentSearchResult> results = new ArrayList<>(magistaResponse.getPaymentsSize());
+        for (StatPayment payment : magistaResponse.getPayments()) {
+            PaymentSearchResult result = new PaymentSearchResult()
+                    .amount(payment.getAmount())
+                    .createdAt(TypeUtil.stringToInstant(payment.getCreatedAt()).atOffset(ZoneOffset.UTC))
+                    .currency(payment.getCurrencySymbolicCode())
+                    .externalID(payment.getExternalId())
+                    .fee(payment.getFee())
+                    .flow(new PaymentFlow()
+                            .type(payment.getFlow().isSetHold() ? PaymentFlow.TypeEnum.PAYMENTFLOWHOLD :
+                                    PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT))
+                    .geoLocationInfo(payment.getLocationInfo() != null ? new GeoLocationInfo()
+                            .cityGeoID(payment.getLocationInfo().getCityGeoId())
+                            .countryGeoID(payment.getLocationInfo().getCountryGeoId())
+                            : null)
+                    .id(payment.getId())
+                    .invoiceID(payment.getInvoiceId())
+                    .makeRecurrent(payment.isMakeRecurrent())
+                    .payer(getPayer(payment))
+                    .shopID(payment.getShopId())
+                    .shortID(payment.getShortId())
+                    .transactionInfo(payment.getAdditionalTransactionInfo() != null
+                            ? new TransactionInfo()
+                            .approvalCode(payment.getAdditionalTransactionInfo().getApprovalCode())
+                            .rrn(payment.getAdditionalTransactionInfo().getRrn())
+                            : null);
+            fillStatusInfo(payment, result);
+            results.add(result);
         }
-        //TODO: Error processing;
-        return null;
+        return new InlineResponse20010()
+                .result(results)
+                .continuationToken(magistaResponse.getContinuationToken());
     }
 
     private void fillStatusInfo(StatPayment payment, PaymentSearchResult result) {
@@ -117,134 +112,114 @@ public class SearchService {
         throw new IllegalArgumentException("");
     }
 
+    @SneakyThrows
     public InlineResponse2008 findChargebacks(ChargebackSearchQuery query) {
-        try {
-            StatChargebackResponse magistaResponse = magistaClient.searchChargebacks(query);
-            List<Chargeback> results = new ArrayList<>(magistaResponse.getChargebacksSize());
-            for (StatChargeback chargeback : magistaResponse.getChargebacks()) {
-                Chargeback result = new Chargeback()
-                        .bodyAmount(chargeback.getAmount())
-                        .createdAt(TypeUtil.stringToInstant(chargeback.getCreatedAt()).atOffset(ZoneOffset.UTC))
-                        .chargebackId(chargeback.getChargebackId())
-                        .fee(chargeback.getFee())
-                        .chargebackReason(chargeback.getChargebackReason() != null
-                                ? new ChargebackReason()
-                                .category(mapToCategory(chargeback.getChargebackReason().getCategory()))
-                                .code(chargeback.getChargebackReason().getCode()) : null)
-                        .content(chargeback.getContent() != null
-                                ? new Content().data(chargeback.getContent().getData())
-                                .type(chargeback.getContent().getType()) : null)
-                        .bodyCurrency(chargeback.getCurrencyCode().getSymbolicCode());
-                results.add(result);
-            }
-            return new InlineResponse2008()
-                    .result(results)
-                    .continuationToken(magistaResponse.getContinuationToken());
-        } catch (TException e) {
-            e.printStackTrace();
+        StatChargebackResponse magistaResponse = magistaClient.searchChargebacks(query);
+        List<Chargeback> results = new ArrayList<>(magistaResponse.getChargebacksSize());
+        for (StatChargeback chargeback : magistaResponse.getChargebacks()) {
+            Chargeback result = new Chargeback()
+                    .bodyAmount(chargeback.getAmount())
+                    .createdAt(TypeUtil.stringToInstant(chargeback.getCreatedAt()).atOffset(ZoneOffset.UTC))
+                    .chargebackId(chargeback.getChargebackId())
+                    .fee(chargeback.getFee())
+                    .chargebackReason(chargeback.getChargebackReason() != null
+                            ? new ChargebackReason()
+                            .category(mapToCategory(chargeback.getChargebackReason().getCategory()))
+                            .code(chargeback.getChargebackReason().getCode()) : null)
+                    .content(chargeback.getContent() != null
+                            ? new Content().data(chargeback.getContent().getData())
+                            .type(chargeback.getContent().getType()) : null)
+                    .bodyCurrency(chargeback.getCurrencyCode().getSymbolicCode());
+            results.add(result);
         }
-        //TODO: Error processing;
-        return null;
+        return new InlineResponse2008()
+                .result(results)
+                .continuationToken(magistaResponse.getContinuationToken());
     }
 
 
+    @SneakyThrows
     public InlineResponse2009 findInvoices(InvoiceSearchQuery query) {
-        try {
-            StatInvoiceResponse magistaResponse = magistaClient.searchInvoices(query);
-            List<Invoice> results = new ArrayList<>(magistaResponse.getInvoicesSize());
-            for (StatInvoice invoice : magistaResponse.getInvoices()) {
-                Invoice result = new Invoice()
-                        .amount(invoice.getAmount())
-                        .createdAt(TypeUtil.stringToInstant(invoice.getCreatedAt()).atOffset(ZoneOffset.UTC))
-                        .currency(invoice.getCurrencySymbolicCode())
-                        .externalID(invoice.getExternalId())
-                        .cart(invoice.getCart() != null
-                                ? invoice.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
-                                        .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
-                                        .price(invoiceLine.getPrice().getAmount())
-                                        .product(invoiceLine.getProduct())
-                                //.getTaxMode()
-                        ).collect(Collectors.toList()) : null)
-                        .description(invoice.getDescription())
-                        .dueDate(TypeUtil.stringToInstant(invoice.getDue()).atOffset(ZoneOffset.UTC))
-                        .id(invoice.getId())
-                        .product(invoice.getProduct())
-                        //.reason()
-                        .shopID(invoice.getShopId())
-                        .status(OpenApiUtil.mapToInvoiceStatus(invoice.getStatus()));
-                results.add(result);
-            }
-            return new InlineResponse2009()
-                    .result(results)
-                    .continuationToken(magistaResponse.getContinuationToken());
-        } catch (TException e) {
-            e.printStackTrace();
+        StatInvoiceResponse magistaResponse = magistaClient.searchInvoices(query);
+        List<Invoice> results = new ArrayList<>(magistaResponse.getInvoicesSize());
+        for (StatInvoice invoice : magistaResponse.getInvoices()) {
+            Invoice result = new Invoice()
+                    .amount(invoice.getAmount())
+                    .createdAt(TypeUtil.stringToInstant(invoice.getCreatedAt()).atOffset(ZoneOffset.UTC))
+                    .currency(invoice.getCurrencySymbolicCode())
+                    .externalID(invoice.getExternalId())
+                    .cart(invoice.getCart() != null
+                            ? invoice.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
+                                    .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
+                                    .price(invoiceLine.getPrice().getAmount())
+                                    .product(invoiceLine.getProduct())
+                            //.getTaxMode()
+                    ).collect(Collectors.toList()) : null)
+                    .description(invoice.getDescription())
+                    .dueDate(TypeUtil.stringToInstant(invoice.getDue()).atOffset(ZoneOffset.UTC))
+                    .id(invoice.getId())
+                    .product(invoice.getProduct())
+                    //.reason()
+                    .shopID(invoice.getShopId())
+                    .status(OpenApiUtil.mapToInvoiceStatus(invoice.getStatus()));
+            results.add(result);
         }
-        //TODO: Error processing;
-        return null;
+        return new InlineResponse2009()
+                .result(results)
+                .continuationToken(magistaResponse.getContinuationToken());
     }
 
+    @SneakyThrows
     public InlineResponse20011 findPayouts(PayoutSearchQuery query) {
-        try {
-            StatPayoutResponse magistaResponse = magistaClient.searchPayouts(query);
-            List<Payout> results = new ArrayList<>(magistaResponse.getPayoutsSize());
-            for (StatPayout payout : magistaResponse.getPayouts()) {
-                Payout result = new Payout()
-                        .amount(payout.getAmount())
-                        .createdAt(TypeUtil.stringToInstant(payout.getCreatedAt()).atOffset(ZoneOffset.UTC))
-                        .currency(payout.getCurrencySymbolicCode())
-                        .fee(payout.getFee())
-                        .id(payout.getId())
-                        .payoutToolDetails(mapToPayoutToolDetails(payout.getPayoutToolInfo()))
-                        .shopID(payout.getShopId())
-                        .status(OpenApiUtil.mapToPayoutStatus(payout.getStatus()))
-                        .cancellationDetails(
-                                payout.getStatus().isSetCancelled() ? payout.getStatus().getCancelled().getDetails() :
-                                        null);
-                results.add(result);
-            }
-            return new InlineResponse20011()
-                    .result(results)
-                    .continuationToken(magistaResponse.getContinuationToken());
-        } catch (TException e) {
-            e.printStackTrace();
+        StatPayoutResponse magistaResponse = magistaClient.searchPayouts(query);
+        List<Payout> results = new ArrayList<>(magistaResponse.getPayoutsSize());
+        for (StatPayout payout : magistaResponse.getPayouts()) {
+            Payout result = new Payout()
+                    .amount(payout.getAmount())
+                    .createdAt(TypeUtil.stringToInstant(payout.getCreatedAt()).atOffset(ZoneOffset.UTC))
+                    .currency(payout.getCurrencySymbolicCode())
+                    .fee(payout.getFee())
+                    .id(payout.getId())
+                    .payoutToolDetails(mapToPayoutToolDetails(payout.getPayoutToolInfo()))
+                    .shopID(payout.getShopId())
+                    .status(OpenApiUtil.mapToPayoutStatus(payout.getStatus()))
+                    .cancellationDetails(
+                            payout.getStatus().isSetCancelled() ? payout.getStatus().getCancelled().getDetails() :
+                                    null);
+            results.add(result);
         }
-        //TODO: Error processing;
-        return null;
+        return new InlineResponse20011()
+                .result(results)
+                .continuationToken(magistaResponse.getContinuationToken());
     }
 
+    @SneakyThrows
     public InlineResponse20012 findRefunds(RefundSearchQuery query) {
-        try {
-            StatRefundResponse magistaResponse = magistaClient.searchRefunds(query);
-            List<RefundSearchResult> results = new ArrayList<>(magistaResponse.getRefundsSize());
-            for (StatRefund refund : magistaResponse.getRefunds()) {
-                RefundSearchResult result = new RefundSearchResult()
-                        .amount(refund.getAmount())
-                        .createdAt(TypeUtil.stringToInstant(refund.getCreatedAt()).atOffset(ZoneOffset.UTC))
-                        .currency(refund.getCurrencySymbolicCode())
-                        .id(refund.getId())
-                        .shopID(refund.getShopId())
-                        .status(mapToRefundStatus(refund.getStatus()))
-                        .externalID(refund.getExternalId())
-                        .error(refund.getStatus().isSetFailed()
-                                && refund.getStatus().getFailed().getFailure().isSetFailure()
-                                ? new RefundStatusError()
-                                .code(refund.getStatus().getFailed().getFailure().getFailure().getCode())
-                                .message(refund.getStatus().getFailed().getFailure().getFailure().getReason())
-                                : null)
-                        .invoiceID(refund.getInvoiceId())
-                        .paymentID(refund.getPaymentId())
-                        .reason(refund.getReason());
-                results.add(result);
-            }
-            return new InlineResponse20012()
-                    .result(results)
-                    .continuationToken(magistaResponse.getContinuationToken());
-        } catch (TException e) {
-            e.printStackTrace();
+        StatRefundResponse magistaResponse = magistaClient.searchRefunds(query);
+        List<RefundSearchResult> results = new ArrayList<>(magistaResponse.getRefundsSize());
+        for (StatRefund refund : magistaResponse.getRefunds()) {
+            RefundSearchResult result = new RefundSearchResult()
+                    .amount(refund.getAmount())
+                    .createdAt(TypeUtil.stringToInstant(refund.getCreatedAt()).atOffset(ZoneOffset.UTC))
+                    .currency(refund.getCurrencySymbolicCode())
+                    .id(refund.getId())
+                    .shopID(refund.getShopId())
+                    .status(mapToRefundStatus(refund.getStatus()))
+                    .externalID(refund.getExternalId())
+                    .error(refund.getStatus().isSetFailed()
+                            && refund.getStatus().getFailed().getFailure().isSetFailure()
+                            ? new RefundStatusError()
+                            .code(refund.getStatus().getFailed().getFailure().getFailure().getCode())
+                            .message(refund.getStatus().getFailed().getFailure().getFailure().getReason())
+                            : null)
+                    .invoiceID(refund.getInvoiceId())
+                    .paymentID(refund.getPaymentId())
+                    .reason(refund.getReason());
+            results.add(result);
         }
-        //TODO: Error processing;
-        return null;
+        return new InlineResponse20012()
+                .result(results)
+                .continuationToken(magistaResponse.getContinuationToken());
     }
 
 }
