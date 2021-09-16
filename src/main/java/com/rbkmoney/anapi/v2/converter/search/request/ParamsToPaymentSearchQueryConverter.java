@@ -46,7 +46,7 @@ public class ParamsToPaymentSearchQueryConverter {
                                       Long paymentAmountTo,
                                       List<String> excludedShops,
                                       String continuationToken) {
-
+//TODO: clarify mapping for paymentInstitutionRealm
         PaymentSearchQuery query = new PaymentSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
