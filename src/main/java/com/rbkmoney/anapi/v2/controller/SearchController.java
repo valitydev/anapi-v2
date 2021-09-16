@@ -6,11 +6,10 @@ import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.validation.Valid;
@@ -23,6 +22,7 @@ import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 
 
 @Slf4j
+@PreAuthorize("hasAuthority('invoices:read')")
 @Controller
 @RequiredArgsConstructor
 @SuppressWarnings("ParameterName")
@@ -40,7 +40,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
         return PaymentsApi.super.getRequest();
     }
 
-    @SneakyThrows
     @Override
     public ResponseEntity<InlineResponse20010> searchPayments(String xRequestID,
                                                               @NotNull @Size(min = 1, max = 40) @Valid String partyID,
@@ -105,11 +104,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
         return ResponseEntity.ok(response);
     }
 
-    @SneakyThrows
-    @GetMapping(
-            value = "/chargebacks",
-            produces = {"application/json; charset=utf-8"}
-    )
     @Override
     public ResponseEntity<InlineResponse2008> searchChargebacks(String xRequestID,
                                                                 @NotNull @Size(min = 1, max = 40) @Valid String partyID,
@@ -149,11 +143,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
         return ResponseEntity.ok(response);
     }
 
-    @SneakyThrows
-    @GetMapping(
-            value = "/invoices",
-            produces = {"application/json; charset=utf-8"}
-    )
     @Override
     public ResponseEntity<InlineResponse2009> searchInvoices(String xRequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
@@ -192,11 +181,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
         return ResponseEntity.ok(response);
     }
 
-    @SneakyThrows
-    @GetMapping(
-            value = "/payouts",
-            produces = {"application/json; charset=utf-8"}
-    )
     @Override
     public ResponseEntity<InlineResponse20011> searchPayouts(String xRequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
@@ -229,11 +213,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
         return ResponseEntity.ok(response);
     }
 
-    @SneakyThrows
-    @GetMapping(
-            value = "/refunds",
-            produces = {"application/json; charset=utf-8"}
-    )
     @Override
     public ResponseEntity<InlineResponse20012> searchRefunds(String xRequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
@@ -270,7 +249,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 refundStatus,
                 excludedShops,
                 continuationToken);
-
         InlineResponse20012 response = searchService.findRefunds(query);
         return ResponseEntity.ok(response);
     }

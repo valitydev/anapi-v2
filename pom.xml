@@ -56,12 +56,10 @@
             <artifactId>payout-manager-proto</artifactId>
             <version>1.17-8aa3eb8</version>
         </dependency>
-
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <!-- Server generated classes -->
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.29-27f5575-server</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
