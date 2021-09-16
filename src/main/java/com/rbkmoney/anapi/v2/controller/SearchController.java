@@ -25,15 +25,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import static com.rbkmoney.anapi.v2.util.CommonUtil.getRequestDeadlineMillis;
+import static com.rbkmoney.anapi.v2.util.DeadlineUtils.checkDeadline;
+
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@SuppressWarnings("ParameterName")
 public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi {
 
     private final SearchService searchService;
@@ -50,12 +51,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
 
     @SneakyThrows
     @Override
-    public ResponseEntity<InlineResponse20010> searchPayments(String xrequestID,
+    public ResponseEntity<InlineResponse20010> searchPayments(String xRequestID,
                                                               @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                               @NotNull @Valid OffsetDateTime fromTime,
                                                               @NotNull @Valid OffsetDateTime toTime,
                                                               @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                              String xrequestDeadline,
+                                                              String xRequestDeadline,
                                                               @Size(min = 1, max = 40) @Valid String shopID,
                                                               @Valid List<String> shopIDs,
                                                               @Valid String paymentInstitutionRealm,
@@ -80,6 +81,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Min(1L) @Valid Long paymentAmountTo,
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
+        checkDeadline(xRequestDeadline, xRequestID);
         PaymentSearchQuery query = paymentSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
@@ -108,14 +110,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 paymentAmountTo,
                 excludedShops,
                 continuationToken);
-        InlineResponse20010 response;
-        if (xrequestDeadline != null) {
-            response = searchService
-                    .findPayments(query)
-                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-        } else {
-            response = searchService.findPayments(query).get();
-        }
+        InlineResponse20010 response = searchService.findPayments(query);
         return ResponseEntity.ok(response);
     }
 
@@ -125,12 +120,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse2008> searchChargebacks(String xrequestID,
+    public ResponseEntity<InlineResponse2008> searchChargebacks(String xRequestID,
                                                                 @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                                 @NotNull @Valid OffsetDateTime fromTime,
                                                                 @NotNull @Valid OffsetDateTime toTime,
                                                                 @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                                String xrequestDeadline,
+                                                                String xRequestDeadline,
                                                                 @Size(min = 1, max = 40) @Valid String shopID,
                                                                 @Valid List<String> shopIDs,
                                                                 @Valid String paymentInstitutionRealm,
@@ -143,6 +138,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, offset
+        checkDeadline(xRequestDeadline, xRequestID);
         ChargebackSearchQuery query = chargebackSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
@@ -158,14 +154,8 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 chargebackStages,
                 chargebackCategories,
                 continuationToken);
-        InlineResponse2008 response;
-        if (xrequestDeadline != null) {
-            response = searchService
-                    .findChargebacks(query)
-                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-        } else {
-            response = searchService.findChargebacks(query).get();
-        }
+        InlineResponse2008 response = searchService
+                .findChargebacks(query);
         return ResponseEntity.ok(response);
     }
 
@@ -175,12 +165,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse2009> searchInvoices(String xrequestID,
+    public ResponseEntity<InlineResponse2009> searchInvoices(String xRequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                              @NotNull @Valid OffsetDateTime fromTime,
                                                              @NotNull @Valid OffsetDateTime toTime,
                                                              @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                             String xrequestDeadline,
+                                                             String xRequestDeadline,
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
@@ -193,6 +183,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops
+        checkDeadline(xRequestDeadline, xRequestID);
         InvoiceSearchQuery query = invoiceSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
@@ -208,14 +199,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 invoiceAmountTo,
                 excludedShops,
                 continuationToken);
-        InlineResponse2009 response;
-        if (xrequestDeadline != null) {
-            response = searchService
-                    .findInvoices(query)
-                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-        } else {
-            response = searchService.findInvoices(query).get();
-        }
+        InlineResponse2009 response = searchService.findInvoices(query);
         return ResponseEntity.ok(response);
     }
 
@@ -225,12 +209,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse20011> searchPayouts(String xrequestID,
+    public ResponseEntity<InlineResponse20011> searchPayouts(String xRequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                              @NotNull @Valid OffsetDateTime fromTime,
                                                              @NotNull @Valid OffsetDateTime toTime,
                                                              @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                             String xrequestDeadline,
+                                                             String xRequestDeadline,
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
@@ -241,6 +225,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops,
         //offset + setStatuses
+        checkDeadline(xRequestDeadline, xRequestID);
         PayoutSearchQuery query = payoutSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
@@ -253,14 +238,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 payoutToolType,
                 excludedShops,
                 continuationToken);
-        InlineResponse20011 response;
-        if (xrequestDeadline != null) {
-            response = searchService
-                    .findPayouts(query)
-                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-        } else {
-            response = searchService.findPayouts(query).get();
-        }
+        InlineResponse20011 response = searchService.findPayouts(query);
         return ResponseEntity.ok(response);
     }
 
@@ -270,12 +248,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
             produces = {"application/json; charset=utf-8"}
     )
     @Override
-    public ResponseEntity<InlineResponse20012> searchRefunds(String xrequestID,
+    public ResponseEntity<InlineResponse20012> searchRefunds(String xRequestID,
                                                              @NotNull @Size(min = 1, max = 40) @Valid String partyID,
                                                              @NotNull @Valid OffsetDateTime fromTime,
                                                              @NotNull @Valid OffsetDateTime toTime,
                                                              @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
-                                                             String xrequestDeadline,
+                                                             String xRequestDeadline,
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
@@ -289,6 +267,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
         //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops, offset
+        checkDeadline(xRequestDeadline, xRequestID);
         RefundSearchQuery query = refundSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
@@ -306,14 +285,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 excludedShops,
                 continuationToken);
 
-        InlineResponse20012 response;
-        if (xrequestDeadline != null) {
-            response = searchService
-                    .findRefunds(query)
-                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-        } else {
-            response = searchService.findRefunds(query).get();
-        }
+        InlineResponse20012 response = searchService.findRefunds(query);
         return ResponseEntity.ok(response);
     }
 
