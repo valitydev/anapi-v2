@@ -128,7 +128,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Valid List<String> chargebackStages,
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, offset
         checkDeadline(xRequestDeadline, xRequestID);
         ChargebackSearchQuery query = chargebackSearchConverter.convert(partyID,
                 fromTime,
@@ -173,7 +172,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Min(1L) @Valid Long invoiceAmountTo,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops
         checkDeadline(xRequestDeadline, xRequestID);
         InvoiceSearchQuery query = invoiceSearchConverter.convert(partyID,
                 fromTime,
@@ -214,8 +212,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String payoutToolType,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops,
-        //offset + setStatuses
         checkDeadline(xRequestDeadline, xRequestID);
         PayoutSearchQuery query = payoutSearchConverter.convert(partyID,
                 fromTime,
@@ -257,7 +253,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid String refundStatus,
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
-        //TODO: clarify mapping for paymentInstitutionRealm, xrequestID, xrequestDeadline, excludedShops, offset
         checkDeadline(xRequestDeadline, xRequestID);
         RefundSearchQuery query = refundSearchConverter.convert(partyID,
                 fromTime,

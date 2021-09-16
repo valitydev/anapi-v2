@@ -34,6 +34,7 @@ public class ParamsToRefundSearchQueryConverter {
                                      String refundStatus,
                                      List<String> excludedShops,
                                      String continuationToken) {
+        //TODO: Mapping for paymentInstitutionRealm, offset, excludedShops
         return new RefundSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),

@@ -29,7 +29,7 @@ public class ParamsToPayoutSearchQueryConverter {
                                      String payoutToolType,
                                      List<String> excludedShops,
                                      String continuationToken) {
-
+        //TODO: Mapping for paymentInstitutionRealm, offset, excludedShops
         return new PayoutSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
@@ -42,7 +42,7 @@ public class ParamsToPayoutSearchQueryConverter {
         var payoutToolInfo = new PayoutToolInfo();
         switch (payoutToolType) {
             case "PayoutAccount" -> payoutToolInfo
-                    .setRussianBankAccount(new RussianBankAccount()); //TODO: Russian or international?
+                    .setRussianBankAccount(new RussianBankAccount());//TODO: Russian or International?
             case "Wallet" -> payoutToolInfo.setWalletInfo(new WalletInfo());
             case "PaymentInstitutionAccount" -> payoutToolInfo
                     .setPaymentInstitutionAccount(new PaymentInstitutionAccount());

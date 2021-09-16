@@ -11,9 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.mapStatus;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.*;
 
 @Component
 public class ParamsToPaymentSearchQueryConverter {
@@ -46,7 +44,7 @@ public class ParamsToPaymentSearchQueryConverter {
                                       Long paymentAmountTo,
                                       List<String> excludedShops,
                                       String continuationToken) {
-//TODO: clarify mapping for paymentInstitutionRealm
+        //TODO: Mapping for paymentInstitutionRealm
         PaymentSearchQuery query = new PaymentSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),

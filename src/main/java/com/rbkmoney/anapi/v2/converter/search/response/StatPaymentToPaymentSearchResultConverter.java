@@ -81,7 +81,7 @@ public class StatPaymentToPaymentSearchResultConverter {
         }
 
         if (status.isSetChargedBack()) {
-            //TODO: Clearify
+            //TODO: OpenAPI missing status, should be added?
         }
 
         if (status.isSetFailed()) {

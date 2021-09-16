@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class StatInvoiceToInvoiceConverter {
 
     public Invoice convert(StatInvoice invoice) {
-        return new Invoice()
+        Invoice result = new Invoice()
                 .amount(invoice.getAmount())
                 .createdAt(TypeUtil.stringToInstant(invoice.getCreatedAt()).atOffset(ZoneOffset.UTC))
                 .currency(invoice.getCurrencySymbolicCode())
@@ -24,32 +24,39 @@ public class StatInvoiceToInvoiceConverter {
                                 .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
                                 .price(invoiceLine.getPrice().getAmount())
                                 .product(invoiceLine.getProduct())
-                        //.getTaxMode()
+                        //.taxMode() //TODO: Where is the value?
                 ).collect(Collectors.toList()) : null)
                 .description(invoice.getDescription())
                 .dueDate(TypeUtil.stringToInstant(invoice.getDue()).atOffset(ZoneOffset.UTC))
                 .id(invoice.getId())
                 .product(invoice.getProduct())
-                //.reason()
-                .shopID(invoice.getShopId())
-                .status(mapToInvoiceStatus(invoice.getStatus()));
+                .shopID(invoice.getShopId());
+
+        fillStatusInfo(result, invoice.getStatus());
+        return result;
     }
 
-    private Invoice.StatusEnum mapToInvoiceStatus(InvoiceStatus status) {
+    private void fillStatusInfo(Invoice invoice, InvoiceStatus status) {
         if (status.isSetFulfilled()) {
-            return Invoice.StatusEnum.FULFILLED;
+            invoice.setStatus(Invoice.StatusEnum.FULFILLED);
+            invoice.setReason(status.getFulfilled().getDetails());
+            return;
         }
 
         if (status.isSetPaid()) {
-            return Invoice.StatusEnum.PAID;
+            invoice.setStatus(Invoice.StatusEnum.PAID);
+            return;
         }
 
         if (status.isSetUnpaid()) {
-            return Invoice.StatusEnum.UNPAID;
+            invoice.setStatus(Invoice.StatusEnum.UNPAID);
+            return;
         }
 
         if (status.isSetCancelled()) {
-            return Invoice.StatusEnum.CANCELLED;
+            invoice.setStatus(Invoice.StatusEnum.CANCELLED);
+            invoice.setReason(status.getCancelled().getDetails());
+            return;
         }
 
         throw new IllegalArgumentException(

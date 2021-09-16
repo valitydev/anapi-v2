@@ -33,6 +33,7 @@ public class ParamsToChargebackSearchQueryConverter {
                                          List<String> chargebackStages,
                                          List<String> chargebackCategories,
                                          String continuationToken) {
+        //TODO: Mapping for paymentInstitutionRealm, offset
         return new ChargebackSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),

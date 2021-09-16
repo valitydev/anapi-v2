@@ -29,6 +29,7 @@ public class ParamsToInvoiceSearchQueryConverter {
                                       Long invoiceAmountTo,
                                       List<String> excludedShops,
                                       String continuationToken) {
+        //TODO: Mapping for paymentInstitutionRealm, excludedShops
         return new InvoiceSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
