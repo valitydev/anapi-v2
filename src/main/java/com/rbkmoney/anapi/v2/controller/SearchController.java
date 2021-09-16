@@ -7,6 +7,7 @@ import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
         return PaymentsApi.super.getRequest();
     }
 
+    @SneakyThrows
     @Override
     public ResponseEntity<InlineResponse20010> searchPayments(String xrequestID,
                                                               @NotNull @Size(min = 1, max = 40) @Valid String partyID,
@@ -106,29 +108,18 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 paymentAmountTo,
                 excludedShops,
                 continuationToken);
-        try {
-            InlineResponse20010 response;
-            if (xrequestDeadline != null) {
-                response = searchService
-                        .findPayments(query)
-                        .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-            } else {
-                response = searchService.findPayments(query).get();
-            }
-            return ResponseEntity.ok(response);
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-            Thread.currentThread().interrupt();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (ExecutionException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (TimeoutException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT);
+        InlineResponse20010 response;
+        if (xrequestDeadline != null) {
+            response = searchService
+                    .findPayments(query)
+                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
+        } else {
+            response = searchService.findPayments(query).get();
         }
+        return ResponseEntity.ok(response);
     }
 
+    @SneakyThrows
     @GetMapping(
             value = "/chargebacks",
             produces = {"application/json; charset=utf-8"}
@@ -167,29 +158,18 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 chargebackStages,
                 chargebackCategories,
                 continuationToken);
-        try {
-            InlineResponse2008 response;
-            if (xrequestDeadline != null) {
-                response = searchService
-                        .findChargebacks(query)
-                        .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-            } else {
-                response = searchService.findChargebacks(query).get();
-            }
-            return ResponseEntity.ok(response);
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-            Thread.currentThread().interrupt();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (ExecutionException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (TimeoutException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT);
+        InlineResponse2008 response;
+        if (xrequestDeadline != null) {
+            response = searchService
+                    .findChargebacks(query)
+                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
+        } else {
+            response = searchService.findChargebacks(query).get();
         }
+        return ResponseEntity.ok(response);
     }
 
+    @SneakyThrows
     @GetMapping(
             value = "/invoices",
             produces = {"application/json; charset=utf-8"}
@@ -228,30 +208,18 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 invoiceAmountTo,
                 excludedShops,
                 continuationToken);
-
-        try {
-            InlineResponse2009 response;
-            if (xrequestDeadline != null) {
-                response = searchService
-                        .findInvoices(query)
-                        .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-            } else {
-                response = searchService.findInvoices(query).get();
-            }
-            return ResponseEntity.ok(response);
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-            Thread.currentThread().interrupt();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (ExecutionException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (TimeoutException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT);
+        InlineResponse2009 response;
+        if (xrequestDeadline != null) {
+            response = searchService
+                    .findInvoices(query)
+                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
+        } else {
+            response = searchService.findInvoices(query).get();
         }
+        return ResponseEntity.ok(response);
     }
 
+    @SneakyThrows
     @GetMapping(
             value = "/payouts",
             produces = {"application/json; charset=utf-8"}
@@ -285,30 +253,18 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 payoutToolType,
                 excludedShops,
                 continuationToken);
-
-        try {
-            InlineResponse20011 response;
-            if (xrequestDeadline != null) {
-                response = searchService
-                        .findPayouts(query)
-                        .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-            } else {
-                response = searchService.findPayouts(query).get();
-            }
-            return ResponseEntity.ok(response);
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-            Thread.currentThread().interrupt();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (ExecutionException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (TimeoutException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT);
+        InlineResponse20011 response;
+        if (xrequestDeadline != null) {
+            response = searchService
+                    .findPayouts(query)
+                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
+        } else {
+            response = searchService.findPayouts(query).get();
         }
+        return ResponseEntity.ok(response);
     }
 
+    @SneakyThrows
     @GetMapping(
             value = "/refunds",
             produces = {"application/json; charset=utf-8"}
@@ -350,33 +306,23 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 excludedShops,
                 continuationToken);
 
-        try {
-            InlineResponse20012 response;
-            if (xrequestDeadline != null) {
-                response = searchService
-                        .findRefunds(query)
-                        .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
-            } else {
-                response = searchService.findRefunds(query).get();
-            }
-            return ResponseEntity.ok(response);
-        } catch (InterruptedException e) {
-            log.error(e.getMessage());
-            Thread.currentThread().interrupt();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (ExecutionException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (TimeoutException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.REQUEST_TIMEOUT);
+        InlineResponse20012 response;
+        if (xrequestDeadline != null) {
+            response = searchService
+                    .findRefunds(query)
+                    .get(getRequestDeadlineMillis(xrequestDeadline), TimeUnit.MILLISECONDS);
+        } else {
+            response = searchService.findRefunds(query).get();
         }
+        return ResponseEntity.ok(response);
     }
 
-    @ExceptionHandler({ConstraintViolationException.class, BadRequestException.class, IllegalArgumentException.class})
+    @ExceptionHandler({ConstraintViolationException.class, BadRequestException.class, IllegalArgumentException.class,
+            InterruptedException.class, ExecutionException.class, TimeoutException.class})
     public ResponseEntity<DefaultLogicError> handleConstraintViolation(Exception ex) {
         DefaultLogicError error;
         if (ex instanceof ConstraintViolationException) {
+            log.warn("Invalid request: ", ex);
             Set<ConstraintViolation<?>> constraintViolations =
                     ((ConstraintViolationException) ex).getConstraintViolations();
             String errorMessage =
@@ -387,13 +333,20 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                     .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
                     .message(errorMessage);
         } else if (ex instanceof BadRequestException) {
+            log.warn("Invalid request: ", ex);
             error = new DefaultLogicError()
                     .code(((BadRequestException) ex).getErrorCode())
                     .message(ex.getMessage());
+        } else if (ex instanceof InterruptedException) {
+            log.error("Internal error: ", ex);
+            Thread.currentThread().interrupt();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } else if (ex instanceof TimeoutException) {
+            log.error("Request timeout: ", ex);
+            return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
         } else {
-            error = new DefaultLogicError()
-                    .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
-                    .message(ex.getMessage());
+            log.error("Internal error: ", ex);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
