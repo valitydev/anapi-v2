@@ -1,8 +1,7 @@
 package com.rbkmoney.anapi.v2.converter.search.request;
 
-import com.rbkmoney.damsel.domain.LegacyBankCardPaymentSystem;
-import com.rbkmoney.damsel.domain.LegacyBankCardTokenProvider;
-import com.rbkmoney.damsel.domain.LegacyTerminalPaymentProvider;
+import com.rbkmoney.anapi.v2.exception.BadRequestException;
+import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.magista.PaymentParams;
 import com.rbkmoney.magista.PaymentSearchQuery;
 import com.rbkmoney.openapi.anapi_v2.model.BankCardPaymentSystem;
@@ -12,8 +11,9 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.rbkmoney.anapi.v2.util.CommonUtil.merge;
-import static com.rbkmoney.anapi.v2.util.DamselUtil.*;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.mapStatus;
 
 @Component
 public class ParamsToPaymentSearchQueryConverter {
@@ -77,7 +77,7 @@ public class ParamsToPaymentSearchQueryConverter {
                 .setPaymentId(paymentID)
                 .setPaymentIp(payerIP)
                 .setPaymentRrn(rrn)
-                .setPaymentStatus(paymentStatus != null ? getStatus(paymentStatus) : null)
+                .setPaymentStatus(paymentStatus != null ? mapStatus(paymentStatus) : null)
                 .setPaymentSystem(bankCardPaymentSystem != null
                         ? LegacyBankCardPaymentSystem.valueOf(bankCardPaymentSystem.getValue()) :
                         null);
@@ -89,5 +89,28 @@ public class ParamsToPaymentSearchQueryConverter {
         }
         query.setPaymentParams(paymentParams);
         return query;
+    }
+
+    private PaymentTool mapToPaymentTool(String paymentMethod) {
+        var paymentTool = new PaymentTool();
+        switch (paymentMethod) {
+            case "bankCard" -> paymentTool.setBankCard(new BankCard());
+            case "paymentTerminal" -> paymentTool.setPaymentTerminal(new PaymentTerminal());
+            default -> throw new BadRequestException(
+                    String.format("Payment method %s cannot be processed", paymentMethod));
+        }
+
+        return paymentTool;
+    }
+
+    private InvoicePaymentFlow mapToInvoicePaymentFlow(String paymentFlow) {
+        var invoicePaymentFlow = new InvoicePaymentFlow();
+        switch (paymentFlow) {
+            case "instant" -> invoicePaymentFlow.setInstant(new InvoicePaymentFlowInstant());
+            case "hold" -> invoicePaymentFlow.setHold(new InvoicePaymentFlowHold());
+            default -> throw new BadRequestException(
+                    String.format("Payment flow %s cannot be processed", paymentFlow));
+        }
+        return invoicePaymentFlow;
     }
 }

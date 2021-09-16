@@ -23,7 +23,7 @@ import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import static com.rbkmoney.anapi.v2.util.DeadlineUtils.*;
+import static com.rbkmoney.anapi.v2.util.DeadlineUtil.*;
 import static com.rbkmoney.woody.api.trace.ContextUtils.setCustomMetadataValue;
 import static com.rbkmoney.woody.api.trace.ContextUtils.setDeadline;
 

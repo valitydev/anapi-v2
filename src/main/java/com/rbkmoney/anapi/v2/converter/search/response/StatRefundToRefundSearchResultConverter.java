@@ -1,14 +1,13 @@
 package com.rbkmoney.anapi.v2.converter.search.response;
 
 import com.rbkmoney.geck.common.util.TypeUtil;
+import com.rbkmoney.magista.InvoicePaymentRefundStatus;
 import com.rbkmoney.magista.StatRefund;
 import com.rbkmoney.openapi.anapi_v2.model.RefundSearchResult;
 import com.rbkmoney.openapi.anapi_v2.model.RefundStatusError;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
-
-import static com.rbkmoney.anapi.v2.util.OpenApiUtil.mapToRefundStatus;
 
 @Component
 public class StatRefundToRefundSearchResultConverter {
@@ -31,5 +30,22 @@ public class StatRefundToRefundSearchResultConverter {
                 .invoiceID(refund.getInvoiceId())
                 .paymentID(refund.getPaymentId())
                 .reason(refund.getReason());
+    }
+
+    private RefundSearchResult.StatusEnum mapToRefundStatus(InvoicePaymentRefundStatus status) {
+        if (status.isSetPending()) {
+            return RefundSearchResult.StatusEnum.PENDING;
+        }
+
+        if (status.isSetFailed()) {
+            return RefundSearchResult.StatusEnum.FAILED;
+        }
+
+        if (status.isSetSucceeded()) {
+            return RefundSearchResult.StatusEnum.SUCCEEDED;
+        }
+
+        throw new IllegalArgumentException(
+                String.format("Refund status %s cannot be processed", status));
     }
 }

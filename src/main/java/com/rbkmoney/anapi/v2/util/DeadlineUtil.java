@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 @SuppressWarnings("ParameterName")
-public class DeadlineUtils {
+public class DeadlineUtil {
 
     public static void checkDeadline(String xRequestDeadline, String xRequestId) {
         if (xRequestDeadline == null) {

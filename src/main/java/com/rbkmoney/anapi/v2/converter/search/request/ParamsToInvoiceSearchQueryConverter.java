@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.rbkmoney.anapi.v2.util.CommonUtil.merge;
-import static com.rbkmoney.anapi.v2.util.DamselUtil.fillCommonParams;
-import static com.rbkmoney.anapi.v2.util.DamselUtil.getStatus;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.mapStatus;
 
 @Component
 public class ParamsToInvoiceSearchQueryConverter {
@@ -37,7 +37,7 @@ public class ParamsToInvoiceSearchQueryConverter {
                         new PaymentParams()
                                 .setPaymentAmountFrom(invoiceAmountFrom)
                                 .setPaymentAmountTo(invoiceAmountTo)
-                                .setPaymentStatus(invoiceStatus != null ? getStatus(invoiceStatus) : null)
+                                .setPaymentStatus(invoiceStatus != null ? mapStatus(invoiceStatus) : null)
                 )
                 .setInvoiceIds(merge(invoiceID, invoiceIDs))
                 .setExternalId(externalID);

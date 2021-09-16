@@ -1,7 +1,6 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.converter.search.request.*;
-import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.anapi.v2.service.SearchService;
 import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
@@ -9,26 +8,18 @@ import com.rbkmoney.openapi.anapi_v2.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
-import static com.rbkmoney.anapi.v2.util.DeadlineUtils.checkDeadline;
+import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 
 
 @Slf4j
@@ -287,40 +278,5 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
 
         InlineResponse20012 response = searchService.findRefunds(query);
         return ResponseEntity.ok(response);
-    }
-
-    @ExceptionHandler({ConstraintViolationException.class, BadRequestException.class, IllegalArgumentException.class,
-            InterruptedException.class, ExecutionException.class, TimeoutException.class})
-    public ResponseEntity<DefaultLogicError> handleConstraintViolation(Exception ex) {
-        DefaultLogicError error;
-        if (ex instanceof ConstraintViolationException) {
-            log.warn("Invalid request: ", ex);
-            Set<ConstraintViolation<?>> constraintViolations =
-                    ((ConstraintViolationException) ex).getConstraintViolations();
-            String errorMessage =
-                    constraintViolations.stream()
-                            .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                            .collect(Collectors.joining(", "));
-            error = new DefaultLogicError()
-                    .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
-                    .message(errorMessage);
-        } else if (ex instanceof BadRequestException) {
-            log.warn("Invalid request: ", ex);
-            error = new DefaultLogicError()
-                    .code(((BadRequestException) ex).getErrorCode())
-                    .message(ex.getMessage());
-        } else if (ex instanceof InterruptedException) {
-            log.error("Internal error: ", ex);
-            Thread.currentThread().interrupt();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } else if (ex instanceof TimeoutException) {
-            log.error("Request timeout: ", ex);
-            return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
-        } else {
-            log.error("Internal error: ", ex);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

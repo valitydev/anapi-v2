@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.converter.search.response;
 
-import com.rbkmoney.anapi.v2.util.OpenApiUtil;
 import com.rbkmoney.geck.common.util.TypeUtil;
+import com.rbkmoney.magista.InvoiceStatus;
 import com.rbkmoney.magista.StatInvoice;
 import com.rbkmoney.openapi.anapi_v2.model.Invoice;
 import com.rbkmoney.openapi.anapi_v2.model.InvoiceLine;
@@ -32,7 +32,28 @@ public class StatInvoiceToInvoiceConverter {
                 .product(invoice.getProduct())
                 //.reason()
                 .shopID(invoice.getShopId())
-                .status(OpenApiUtil.mapToInvoiceStatus(invoice.getStatus()));
+                .status(mapToInvoiceStatus(invoice.getStatus()));
+    }
+
+    private Invoice.StatusEnum mapToInvoiceStatus(InvoiceStatus status) {
+        if (status.isSetFulfilled()) {
+            return Invoice.StatusEnum.FULFILLED;
+        }
+
+        if (status.isSetPaid()) {
+            return Invoice.StatusEnum.PAID;
+        }
+
+        if (status.isSetUnpaid()) {
+            return Invoice.StatusEnum.UNPAID;
+        }
+
+        if (status.isSetCancelled()) {
+            return Invoice.StatusEnum.CANCELLED;
+        }
+
+        throw new IllegalArgumentException(
+                String.format("Invoice status %s cannot be processed", status));
     }
 
 }
