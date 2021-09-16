@@ -1,5 +1,6 @@
 package com.rbkmoney.anapi.v2.util;
 
+import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.magista.CommonSearchQueryParams;
@@ -17,7 +18,7 @@ public class DamselUtil {
         switch (paymentMethod) {
             case "bankCard" -> paymentTool.setBankCard(new BankCard());
             case "paymentTerminal" -> paymentTool.setPaymentTerminal(new PaymentTerminal());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("Payment method %s cannot be processed", paymentMethod));
         }
 
@@ -29,7 +30,7 @@ public class DamselUtil {
         switch (paymentFlow) {
             case "instant" -> invoicePaymentFlow.setInstant(new InvoicePaymentFlowInstant());
             case "hold" -> invoicePaymentFlow.setHold(new InvoicePaymentFlowHold());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("Payment flow %s cannot be processed", paymentFlow));
         }
         return invoicePaymentFlow;
@@ -58,7 +59,7 @@ public class DamselUtil {
             case CANCELLED -> invoicePaymentStatus.setCancelled(new InvoicePaymentCancelled());
             case REFUNDED -> invoicePaymentStatus.setRefunded(new InvoicePaymentRefunded());
             case FAILED -> invoicePaymentStatus.setFailed(new InvoicePaymentFailed());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("Payment status %s cannot be processed", paymentStatus));
         }
         return invoicePaymentStatus;
@@ -71,7 +72,7 @@ public class DamselUtil {
             case CHARGEBACK -> damselStage.setChargeback(new InvoicePaymentChargebackStageChargeback());
             case PRE_ARBITRATION -> damselStage.setPreArbitration(new InvoicePaymentChargebackStagePreArbitration());
             case ARBITRATION -> damselStage.setArbitration(new InvoicePaymentChargebackStageArbitration());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("Chargeback stage %s cannot be processed", chargebackStage));
         }
 
@@ -86,7 +87,7 @@ public class DamselUtil {
             case ACCEPTED -> damselStatus.setAccepted(new InvoicePaymentChargebackAccepted());
             case REJECTED -> damselStatus.setRejected(new InvoicePaymentChargebackRejected());
             case CANCELLED -> damselStatus.setCancelled(new InvoicePaymentChargebackCancelled());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("Chargeback status %s cannot be processed", chargebackStatus));
         }
 
@@ -103,7 +104,7 @@ public class DamselUtil {
                     .setAuthorisation(new InvoicePaymentChargebackCategoryAuthorisation());
             case PROCESSING_ERROR -> damselCategory
                     .setProcessingError(new InvoicePaymentChargebackCategoryProcessingError());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("Chargeback category %s cannot be processed", chargebackCategory));
         }
 
@@ -118,7 +119,7 @@ public class DamselUtil {
             case "Wallet" -> payoutToolInfo.setWalletInfo(new WalletInfo());
             case "PaymentInstitutionAccount" -> payoutToolInfo
                     .setPaymentInstitutionAccount(new PaymentInstitutionAccount());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("PayoutToolType %s cannot be processed", payoutToolType));
         }
 
@@ -131,7 +132,7 @@ public class DamselUtil {
             case PENDING -> invoicePaymentRefundStatus.setPending(new InvoicePaymentRefundPending());
             case SUCCEEDED -> invoicePaymentRefundStatus.setSucceeded(new InvoicePaymentRefundSucceeded());
             case FAILED -> invoicePaymentRefundStatus.setFailed(new InvoicePaymentRefundFailed());
-            default -> throw new IllegalArgumentException(
+            default -> throw new BadRequestException(
                     String.format("Refund status %s cannot be processed", refundStatus));
         }
         return invoicePaymentRefundStatus;
