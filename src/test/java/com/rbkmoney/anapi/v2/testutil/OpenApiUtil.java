@@ -109,4 +109,19 @@ public class OpenApiUtil {
 
         return params;
     }
+
+    public static MultiValueMap<String, String> getSearchPayoutAllParams() {
+        MultiValueMap<String, String> params = getSearchRequiredParams();
+        params.add("shopID", randomInteger(1, 10));
+        params.add("shopIDs", randomInteger(11, 20));
+        params.add("shopIDs", randomInteger(21, 30));
+        params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
+        params.add("offset", randomInteger(1, 10));
+        params.add("payoutID", randomInteger(1, 1000));
+        params.add("payoutToolType", "PayoutAccount");
+        params.add("excludedShops", randomInteger(1, 10));
+        params.add("excludedShops", randomInteger(11, 20));
+        params.add("continuationToken", "test");
+        return params;
+    }
 }

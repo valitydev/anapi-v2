@@ -120,6 +120,24 @@ public class MagistaUtil {
         );
     }
 
+    public static StatPayoutResponse createSearchPayoutRequiredResponse() {
+        return fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
+    }
+
+    public static StatPayoutResponse createSearchPayoutAllResponse() {
+        var payout = fillAllTBaseObject(new StatPayout(), StatPayout.class);
+        var toolInfo = fillAllTBaseObject(new PayoutToolInfo(), PayoutToolInfo.class);
+        var bank = fillAllTBaseObject(new RussianBankAccount(), RussianBankAccount.class);
+        var status = fillAllTBaseObject(new PayoutStatus(), PayoutStatus.class);
+        var response = fillAllTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
+        toolInfo.setRussianBankAccount(bank);
+        return response.setPayouts(
+                List.of(payout
+                        .setPayoutToolInfo(toolInfo)
+                        .setStatus(status))
+        );
+    }
+
     @SneakyThrows
     public static <T extends TBase> T fillRequiredTBaseObject(T tbase, Class<T> type) {
         return mockRequiredTBaseProcessor.process(tbase, new TBaseHandler<>(type));
