@@ -1,12 +1,15 @@
 package com.rbkmoney.anapi.v2.testutil;
 
-import com.rbkmoney.damsel.domain.InvoiceCart;
-import com.rbkmoney.damsel.domain.InvoiceLine;
+import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.damsel.geo_ip.LocationInfo;
 import com.rbkmoney.geck.serializer.kit.mock.FieldHandler;
 import com.rbkmoney.geck.serializer.kit.mock.MockMode;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
+import com.rbkmoney.magista.InvoicePaymentFlow;
+import com.rbkmoney.magista.InvoicePaymentFlowInstant;
+import com.rbkmoney.magista.InvoicePaymentPending;
+import com.rbkmoney.magista.InvoicePaymentStatus;
 import com.rbkmoney.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -38,6 +41,10 @@ public class MagistaUtil {
         return fillRequiredTBaseObject(new StatPaymentResponse(), StatPaymentResponse.class);
     }
 
+    public static StatChargebackResponse createSearchChargebackRequiredResponse() {
+        return fillRequiredTBaseObject(new StatChargebackResponse(), StatChargebackResponse.class);
+    }
+
     public static StatPaymentResponse createSearchPaymentAllResponse() {
         var payment = fillAllTBaseObject(new StatPayment(), StatPayment.class);
         var cart = fillAllTBaseObject(new InvoiceCart(), InvoiceCart.class);
@@ -46,7 +53,7 @@ public class MagistaUtil {
         var locationInfo = fillAllTBaseObject(new LocationInfo(), LocationInfo.class);
         var response = fillAllTBaseObject(new StatPaymentResponse(), StatPaymentResponse.class);
 
-        response.setPayments(
+        return response.setPayments(
                 List.of(payment
                         .setStatus(InvoicePaymentStatus
                                 .pending(new InvoicePaymentPending()))
@@ -54,8 +61,21 @@ public class MagistaUtil {
                         .setFlow(InvoicePaymentFlow
                                 .instant(instant))
                         .setLocationInfo(locationInfo)));
+    }
 
-        return response;
+    public static StatChargebackResponse createSearchChargebackAllResponse() {
+        var chargeback = fillAllTBaseObject(new StatChargeback(), StatChargeback.class);
+        var stage = fillAllTBaseObject(new InvoicePaymentChargebackStage(), InvoicePaymentChargebackStage.class);
+        var reason = fillAllTBaseObject(new InvoicePaymentChargebackReason(), InvoicePaymentChargebackReason.class);
+        var status = fillAllTBaseObject(new InvoicePaymentChargebackStatus(), InvoicePaymentChargebackStatus.class);
+        var response = fillAllTBaseObject(new StatChargebackResponse(), StatChargebackResponse.class);
+
+        return response.setChargebacks(
+                List.of(chargeback
+                        .setStage(stage)
+                        .setChargebackReason(reason)
+                        .setChargebackStatus(status))
+        );
     }
 
     @SneakyThrows

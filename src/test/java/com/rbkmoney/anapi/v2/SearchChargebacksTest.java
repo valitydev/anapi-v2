@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
+class SearchChargebacksTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @MockBean
     public MerchantStatisticsServiceSrv.Iface magistaClient;
@@ -55,9 +55,9 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Test
     @SneakyThrows
-    void searchPaymentsRequiredParamsRequestSuccess() {
-        when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentRequiredResponse());
-        mvc.perform(get("/payments")
+    void searchChargebacksRequiredParamsRequestSuccess() {
+        when(magistaClient.searchChargebacks(any())).thenReturn(MagistaUtil.createSearchChargebackRequiredResponse());
+        mvc.perform(get("/chargebacks")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -67,32 +67,32 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
-        verify(magistaClient, times(1)).searchPayments(any());
+        verify(magistaClient, times(1)).searchChargebacks(any());
     }
 
     @Test
     @SneakyThrows
-    void searchPaymentsAllParamsRequestSuccess() {
-        when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentAllResponse());
-        mvc.perform(get("/payments")
+    void searchChargebacksAllParamsRequestSuccess() {
+        when(magistaClient.searchChargebacks(any())).thenReturn(MagistaUtil.createSearchChargebackAllResponse());
+        mvc.perform(get("/chargebacks")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(OpenApiUtil.getSearchPaymentAllParams())
+                .params(OpenApiUtil.getSearchChargebackAllParams())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(""))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
-        verify(magistaClient, times(1)).searchPayments(any());
+        verify(magistaClient, times(1)).searchChargebacks(any());
     }
 
     @Test
     @SneakyThrows
-    void searchPaymentsRequestInvalid() {
+    void searchChargebacksRequestInvalid() {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
         params.remove("partyID");
-        mvc.perform(get("/payments")
+        mvc.perform(get("/chargebacks")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -107,9 +107,9 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Test
     @SneakyThrows
-    void searchPaymentsRequestMagistaUnavailable() {
+    void searchChargebacksRequestMagistaUnavailable() {
         when(magistaClient.searchPayments(any())).thenThrow(TException.class);
-        mvc.perform(get("/payments")
+        mvc.perform(get("/chargebacks")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -118,6 +118,6 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .content(""))
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
-        verify(magistaClient, times(1)).searchPayments(any());
+        verify(magistaClient, times(1)).searchChargebacks(any());
     }
 }
