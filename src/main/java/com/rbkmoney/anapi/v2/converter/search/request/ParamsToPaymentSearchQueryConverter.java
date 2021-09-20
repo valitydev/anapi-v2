@@ -6,12 +6,14 @@ import com.rbkmoney.magista.PaymentParams;
 import com.rbkmoney.magista.PaymentSearchQuery;
 import com.rbkmoney.openapi.anapi_v2.model.BankCardPaymentSystem;
 import com.rbkmoney.openapi.anapi_v2.model.BankCardTokenProvider;
+import com.rbkmoney.openapi.anapi_v2.model.PaymentStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.*;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 
 @Component
 public class ParamsToPaymentSearchQueryConverter {
@@ -110,5 +112,21 @@ public class ParamsToPaymentSearchQueryConverter {
                     String.format("Payment flow %s cannot be processed", paymentFlow));
         }
         return invoicePaymentFlow;
+    }
+
+    private InvoicePaymentStatus mapStatus(String paymentStatus) {
+        var status = Enum.valueOf(PaymentStatus.StatusEnum.class, paymentStatus);
+        var invoicePaymentStatus = new com.rbkmoney.damsel.domain.InvoicePaymentStatus();
+        switch (status) {
+            case PENDING -> invoicePaymentStatus.setPending(new InvoicePaymentPending());
+            case PROCESSED -> invoicePaymentStatus.setProcessed(new InvoicePaymentProcessed());
+            case CAPTURED -> invoicePaymentStatus.setCaptured(new InvoicePaymentCaptured());
+            case CANCELLED -> invoicePaymentStatus.setCancelled(new InvoicePaymentCancelled());
+            case REFUNDED -> invoicePaymentStatus.setRefunded(new InvoicePaymentRefunded());
+            case FAILED -> invoicePaymentStatus.setFailed(new InvoicePaymentFailed());
+            default -> throw new BadRequestException(
+                    String.format("Payment status %s cannot be processed", paymentStatus));
+        }
+        return invoicePaymentStatus;
     }
 }

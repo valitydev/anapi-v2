@@ -1,5 +1,6 @@
 package com.rbkmoney.anapi.v2.converter.search.request;
 
+import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.magista.InvoiceSearchQuery;
 import com.rbkmoney.magista.PaymentParams;
 import org.springframework.stereotype.Component;
@@ -7,9 +8,8 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.mapStatus;
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 
 @Component
 public class ParamsToInvoiceSearchQueryConverter {
@@ -36,11 +36,25 @@ public class ParamsToInvoiceSearchQueryConverter {
                                 continuationToken))
                 .setPaymentParams(
                         new PaymentParams()
-                                .setPaymentAmountFrom(invoiceAmountFrom)
-                                .setPaymentAmountTo(invoiceAmountTo)
-                                .setPaymentStatus(invoiceStatus != null ? mapStatus(invoiceStatus) : null)
+                                .setPaymentAmountFrom(invoiceAmountFrom != null ? invoiceAmountFrom : 0L)
+                                .setPaymentAmountTo(invoiceAmountTo != null ? invoiceAmountTo : 0L)
                 )
+                .setInvoiceStatus(invoiceStatus != null ? mapStatus(invoiceStatus) : null)
                 .setInvoiceIds(merge(invoiceID, invoiceIDs))
                 .setExternalId(externalID);
+    }
+
+    private com.rbkmoney.damsel.domain.InvoiceStatus mapStatus(String statusParam) {
+        var status = Enum.valueOf(com.rbkmoney.openapi.anapi_v2.model.InvoiceStatus.StatusEnum.class, statusParam);
+        var invoiceStatus = new com.rbkmoney.damsel.domain.InvoiceStatus();
+        switch (status) {
+            case CANCELLED -> invoiceStatus.setCancelled(new com.rbkmoney.damsel.domain.InvoiceCancelled());
+            case FULFILLED -> invoiceStatus.setFulfilled(new com.rbkmoney.damsel.domain.InvoiceFulfilled());
+            case PAID -> invoiceStatus.setPaid(new com.rbkmoney.damsel.domain.InvoicePaid());
+            case UNPAID -> invoiceStatus.setUnpaid(new com.rbkmoney.damsel.domain.InvoiceUnpaid());
+            default -> throw new BadRequestException(
+                    String.format("Invoice status %s cannot be processed", status));
+        }
+        return invoiceStatus;
     }
 }

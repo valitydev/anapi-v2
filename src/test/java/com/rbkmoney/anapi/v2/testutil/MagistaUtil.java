@@ -9,7 +9,9 @@ import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.magista.InvoicePaymentFlow;
 import com.rbkmoney.magista.InvoicePaymentFlowInstant;
 import com.rbkmoney.magista.InvoicePaymentPending;
+import com.rbkmoney.magista.InvoicePaymentRefundStatus;
 import com.rbkmoney.magista.InvoicePaymentStatus;
+import com.rbkmoney.magista.InvoiceStatus;
 import com.rbkmoney.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -75,6 +77,46 @@ public class MagistaUtil {
                         .setStage(stage)
                         .setChargebackReason(reason)
                         .setChargebackStatus(status))
+        );
+    }
+
+    public static StatRefundResponse createSearchRefundRequiredResponse() {
+        return fillRequiredTBaseObject(new StatRefundResponse(), StatRefundResponse.class);
+    }
+
+    public static StatRefundResponse createsearchRefundAllResponse() {
+        var refund = fillAllTBaseObject(new StatRefund(), StatRefund.class);
+        var cart = fillAllTBaseObject(new InvoiceCart(), InvoiceCart.class);
+        var line = fillAllTBaseObject(new InvoiceLine(), InvoiceLine.class);
+        var cash = fillAllTBaseObject(new Cash(), Cash.class);
+        var status = fillAllTBaseObject(new InvoicePaymentRefundStatus(), InvoicePaymentRefundStatus.class);
+        var response = fillAllTBaseObject(new StatRefundResponse(), StatRefundResponse.class);
+
+        return response.setRefunds(
+                List.of(refund
+                        .setCart(cart
+                                .setLines(List.of(line.setPrice(cash))))
+                        .setStatus(status))
+        );
+    }
+
+    public static StatInvoiceResponse createSearchInvoiceRequiredResponse() {
+        return fillRequiredTBaseObject(new StatInvoiceResponse(), StatInvoiceResponse.class);
+    }
+
+    public static StatInvoiceResponse createSearchInvoiceAllResponse() {
+        var invoice = fillAllTBaseObject(new StatInvoice(), StatInvoice.class);
+        var cart = fillAllTBaseObject(new InvoiceCart(), InvoiceCart.class);
+        var line = fillAllTBaseObject(new InvoiceLine(), InvoiceLine.class);
+        var cash = fillAllTBaseObject(new Cash(), Cash.class);
+        var status = fillAllTBaseObject(new InvoiceStatus(), InvoiceStatus.class);
+        var response = fillAllTBaseObject(new StatInvoiceResponse(), StatInvoiceResponse.class);
+
+        return response.setInvoices(
+                List.of(invoice
+                        .setCart(cart
+                                .setLines(List.of(line.setPrice(cash))))
+                        .setStatus(status))
         );
     }
 

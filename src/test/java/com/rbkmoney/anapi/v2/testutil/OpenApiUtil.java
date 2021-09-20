@@ -59,6 +59,7 @@ public class OpenApiUtil {
         params.add("shopIDs", randomInteger(11, 20));
         params.add("shopIDs", randomInteger(21, 30));
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
+        params.add("offset", randomInteger(1, 10));
         params.add("invoiceID", randomInteger(1, 1000));
         params.add("paymentID", randomInteger(1, 1000));
         params.add("chargebackID", randomInteger(1, 1000));
@@ -66,6 +67,46 @@ public class OpenApiUtil {
         params.add("chargebackStages", ChargebackStage.CHARGEBACK.name());
         params.add("chargebackCategories", ChargebackCategory.AUTHORISATION.name());
         params.add("continuationToken", "test");
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getSearchRefundAllParams() {
+        MultiValueMap<String, String> params = getSearchRequiredParams();
+        params.add("shopID", randomInteger(1, 10));
+        params.add("shopIDs", randomInteger(11, 20));
+        params.add("shopIDs", randomInteger(21, 30));
+        params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
+        params.add("offset", randomInteger(1, 10));
+        params.add("invoiceIDs", randomInteger(1, 10));
+        params.add("invoiceIDs", randomInteger(11, 20));
+        params.add("invoiceID", randomInteger(1, 1000));
+        params.add("paymentID", randomInteger(1, 1000));
+        params.add("refundID", randomInteger(1, 1000));
+        params.add("externalID", randomInteger(1, 1000));
+        params.add("refundStatus", RefundStatus.StatusEnum.PENDING.name());
+        params.add("excludedShops", randomInteger(1, 10));
+        params.add("excludedShops", randomInteger(11, 20));
+        params.add("continuationToken", "test");
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getSearchInvoiceAllParams() {
+        MultiValueMap<String, String> params = getSearchRequiredParams();
+        params.add("shopID", randomInteger(1, 10));
+        params.add("shopIDs", randomInteger(11, 20));
+        params.add("shopIDs", randomInteger(21, 30));
+        params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
+        params.add("invoiceIDs", randomInteger(1, 10));
+        params.add("invoiceIDs", randomInteger(11, 20));
+        params.add("invoiceStatus", Invoice.StatusEnum.PAID.name());
+        params.add("invoiceID", randomInteger(1, 1000));
+        params.add("externalID", randomInteger(1, 1000));
+        params.add("invoiceAmountFrom", randomInteger(1, 1000));
+        params.add("invoiceAmountTo", randomInteger(1, 1000));
+        params.add("excludedShops", randomInteger(1, 10));
+        params.add("excludedShops", randomInteger(11, 20));
+        params.add("continuationToken", "test");
+
         return params;
     }
 }

@@ -37,20 +37,4 @@ public class ConverterUtil {
                 .setPartyId(partyId)
                 .setShopIds(shopIDs);
     }
-
-    public static InvoicePaymentStatus mapStatus(String paymentStatus) {
-        var status = Enum.valueOf(PaymentStatus.StatusEnum.class, paymentStatus);
-        var invoicePaymentStatus = new com.rbkmoney.damsel.domain.InvoicePaymentStatus();
-        switch (status) {
-            case PENDING -> invoicePaymentStatus.setPending(new InvoicePaymentPending());
-            case PROCESSED -> invoicePaymentStatus.setProcessed(new InvoicePaymentProcessed());
-            case CAPTURED -> invoicePaymentStatus.setCaptured(new InvoicePaymentCaptured());
-            case CANCELLED -> invoicePaymentStatus.setCancelled(new InvoicePaymentCancelled());
-            case REFUNDED -> invoicePaymentStatus.setRefunded(new InvoicePaymentRefunded());
-            case FAILED -> invoicePaymentStatus.setFailed(new InvoicePaymentFailed());
-            default -> throw new BadRequestException(
-                    String.format("Payment status %s cannot be processed", paymentStatus));
-        }
-        return invoicePaymentStatus;
-    }
 }
