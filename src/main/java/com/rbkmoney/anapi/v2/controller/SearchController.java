@@ -35,6 +35,7 @@ public class SearchController
     private final ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
     private final ParamsToPayoutSearchQueryConverter payoutSearchConverter;
     private final ParamsToRefundSearchQueryConverter refundSearchConverter;
+    private final ParamsToInvoiceTemplateSearchQueryConverter invoiceTempateSearchConverter;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
