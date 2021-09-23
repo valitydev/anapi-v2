@@ -26,7 +26,8 @@ import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 @Controller
 @RequiredArgsConstructor
 @SuppressWarnings("ParameterName")
-public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi {
+public class SearchController
+        implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi, InvoiceTemplatesApi {
 
     private final SearchService searchService;
     private final ParamsToPaymentSearchQueryConverter paymentSearchConverter;
@@ -250,6 +251,36 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 excludedShops,
                 continuationToken);
         InlineResponse20012 response = searchService.findRefunds(query);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<InlineResponse20013> searchInvoiceTemplates(String xRequestID,
+                                                                      @NotNull @Size(min = 1, max = 40) @Valid String partyID,
+                                                                      @NotNull @Valid OffsetDateTime fromTime,
+                                                                      @NotNull @Valid OffsetDateTime toTime,
+                                                                      @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
+                                                                      String xRequestDeadline,
+                                                                      @Valid List<String> shopIDs,
+                                                                      @Valid String invoiceTemplateStatus,
+                                                                      @Size(min = 1, max = 40) @Valid String invoiceTemplateID,
+                                                                      @Valid String continuationToken,
+                                                                      @Size(min = 1, max = 40) @Valid String name,
+                                                                      @Size(min = 1, max = 40) @Valid String product,
+                                                                      @Size(min = 1, max = 40) @Valid OffsetDateTime invoiceValidUntil) {
+        checkDeadline(xRequestDeadline, xRequestID);
+        InvoiceTemplateSearchQuery query = invoiceTempateSearchConverter.convert(partyID,
+                fromTime,
+                toTime,
+                limit,
+                shopIDs,
+                invoiceTemplateStatus,
+                invoiceTemplateID,
+                continuationToken,
+                name,
+                product,
+                invoiceValidUntil);
+        InlineResponse20013 response = searchService.findInvoiceTemplates(query);
         return ResponseEntity.ok(response);
     }
 }
