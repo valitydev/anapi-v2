@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.converter.search.response;
 
+import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.InvoicePaymentRefundStatus;
 import com.rbkmoney.magista.StatRefund;
 import com.rbkmoney.openapi.anapi_v2.model.RefundSearchResult;
 import com.rbkmoney.openapi.anapi_v2.model.RefundStatusError;
@@ -19,17 +19,23 @@ public class StatRefundToRefundSearchResultConverter {
                 .currency(refund.getCurrencySymbolicCode())
                 .id(refund.getId())
                 .shopID(refund.getShopId())
-                .status(refund.getStatus() != null ? mapToRefundStatus(refund.getStatus()) : null)
+                .status(mapToRefundStatus(refund.getStatus()))
                 .externalID(refund.getExternalId())
-                .error(refund.getStatus().isSetFailed()
-                        && refund.getStatus().getFailed().getFailure().isSetFailure()
-                        ? new RefundStatusError()
-                        .code(refund.getStatus().getFailed().getFailure().getFailure().getCode())
-                        .message(refund.getStatus().getFailed().getFailure().getFailure().getReason())
-                        : null)
+                .error(mapToRefundStatusError(refund.getStatus()))
                 .invoiceID(refund.getInvoiceId())
                 .paymentID(refund.getPaymentId())
                 .reason(refund.getReason());
+    }
+
+    private RefundStatusError mapToRefundStatusError(InvoicePaymentRefundStatus status) {
+        if (status.isSetFailed() && status.getFailed().getFailure().isSetFailure()) {
+            var failure = status.getFailed().getFailure().getFailure();
+            return new RefundStatusError()
+                    .code(failure.getCode())
+                    .message(failure.getReason());
+        }
+
+        return null;
     }
 
     private RefundSearchResult.StatusEnum mapToRefundStatus(InvoicePaymentRefundStatus status) {

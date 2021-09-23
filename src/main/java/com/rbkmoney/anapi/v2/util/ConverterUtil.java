@@ -1,10 +1,7 @@
 package com.rbkmoney.anapi.v2.util;
 
-import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.magista.CommonSearchQueryParams;
-import com.rbkmoney.openapi.anapi_v2.model.PaymentStatus;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nullable;
@@ -16,13 +13,15 @@ import java.util.List;
 public class ConverterUtil {
 
     public static List<String> merge(@Nullable String id, @Nullable List<String> ids) {
+        List<String> identifiers = new ArrayList<>();
         if (id != null) {
-            if (ids == null) {
-                ids = new ArrayList<>();
-            }
-            ids.add(id);
+            identifiers.add(id);
         }
-        return ids;
+
+        if (ids != null && !ids.isEmpty()) {
+            identifiers.addAll(ids);
+        }
+        return identifiers;
     }
 
     public static CommonSearchQueryParams fillCommonParams(OffsetDateTime fromTime, OffsetDateTime toTime,

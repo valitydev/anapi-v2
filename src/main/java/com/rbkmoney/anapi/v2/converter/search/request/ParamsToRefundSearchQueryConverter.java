@@ -1,10 +1,6 @@
 package com.rbkmoney.anapi.v2.converter.search.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.damsel.domain.InvoicePaymentRefundFailed;
-import com.rbkmoney.damsel.domain.InvoicePaymentRefundPending;
-import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
-import com.rbkmoney.damsel.domain.InvoicePaymentRefundSucceeded;
 import com.rbkmoney.magista.RefundSearchQuery;
 import com.rbkmoney.openapi.anapi_v2.model.RefundStatus;
 import org.springframework.stereotype.Component;
@@ -14,6 +10,7 @@ import java.util.List;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
+import static com.rbkmoney.magista.InvoicePaymentRefundStatus.*;
 
 @Component
 public class ParamsToRefundSearchQueryConverter {
@@ -46,16 +43,14 @@ public class ParamsToRefundSearchQueryConverter {
                 .setRefundId(refundID);
     }
 
-    private InvoicePaymentRefundStatus getRefundStatus(String refundStatus) {
-        var invoicePaymentRefundStatus = new InvoicePaymentRefundStatus();
-        switch (Enum.valueOf(RefundStatus.StatusEnum.class, refundStatus)) {
-            case PENDING -> invoicePaymentRefundStatus.setPending(new InvoicePaymentRefundPending());
-            case SUCCEEDED -> invoicePaymentRefundStatus.setSucceeded(new InvoicePaymentRefundSucceeded());
-            case FAILED -> invoicePaymentRefundStatus.setFailed(new InvoicePaymentRefundFailed());
+    private com.rbkmoney.magista.InvoicePaymentRefundStatus getRefundStatus(String refundStatus) {
+        return switch (Enum.valueOf(RefundStatus.StatusEnum.class, refundStatus)) {
+            case PENDING -> pending;
+            case SUCCEEDED -> succeeded;
+            case FAILED -> failed;
             default -> throw new BadRequestException(
                     String.format("Refund status %s cannot be processed", refundStatus));
-        }
-        return invoicePaymentRefundStatus;
+        };
     }
 
 }

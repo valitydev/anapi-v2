@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.testutil;
 
 import com.rbkmoney.damsel.domain.PaymentInstitutionRealm;
-import com.rbkmoney.magista.TerminalPaymentProvider;
+import com.rbkmoney.damsel.merch_stat.TerminalPaymentProvider;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.LinkedMultiValueMap;
@@ -66,7 +66,7 @@ public class OpenApiUtil {
         params.add("chargebackStatuses", ChargebackStatus.PENDING.name());
         params.add("chargebackStages", ChargebackStage.CHARGEBACK.name());
         params.add("chargebackCategories", ChargebackCategory.AUTHORISATION.name());
-        params.add("continuationToken", "test");
+        //params.add("continuationToken", "test");
         return params;
     }
 

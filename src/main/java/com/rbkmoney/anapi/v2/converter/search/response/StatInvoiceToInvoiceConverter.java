@@ -1,13 +1,17 @@
 package com.rbkmoney.anapi.v2.converter.search.response;
 
+import com.rbkmoney.damsel.domain.InvoiceStatus;
+import com.rbkmoney.damsel.msgpack.Value;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.InvoiceStatus;
 import com.rbkmoney.magista.StatInvoice;
 import com.rbkmoney.openapi.anapi_v2.model.Invoice;
 import com.rbkmoney.openapi.anapi_v2.model.InvoiceLine;
+import com.rbkmoney.openapi.anapi_v2.model.InvoiceLineTaxMode;
+import com.rbkmoney.openapi.anapi_v2.model.InvoiceLineTaxVAT;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,10 +25,10 @@ public class StatInvoiceToInvoiceConverter {
                 .externalID(invoice.getExternalId())
                 .cart(invoice.getCart() != null
                         ? invoice.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
-                                .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
-                                .price(invoiceLine.getPrice().getAmount())
-                                .product(invoiceLine.getProduct())
-                        //.taxMode() //TODO: Where is the value?
+                        .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
+                        .price(invoiceLine.getPrice().getAmount())
+                        .product(invoiceLine.getProduct())
+                        .taxMode(getTaxMode(invoiceLine.getMetadata()))
                 ).collect(Collectors.toList()) : null)
                 .description(invoice.getDescription())
                 .dueDate(TypeUtil.stringToInstant(invoice.getDue()).atOffset(ZoneOffset.UTC))
@@ -61,6 +65,16 @@ public class StatInvoiceToInvoiceConverter {
 
         throw new IllegalArgumentException(
                 String.format("Invoice status %s cannot be processed", status));
+    }
+
+    private InvoiceLineTaxMode getTaxMode(Map<String, Value> metadata) {
+        Value taxMode = metadata.get("TaxMode");
+        if (taxMode != null) {
+            return new InvoiceLineTaxVAT()
+                    .rate(InvoiceLineTaxVAT.RateEnum.fromValue(
+                            taxMode.getStr()));
+        }
+        return null;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.rbkmoney.anapi.v2.testutil;
 
+import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
+import com.rbkmoney.damsel.domain.InvoiceStatus;
 import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.damsel.geo_ip.LocationInfo;
 import com.rbkmoney.geck.serializer.kit.mock.FieldHandler;
@@ -8,10 +10,7 @@ import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.magista.InvoicePaymentFlow;
 import com.rbkmoney.magista.InvoicePaymentFlowInstant;
-import com.rbkmoney.magista.InvoicePaymentPending;
-import com.rbkmoney.magista.InvoicePaymentRefundStatus;
 import com.rbkmoney.magista.InvoicePaymentStatus;
-import com.rbkmoney.magista.InvoiceStatus;
 import com.rbkmoney.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -31,7 +30,7 @@ public class MagistaUtil {
         mockRequiredTBaseProcessor = new MockTBaseProcessor(MockMode.REQUIRED_ONLY, 15, 1);
         Map.Entry<FieldHandler, String[]> timeFields = Map.entry(
                 structHandler -> structHandler.value(Instant.now().toString()),
-                new String[] {"created_at", "at", "due"}
+                new String[] {"created_at", "at", "due", "status_changed_at"}
         );
         mockRequiredTBaseProcessor.addFieldHandler(timeFields.getKey(), timeFields.getValue());
 
@@ -58,7 +57,7 @@ public class MagistaUtil {
         return response.setPayments(
                 List.of(payment
                         .setStatus(InvoicePaymentStatus
-                                .pending(new InvoicePaymentPending()))
+                                .pending)
                         .setCart(cart.setLines(List.of(line)))
                         .setFlow(InvoicePaymentFlow
                                 .instant(instant))
@@ -109,7 +108,8 @@ public class MagistaUtil {
         var cart = fillAllTBaseObject(new InvoiceCart(), InvoiceCart.class);
         var line = fillAllTBaseObject(new InvoiceLine(), InvoiceLine.class);
         var cash = fillAllTBaseObject(new Cash(), Cash.class);
-        var status = fillAllTBaseObject(new InvoiceStatus(), InvoiceStatus.class);
+        var status = fillAllTBaseObject(new InvoiceStatus(),
+                InvoiceStatus.class);
         var response = fillAllTBaseObject(new StatInvoiceResponse(), StatInvoiceResponse.class);
 
         return response.setInvoices(

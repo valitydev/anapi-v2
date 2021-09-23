@@ -1,8 +1,7 @@
 package com.rbkmoney.anapi.v2.converter.search.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.magista.InvoiceSearchQuery;
-import com.rbkmoney.magista.PaymentParams;
+import com.rbkmoney.magista.*;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
@@ -44,17 +43,15 @@ public class ParamsToInvoiceSearchQueryConverter {
                 .setExternalId(externalID);
     }
 
-    private com.rbkmoney.damsel.domain.InvoiceStatus mapStatus(String statusParam) {
+    private InvoiceStatus mapStatus(String statusParam) {
         var status = Enum.valueOf(com.rbkmoney.openapi.anapi_v2.model.InvoiceStatus.StatusEnum.class, statusParam);
-        var invoiceStatus = new com.rbkmoney.damsel.domain.InvoiceStatus();
-        switch (status) {
-            case CANCELLED -> invoiceStatus.setCancelled(new com.rbkmoney.damsel.domain.InvoiceCancelled());
-            case FULFILLED -> invoiceStatus.setFulfilled(new com.rbkmoney.damsel.domain.InvoiceFulfilled());
-            case PAID -> invoiceStatus.setPaid(new com.rbkmoney.damsel.domain.InvoicePaid());
-            case UNPAID -> invoiceStatus.setUnpaid(new com.rbkmoney.damsel.domain.InvoiceUnpaid());
+        return switch (status) {
+            case CANCELLED -> InvoiceStatus.cancelled;
+            case FULFILLED -> InvoiceStatus.fulfilled;
+            case PAID -> InvoiceStatus.paid;
+            case UNPAID -> InvoiceStatus.unpaid;
             default -> throw new BadRequestException(
                     String.format("Invoice status %s cannot be processed", status));
-        }
-        return invoiceStatus;
+        };
     }
 }

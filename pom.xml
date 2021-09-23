@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -59,12 +59,12 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.29-27f5575-server</version>
+            <version>1.42-6975859-server</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.9-1fc32d2</version>
+            <version>1.12-7be076b</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>

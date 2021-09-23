@@ -1,7 +1,10 @@
 package com.rbkmoney.anapi.v2.converter.search.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.damsel.domain.*;
+import com.rbkmoney.damsel.domain.LegacyBankCardPaymentSystem;
+import com.rbkmoney.damsel.domain.LegacyBankCardTokenProvider;
+import com.rbkmoney.damsel.domain.LegacyTerminalPaymentProvider;
+import com.rbkmoney.magista.InvoicePaymentStatus;
 import com.rbkmoney.magista.PaymentParams;
 import com.rbkmoney.magista.PaymentSearchQuery;
 import com.rbkmoney.openapi.anapi_v2.model.BankCardPaymentSystem;
@@ -14,6 +17,11 @@ import java.util.List;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
+import static com.rbkmoney.magista.InvoicePaymentFlowType.hold;
+import static com.rbkmoney.magista.InvoicePaymentFlowType.instant;
+import static com.rbkmoney.magista.InvoicePaymentStatus.*;
+import static com.rbkmoney.magista.PaymentTool.bank_card;
+import static com.rbkmoney.magista.PaymentTool.payment_terminal;
 
 @Component
 public class ParamsToPaymentSearchQueryConverter {
@@ -91,42 +99,35 @@ public class ParamsToPaymentSearchQueryConverter {
         return query;
     }
 
-    private PaymentTool mapToPaymentTool(String paymentMethod) {
-        var paymentTool = new PaymentTool();
-        switch (paymentMethod) {
-            case "bankCard" -> paymentTool.setBankCard(new BankCard());
-            case "paymentTerminal" -> paymentTool.setPaymentTerminal(new PaymentTerminal());
+    private com.rbkmoney.magista.PaymentTool mapToPaymentTool(String paymentMethod) {
+        return switch (paymentMethod) {
+            case "bankCard" -> bank_card;
+            case "paymentTerminal" -> payment_terminal;
             default -> throw new BadRequestException(
                     String.format("Payment method %s cannot be processed", paymentMethod));
-        }
-
-        return paymentTool;
+        };
     }
 
-    private InvoicePaymentFlow mapToInvoicePaymentFlow(String paymentFlow) {
-        var invoicePaymentFlow = new InvoicePaymentFlow();
-        switch (paymentFlow) {
-            case "instant" -> invoicePaymentFlow.setInstant(new InvoicePaymentFlowInstant());
-            case "hold" -> invoicePaymentFlow.setHold(new InvoicePaymentFlowHold());
+    private com.rbkmoney.magista.InvoicePaymentFlowType mapToInvoicePaymentFlow(String paymentFlow) {
+        return switch (paymentFlow) {
+            case "instant" -> instant;
+            case "hold" -> hold;
             default -> throw new BadRequestException(
                     String.format("Payment flow %s cannot be processed", paymentFlow));
-        }
-        return invoicePaymentFlow;
+        };
     }
 
     private InvoicePaymentStatus mapStatus(String paymentStatus) {
         var status = Enum.valueOf(PaymentStatus.StatusEnum.class, paymentStatus);
-        var invoicePaymentStatus = new com.rbkmoney.damsel.domain.InvoicePaymentStatus();
-        switch (status) {
-            case PENDING -> invoicePaymentStatus.setPending(new InvoicePaymentPending());
-            case PROCESSED -> invoicePaymentStatus.setProcessed(new InvoicePaymentProcessed());
-            case CAPTURED -> invoicePaymentStatus.setCaptured(new InvoicePaymentCaptured());
-            case CANCELLED -> invoicePaymentStatus.setCancelled(new InvoicePaymentCancelled());
-            case REFUNDED -> invoicePaymentStatus.setRefunded(new InvoicePaymentRefunded());
-            case FAILED -> invoicePaymentStatus.setFailed(new InvoicePaymentFailed());
+        return switch (status) {
+            case PENDING -> pending;
+            case PROCESSED -> processed;
+            case CAPTURED -> captured;
+            case CANCELLED -> cancelled;
+            case REFUNDED -> refunded;
+            case FAILED -> failed;
             default -> throw new BadRequestException(
                     String.format("Payment status %s cannot be processed", paymentStatus));
-        }
-        return invoicePaymentStatus;
+        };
     }
 }
