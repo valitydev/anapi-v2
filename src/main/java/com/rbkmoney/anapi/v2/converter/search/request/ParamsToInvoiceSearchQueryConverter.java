@@ -1,7 +1,9 @@
 package com.rbkmoney.anapi.v2.converter.search.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.magista.*;
+import com.rbkmoney.magista.InvoiceSearchQuery;
+import com.rbkmoney.magista.InvoiceStatus;
+import com.rbkmoney.magista.PaymentParams;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
@@ -34,13 +36,22 @@ public class ParamsToInvoiceSearchQueryConverter {
                         fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
                                 continuationToken))
                 .setPaymentParams(
-                        new PaymentParams()
-                                .setPaymentAmountFrom(invoiceAmountFrom != null ? invoiceAmountFrom : 0L)
-                                .setPaymentAmountTo(invoiceAmountTo != null ? invoiceAmountTo : 0L)
+                        getPaymentParams(invoiceAmountFrom, invoiceAmountTo)
                 )
                 .setInvoiceStatus(invoiceStatus != null ? mapStatus(invoiceStatus) : null)
                 .setInvoiceIds(merge(invoiceID, invoiceIDs))
                 .setExternalId(externalID);
+    }
+
+    private PaymentParams getPaymentParams(Long invoiceAmountFrom, Long invoiceAmountTo) {
+        var params = new PaymentParams();
+        if (invoiceAmountFrom != null) {
+            params.setPaymentAmountFrom(invoiceAmountFrom);
+        }
+        if (invoiceAmountTo != null) {
+            params.setPaymentAmountTo(invoiceAmountTo);
+        }
+        return params;
     }
 
     private InvoiceStatus mapStatus(String statusParam) {
