@@ -59,12 +59,12 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.42-6975859-server</version>
+            <version>1.41-b4bcbc7-server</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.12-7be076b</version>
+            <version>SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>

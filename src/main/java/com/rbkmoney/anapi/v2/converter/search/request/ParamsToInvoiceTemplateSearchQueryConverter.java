@@ -4,12 +4,14 @@ import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.geck.common.util.TypeUtil;
 import com.rbkmoney.magista.InvoiceTemplateSearchQuery;
 import com.rbkmoney.magista.InvoiceTemplateStatus;
+import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
 
+@Component
 public class ParamsToInvoiceTemplateSearchQueryConverter {
     public InvoiceTemplateSearchQuery convert(String partyID,
                                               OffsetDateTime fromTime,
