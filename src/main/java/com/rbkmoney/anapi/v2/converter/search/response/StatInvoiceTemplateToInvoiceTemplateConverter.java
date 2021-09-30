@@ -31,35 +31,45 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
     }
 
     private InvoiceTemplateDetails mapDetails(com.rbkmoney.damsel.domain.InvoiceTemplateDetails details) {
+        if (details.isSetCart()) {
+            return new InvoiceTemplateCart().cart(
+                            details.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
+                                            .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
+                                            .price(invoiceLine.getPrice().getAmount())
+                                            .product(invoiceLine.getProduct())
+                                            .taxMode(getTaxMode(invoiceLine.getMetadata()))
+                                            .quantity((long) invoiceLine.getQuantity()))
+                                    .collect(Collectors.toList()))
+                    .templateType("invoiceTemplateMultiLine");
+        }
 
-        return new InvoiceTemplateDetails().cart(details.getCart() != null
-                        ? details.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
-                                .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
-                                .price(invoiceLine.getPrice().getAmount())
-                                .product(invoiceLine.getProduct())
-                                .taxMode(getTaxMode(invoiceLine.getMetadata())))
-                        .collect(Collectors.toList()) : null)
-                .product(new InvoiceTemplateProduct()
-                        .product(details.getProduct().getProduct())
-                        .price(mapPrice(details.getProduct().getPrice())))
-                .templateType(InvoiceTemplateDetails.TemplateTypeEnum.INVOICETEMPLATEMULTILINE);
+        if (details.isSetProduct()) {
+            return new InvoiceTemplateProduct()
+                    .product(details.getProduct().getProduct())
+                    .price(mapPrice(details.getProduct().getPrice()))
+                    .metadata(details.getFieldMetaData())
+                    .templateType("invoiceTemplateSingleLine");
+        }
+
+        throw new IllegalArgumentException(
+                String.format("InvoiceTemplateDetails %s cannot be processed", details));
 
     }
 
     private InvoiceTemplateProductPrice mapPrice(com.rbkmoney.damsel.domain.InvoiceTemplateProductPrice price) {
-        InvoiceTemplateProductPrice result = new InvoiceTemplateProductPrice();
         if (price.isSetFixed()) {
-            return result.costType(InvoiceTemplateProductPrice.CostTypeEnum.FIXED)
-                    .fixed(mapCash(price.getFixed()));
+            return mapCash(price.getFixed())
+                    .costType("fixed");
         }
 
         if (price.isSetRange()) {
-            return result.costType(InvoiceTemplateProductPrice.CostTypeEnum.RANGE)
-                    .range(mapCashRange(price.getRange()));
+            return mapCashRange(price.getRange())
+                    .costType("range");
         }
 
         if (price.isSetUnlim()) {
-            return result.costType(InvoiceTemplateProductPrice.CostTypeEnum.UNLIM);
+            return new CashUnlim()
+                    .costType("unlim");
         }
 
         throw new IllegalArgumentException(
@@ -75,7 +85,8 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
     private CashRange mapCashRange(com.rbkmoney.damsel.domain.CashRange cash) {
         return new CashRange()
                 .lowerBound(cash.getLower().getInclusive().getAmount())
-                .upperBound(cash.getUpper().getInclusive().getAmount());
+                .upperBound(cash.getUpper().getInclusive().getAmount())
+                .currency(cash.getLower().getInclusive().getCurrency().getSymbolicCode());
     }
 
     private InvoiceLineTaxMode getTaxMode(Map<String, Value> metadata) {

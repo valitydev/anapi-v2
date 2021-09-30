@@ -59,7 +59,7 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.41-b4bcbc7-server</version>
+            <version>1.43-33abd08-server</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
