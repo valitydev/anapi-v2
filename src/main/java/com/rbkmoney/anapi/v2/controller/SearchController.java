@@ -1,7 +1,9 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.converter.search.request.*;
+import com.rbkmoney.anapi.v2.security.AccessService;
 import com.rbkmoney.anapi.v2.service.SearchService;
+import com.rbkmoney.anapi.v2.service.VortigonService;
 import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
 import com.rbkmoney.openapi.anapi_v2.model.*;
@@ -29,6 +31,8 @@ import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi {
 
     private final SearchService searchService;
+    private final VortigonService vortigonService;
+    private final AccessService accessService;
     private final ParamsToPaymentSearchQueryConverter paymentSearchConverter;
     private final ParamsToChargebackSearchQueryConverter chargebackSearchConverter;
     private final ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
@@ -72,6 +76,9 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
         checkDeadline(xRequestDeadline, xRequestID);
+        List<String> shopIds = vortigonService.getShopIds(partyID, paymentInstitutionRealm);
+        //TODO: clarify, which shops should be checked for access.
+        accessService.checkAccess("searchPayments", partyID, shopID);
         PaymentSearchQuery query = paymentSearchConverter.convert(partyID,
                 fromTime,
                 toTime,

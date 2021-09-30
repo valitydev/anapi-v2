@@ -44,6 +44,11 @@
             <artifactId>custom-actuator-endpoints</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>bouncer-spring-boot-starter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.rbkmoney.woody</groupId>
             <artifactId>woody-thrift</artifactId>
         </dependency>
@@ -59,12 +64,17 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.42-6975859-server</version>
+            <version>1.43-33abd08-server</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>magista-proto</artifactId>
             <version>1.12-7be076b</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>vortigon-proto</artifactId>
+            <version>1.13-0c92608</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>
