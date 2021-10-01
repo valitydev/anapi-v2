@@ -71,7 +71,7 @@ public class StatPaymentToPaymentSearchResultConverter {
             case cancelled -> CANCELLED;
             case refunded -> REFUNDED;
             case failed -> FAILED;
-            //case charged_back ->; TODO: OpenAPI missing status, should be added?
+            case charged_back -> CHARGEDBACK;
             default -> throw new IllegalArgumentException(
                     String.format("Payment status %s cannot be processed", status));
 

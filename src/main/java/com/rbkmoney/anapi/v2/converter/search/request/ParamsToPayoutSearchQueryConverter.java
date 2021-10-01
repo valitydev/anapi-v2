@@ -21,12 +21,9 @@ public class ParamsToPayoutSearchQueryConverter {
                                      OffsetDateTime toTime,
                                      Integer limit,
                                      List<String> shopIDs,
-                                     Integer offset,
                                      String payoutID,
                                      String payoutToolType,
-                                     List<String> excludedShops,
                                      String continuationToken) {
-        //TODO: Mapping for offset, excludedShops
         return new PayoutSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))

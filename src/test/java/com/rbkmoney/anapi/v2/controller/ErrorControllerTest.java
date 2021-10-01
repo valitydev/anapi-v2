@@ -53,8 +53,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     void testBadRequestException() throws Exception {
         String message = "Error!";
         doThrow(new BadRequestException(message)).when(refundSearchConverter)
-                .convert(any(), any(), any(),
-                        any(), any(), any(),
+                .convert(any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
 
@@ -74,8 +73,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(jsonPath("$.message").value(message));
 
         verify(refundSearchConverter, times(1))
-                .convert(any(), any(),
-                        any(), any(), any(), any(),
+                .convert(any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
     }
@@ -119,8 +117,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testInternalException() throws Exception {
         doThrow(new RuntimeException()).when(refundSearchConverter)
-                .convert(any(), any(),
-                        any(), any(), any(), any(),
+                .convert(any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
 
@@ -138,8 +135,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$").doesNotExist());
         verify(refundSearchConverter, times(1))
-                .convert(any(), any(),
-                        any(), any(), any(), any(),
+                .convert(any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
     }

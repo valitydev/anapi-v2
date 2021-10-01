@@ -20,16 +20,13 @@ public class ParamsToRefundSearchQueryConverter {
                                      OffsetDateTime toTime,
                                      Integer limit,
                                      List<String> shopIDs,
-                                     Integer offset,
                                      List<String> invoiceIDs,
                                      String invoiceID,
                                      String paymentID,
                                      String refundID,
                                      String externalID,
                                      String refundStatus,
-                                     List<String> excludedShops,
                                      String continuationToken) {
-        //TODO: Mapping for paymentInstitutionRealm, offset, excludedShops
         return new RefundSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))

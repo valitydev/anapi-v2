@@ -134,7 +134,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 toTime,
                 limit,
                 shopIDs,
-                offset,
                 invoiceID,
                 paymentID,
                 chargebackID,
@@ -179,7 +178,6 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 externalID,
                 invoiceAmountFrom,
                 invoiceAmountTo,
-                excludedShops,
                 continuationToken);
         InlineResponse2009 response = searchService.findInvoices(query);
         return ResponseEntity.ok(response);
@@ -208,10 +206,8 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 toTime,
                 limit,
                 shopIDs,
-                offset,
                 payoutID,
                 payoutToolType,
-                excludedShops,
                 continuationToken);
         InlineResponse20011 response = searchService.findPayouts(query);
         return ResponseEntity.ok(response);
@@ -244,14 +240,12 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 toTime,
                 limit,
                 shopIDs,
-                offset,
                 invoiceIDs,
                 invoiceID,
                 paymentID,
                 refundID,
                 externalID,
                 refundStatus,
-                excludedShops,
                 continuationToken);
         InlineResponse20012 response = searchService.findRefunds(query);
         return ResponseEntity.ok(response);

@@ -26,9 +26,7 @@ public class ParamsToInvoiceSearchQueryConverter {
                                       String externalID,
                                       Long invoiceAmountFrom,
                                       Long invoiceAmountTo,
-                                      List<String> excludedShops,
                                       String continuationToken) {
-        //TODO: Mapping for excludedShops
         return new InvoiceSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))

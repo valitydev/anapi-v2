@@ -22,7 +22,6 @@ public class ParamsToChargebackSearchQueryConverter {
                                          OffsetDateTime toTime,
                                          Integer limit,
                                          List<String> shopIDs,
-                                         Integer offset,
                                          String invoiceID,
                                          String paymentID,
                                          String chargebackID,
@@ -30,7 +29,6 @@ public class ParamsToChargebackSearchQueryConverter {
                                          List<String> chargebackStages,
                                          List<String> chargebackCategories,
                                          String continuationToken) {
-        //TODO: Mapping for offset
         return new ChargebackSearchQuery()
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
