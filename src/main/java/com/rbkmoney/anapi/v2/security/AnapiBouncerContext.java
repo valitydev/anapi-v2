@@ -1,19 +1,18 @@
 package com.rbkmoney.anapi.v2.security;
 
-import com.rbkmoney.bouncer.starter.api.BouncerContext;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 @Builder
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class AnapiBouncerContext extends BouncerContext {
+public class AnapiBouncerContext {
 
     private final long tokenExpiration;
     private final String tokenId;
     private final String userId;
     private final String operationId;
     private final String partyId;
-    private final String shopId;
+    private final List<String> shopIds;
 }

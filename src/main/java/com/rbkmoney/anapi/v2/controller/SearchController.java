@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.converter.search.request.*;
-import com.rbkmoney.anapi.v2.security.AccessService;
+import com.rbkmoney.anapi.v2.security.BouncerAccessService;
 import com.rbkmoney.anapi.v2.service.SearchService;
 import com.rbkmoney.anapi.v2.service.VortigonService;
 import com.rbkmoney.magista.*;
@@ -19,7 +19,9 @@ import javax.validation.constraints.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 
 
@@ -32,7 +34,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
 
     private final SearchService searchService;
     private final VortigonService vortigonService;
-    private final AccessService accessService;
+    private final BouncerAccessService accessService;
     private final ParamsToPaymentSearchQueryConverter paymentSearchConverter;
     private final ParamsToChargebackSearchQueryConverter chargebackSearchConverter;
     private final ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
@@ -77,8 +79,14 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Valid String continuationToken) {
         checkDeadline(xRequestDeadline, xRequestID);
         List<String> shopIds = vortigonService.getShopIds(partyID, paymentInstitutionRealm);
-        //TODO: clarify, which shops should be checked for access.
-        accessService.checkAccess("searchPayments", partyID, shopID);
+        List<String> requestShopIds = merge(shopID, shopIDs);
+        if (!requestShopIds.isEmpty()) {
+            shopIds = requestShopIds.stream()
+                    .filter(shopIds::contains)
+                    .collect(Collectors.toList());
+        }
+
+        accessService.checkAccess("searchPayments", partyID, shopIds);
         PaymentSearchQuery query = paymentSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
