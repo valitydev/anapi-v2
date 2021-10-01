@@ -19,9 +19,7 @@ public class ParamsToInvoiceSearchQueryConverter {
                                       OffsetDateTime fromTime,
                                       OffsetDateTime toTime,
                                       Integer limit,
-                                      String shopID,
                                       List<String> shopIDs,
-                                      String paymentInstitutionRealm,
                                       List<String> invoiceIDs,
                                       String invoiceStatus,
                                       String invoiceID,
@@ -30,11 +28,10 @@ public class ParamsToInvoiceSearchQueryConverter {
                                       Long invoiceAmountTo,
                                       List<String> excludedShops,
                                       String continuationToken) {
-        //TODO: Mapping for paymentInstitutionRealm, excludedShops
+        //TODO: Mapping for excludedShops
         return new InvoiceSearchQuery()
                 .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
-                                continuationToken))
+                        fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setPaymentParams(
                         getPaymentParams(invoiceAmountFrom, invoiceAmountTo)
                 )

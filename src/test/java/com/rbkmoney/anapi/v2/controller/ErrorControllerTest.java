@@ -1,9 +1,8 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
-import com.rbkmoney.anapi.v2.converter.search.request.*;
+import com.rbkmoney.anapi.v2.converter.search.request.ParamsToRefundSearchQueryConverter;
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.anapi.v2.service.SearchService;
 import com.rbkmoney.anapi.v2.testutil.OpenApiUtil;
 import com.rbkmoney.openapi.anapi_v2.model.DefaultLogicError;
 import org.junit.jupiter.api.Test;
@@ -28,17 +27,6 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private SearchService searchService;
-    @MockBean
-    private ParamsToPaymentSearchQueryConverter paymentSearchConverter;
-    @MockBean
-    private ParamsToChargebackSearchQueryConverter chargebackSearchConverter;
-    @MockBean
-    private ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
-    @MockBean
-    private ParamsToPayoutSearchQueryConverter payoutSearchConverter;
     @MockBean
     private ParamsToRefundSearchQueryConverter refundSearchConverter;
 
@@ -65,8 +53,8 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     void testBadRequestException() throws Exception {
         String message = "Error!";
         doThrow(new BadRequestException(message)).when(refundSearchConverter)
-                .convert(any(), any(), any(), any(),
-                        any(), any(), any(), any(),
+                .convert(any(), any(), any(),
+                        any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
 
@@ -86,7 +74,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(jsonPath("$.message").value(message));
 
         verify(refundSearchConverter, times(1))
-                .convert(any(), any(), any(), any(),
+                .convert(any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
@@ -131,7 +119,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testInternalException() throws Exception {
         doThrow(new RuntimeException()).when(refundSearchConverter)
-                .convert(any(), any(), any(), any(),
+                .convert(any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
@@ -150,7 +138,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$").doesNotExist());
         verify(refundSearchConverter, times(1))
-                .convert(any(), any(), any(), any(),
+                .convert(any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());

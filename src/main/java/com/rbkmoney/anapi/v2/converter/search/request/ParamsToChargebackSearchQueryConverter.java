@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 
 @Component
 public class ParamsToChargebackSearchQueryConverter {
@@ -22,9 +21,7 @@ public class ParamsToChargebackSearchQueryConverter {
                                          OffsetDateTime fromTime,
                                          OffsetDateTime toTime,
                                          Integer limit,
-                                         String shopID,
                                          List<String> shopIDs,
-                                         String paymentInstitutionRealm,
                                          Integer offset,
                                          String invoiceID,
                                          String paymentID,
@@ -33,11 +30,10 @@ public class ParamsToChargebackSearchQueryConverter {
                                          List<String> chargebackStages,
                                          List<String> chargebackCategories,
                                          String continuationToken) {
-        //TODO: Mapping for paymentInstitutionRealm, offset
+        //TODO: Mapping for offset
         return new ChargebackSearchQuery()
                 .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
-                                continuationToken))
+                        fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setInvoiceIds(invoiceID != null ? List.of(invoiceID) : null)
                 .setPaymentId(paymentID)
                 .setChargebackId(chargebackID)

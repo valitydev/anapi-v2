@@ -12,7 +12,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 
 @Component
 public class ParamsToPayoutSearchQueryConverter {
@@ -21,19 +20,16 @@ public class ParamsToPayoutSearchQueryConverter {
                                      OffsetDateTime fromTime,
                                      OffsetDateTime toTime,
                                      Integer limit,
-                                     String shopID,
                                      List<String> shopIDs,
-                                     String paymentInstitutionRealm,
                                      Integer offset,
                                      String payoutID,
                                      String payoutToolType,
                                      List<String> excludedShops,
                                      String continuationToken) {
-        //TODO: Mapping for paymentInstitutionRealm, offset, excludedShops
+        //TODO: Mapping for offset, excludedShops
         return new PayoutSearchQuery()
                 .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
-                                continuationToken))
+                        fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setPayoutId(payoutID)
                 .setPayoutType(payoutToolType != null ? mapToDamselPayoutToolInfo(payoutToolType) : null);
     }

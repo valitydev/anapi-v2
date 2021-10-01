@@ -1,9 +1,8 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.converter.search.request.*;
-import com.rbkmoney.anapi.v2.security.BouncerAccessService;
+import com.rbkmoney.anapi.v2.security.AccessService;
 import com.rbkmoney.anapi.v2.service.SearchService;
-import com.rbkmoney.anapi.v2.service.VortigonService;
 import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
 import com.rbkmoney.openapi.anapi_v2.model.*;
@@ -19,7 +18,6 @@ import javax.validation.constraints.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
@@ -33,8 +31,7 @@ import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi {
 
     private final SearchService searchService;
-    private final VortigonService vortigonService;
-    private final BouncerAccessService accessService;
+    private final AccessService accessService;
     private final ParamsToPaymentSearchQueryConverter paymentSearchConverter;
     private final ParamsToChargebackSearchQueryConverter chargebackSearchConverter;
     private final ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
@@ -78,22 +75,14 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
         checkDeadline(xRequestDeadline, xRequestID);
-        List<String> shopIds = vortigonService.getShopIds(partyID, paymentInstitutionRealm);
-        List<String> requestShopIds = merge(shopID, shopIDs);
-        if (!requestShopIds.isEmpty()) {
-            shopIds = requestShopIds.stream()
-                    .filter(shopIds::contains)
-                    .collect(Collectors.toList());
-        }
+        shopIDs = accessService
+                .getAccessibleShops("searchPayments", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
 
-        accessService.checkAccess("searchPayments", partyID, shopIds);
         PaymentSearchQuery query = paymentSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
                 invoiceIDs,
                 paymentStatus, paymentFlow,
                 paymentMethod,
@@ -138,13 +127,13 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchChargebacks", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         ChargebackSearchQuery query = chargebackSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
                 offset,
                 invoiceID,
                 paymentID,
@@ -177,13 +166,13 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchInvoices", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         InvoiceSearchQuery query = invoiceSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
                 invoiceIDs,
                 invoiceStatus,
                 invoiceID,
@@ -212,13 +201,13 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchPayouts", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         PayoutSearchQuery query = payoutSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
                 offset,
                 payoutID,
                 payoutToolType,
@@ -248,13 +237,13 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Valid List<String> excludedShops,
                                                              @Valid String continuationToken) {
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchRefunds", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         RefundSearchQuery query = refundSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
                 offset,
                 invoiceIDs,
                 invoiceID,

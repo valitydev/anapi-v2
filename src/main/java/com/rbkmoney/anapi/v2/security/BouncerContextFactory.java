@@ -44,11 +44,11 @@ public class BouncerContextFactory {
     private ContextFragment buildContextFragment(AnapiBouncerContext bouncerContext) {
         Environment env = buildEnvironment();
         AccessToken accessToken = keycloakService.getAccessToken();
-        ContextAnalyticsAPI contextAnalyticsAPI = buildAnapiContext(bouncerContext);
+        ContextAnalyticsAPI contextAnalyticsApi = buildAnapiContext(bouncerContext);
         return new ContextFragment()
                 .setAuth(buildAuth(bouncerContext, accessToken))
                 .setEnv(env)
-                .setAnapi(contextAnalyticsAPI);
+                .setAnapi(contextAnalyticsApi);
     }
 
     private Auth buildAuth(AnapiBouncerContext bouncerContext, AccessToken accessToken) {

@@ -22,7 +22,7 @@ public class BouncerService {
     private final BouncerContextFactory bouncerContextFactory;
     private final ArbiterSrv.Iface bouncerClient;
 
-    public boolean havePrivileges(AnapiBouncerContext bouncerContext) {
+    public Resolution getResolution(AnapiBouncerContext bouncerContext) {
         log.debug("Check access with bouncer context: {}", bouncerContext);
         Context context = bouncerContextFactory.buildContext(bouncerContext);
         log.debug("Built thrift context: {}", context);
@@ -31,7 +31,7 @@ public class BouncerService {
             log.debug("Have judge: {}", judge);
             Resolution resolution = judge.getResolution();
             log.debug("Resolution: {}", resolution);
-            return resolution.isSetAllowed();
+            return resolution;
         } catch (TException e) {
             throw new BouncerException("Error while call bouncer", e);
         }
