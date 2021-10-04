@@ -1,11 +1,8 @@
 package com.rbkmoney.anapi.v2.converter.search.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.damsel.domain.PaymentInstitutionAccount;
-import com.rbkmoney.damsel.domain.PayoutToolInfo;
-import com.rbkmoney.damsel.domain.RussianBankAccount;
-import com.rbkmoney.damsel.domain.WalletInfo;
 import com.rbkmoney.magista.PayoutSearchQuery;
+import com.rbkmoney.magista.PayoutToolType;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
@@ -28,21 +25,16 @@ public class ParamsToPayoutSearchQueryConverter {
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setPayoutId(payoutID)
-                .setPayoutType(payoutToolType != null ? mapToDamselPayoutToolInfo(payoutToolType) : null);
+                .setPayoutType(payoutToolType != null ? mapToPayoutToolType(payoutToolType) : null);
     }
 
-    private PayoutToolInfo mapToDamselPayoutToolInfo(String payoutToolType) {
-        var payoutToolInfo = new PayoutToolInfo();
-        switch (payoutToolType) {
-            case "PayoutAccount" -> payoutToolInfo
-                    .setRussianBankAccount(new RussianBankAccount());//TODO: Russian or International?
-            case "Wallet" -> payoutToolInfo.setWalletInfo(new WalletInfo());
-            case "PaymentInstitutionAccount" -> payoutToolInfo
-                    .setPaymentInstitutionAccount(new PaymentInstitutionAccount());
+    private PayoutToolType mapToPayoutToolType(String payoutToolType) {
+        return switch (payoutToolType) {
+            case "PayoutAccount" -> PayoutToolType.payout_account;
+            case "Wallet" -> PayoutToolType.wallet;
+            case "PaymentInstitutionAccount" -> PayoutToolType.payment_institution_account;
             default -> throw new BadRequestException(
                     String.format("PayoutToolType %s cannot be processed", payoutToolType));
-        }
-
-        return payoutToolInfo;
+        };
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,13 +25,13 @@ public class AccessService {
     private final BouncerService bouncerService;
     private final KeycloakService keycloakService;
 
-    @Value("${bouncer.auth.enabled}")
+    @Value("${service.bouncer.auth.enabled}")
     private boolean authEnabled;
 
     public List<String> getAccessibleShops(String operationId, String partyId, List<String> requestShopIds,
                                            String realm) {
 
-        List<String> shopIds = vortigonService.getShopIds(partyId, realm);
+        List<String> shopIds = vortigonService.getShopIds(partyId, Objects.requireNonNullElse(realm, "live"));
 
         if (!shopIds.isEmpty()) {
             shopIds = requestShopIds.stream()

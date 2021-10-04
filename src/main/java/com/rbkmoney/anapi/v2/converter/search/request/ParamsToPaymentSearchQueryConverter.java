@@ -7,6 +7,7 @@ import com.rbkmoney.damsel.domain.LegacyTerminalPaymentProvider;
 import com.rbkmoney.magista.InvoicePaymentStatus;
 import com.rbkmoney.magista.PaymentParams;
 import com.rbkmoney.magista.PaymentSearchQuery;
+import com.rbkmoney.magista.PaymentToolType;
 import com.rbkmoney.openapi.anapi_v2.model.BankCardPaymentSystem;
 import com.rbkmoney.openapi.anapi_v2.model.BankCardTokenProvider;
 import com.rbkmoney.openapi.anapi_v2.model.PaymentStatus;
@@ -20,8 +21,8 @@ import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 import static com.rbkmoney.magista.InvoicePaymentFlowType.hold;
 import static com.rbkmoney.magista.InvoicePaymentFlowType.instant;
 import static com.rbkmoney.magista.InvoicePaymentStatus.*;
-import static com.rbkmoney.magista.PaymentTool.bank_card;
-import static com.rbkmoney.magista.PaymentTool.payment_terminal;
+import static com.rbkmoney.magista.PaymentToolType.bank_card;
+import static com.rbkmoney.magista.PaymentToolType.payment_terminal;
 
 @Component
 public class ParamsToPaymentSearchQueryConverter {
@@ -95,7 +96,7 @@ public class ParamsToPaymentSearchQueryConverter {
         return query;
     }
 
-    private com.rbkmoney.magista.PaymentTool mapToPaymentTool(String paymentMethod) {
+    private PaymentToolType mapToPaymentTool(String paymentMethod) {
         return switch (paymentMethod) {
             case "bankCard" -> bank_card;
             case "paymentTerminal" -> payment_terminal;

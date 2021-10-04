@@ -42,8 +42,8 @@ public class ApplicationConfig {
 
     @Bean
     public AuthContextProviderSrv.Iface orgManagerClient(
-            @Value("${orgManagement.url}") Resource resource,
-            @Value("${orgManagement.networkTimeout}") int networkTimeout
+            @Value("${service.orgManagement.url}") Resource resource,
+            @Value("${service.orgManagement.networkTimeout}") int networkTimeout
     ) throws IOException {
         return new THSpawnClientBuilder()
                 .withNetworkTimeout(networkTimeout)
@@ -60,8 +60,8 @@ public class ApplicationConfig {
 
     @Bean
     public ArbiterSrv.Iface bouncerClient(
-            @Value("${bouncer.url}") Resource resource,
-            @Value("${bouncer.networkTimeout}") int networkTimeout
+            @Value("${service.bouncer.url}") Resource resource,
+            @Value("${service.bouncer.networkTimeout}") int networkTimeout
     ) throws IOException {
         return new THSpawnClientBuilder()
                 .withNetworkTimeout(networkTimeout)

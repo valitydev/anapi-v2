@@ -1,5 +1,9 @@
 package com.rbkmoney.anapi.v2.testutil;
 
+import com.rbkmoney.bouncer.ctx.ContextFragment;
+import com.rbkmoney.bouncer.decisions.Judgement;
+import com.rbkmoney.bouncer.decisions.Resolution;
+import com.rbkmoney.bouncer.decisions.ResolutionAllowed;
 import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
 import com.rbkmoney.damsel.domain.InvoiceStatus;
 import com.rbkmoney.damsel.domain.*;
@@ -24,8 +28,7 @@ import java.util.Map;
 public class MagistaUtil {
 
     private static final MockTBaseProcessor mockRequiredTBaseProcessor;
-    private static final MockTBaseProcessor mockFullTBaseProcessor;
-
+    
     static {
         mockRequiredTBaseProcessor = new MockTBaseProcessor(MockMode.REQUIRED_ONLY, 15, 1);
         Map.Entry<FieldHandler, String[]> timeFields = Map.entry(
@@ -33,9 +36,6 @@ public class MagistaUtil {
                 new String[] {"created_at", "at", "due", "status_changed_at"}
         );
         mockRequiredTBaseProcessor.addFieldHandler(timeFields.getKey(), timeFields.getValue());
-
-        mockFullTBaseProcessor = new MockTBaseProcessor(MockMode.ALL, 15, 1);
-        mockFullTBaseProcessor.addFieldHandler(timeFields.getKey(), timeFields.getValue());
     }
 
     public static StatPaymentResponse createSearchPaymentRequiredResponse() {
@@ -47,12 +47,12 @@ public class MagistaUtil {
     }
 
     public static StatPaymentResponse createSearchPaymentAllResponse() {
-        var payment = fillAllTBaseObject(new StatPayment(), StatPayment.class);
-        var cart = fillAllTBaseObject(new InvoiceCart(), InvoiceCart.class);
-        var line = fillAllTBaseObject(new InvoiceLine(), InvoiceLine.class);
-        var instant = fillAllTBaseObject(new InvoicePaymentFlowInstant(), InvoicePaymentFlowInstant.class);
-        var locationInfo = fillAllTBaseObject(new LocationInfo(), LocationInfo.class);
-        var response = fillAllTBaseObject(new StatPaymentResponse(), StatPaymentResponse.class);
+        var payment = fillRequiredTBaseObject(new StatPayment(), StatPayment.class);
+        var cart = fillRequiredTBaseObject(new InvoiceCart(), InvoiceCart.class);
+        var line = fillRequiredTBaseObject(new InvoiceLine(), InvoiceLine.class);
+        var instant = fillRequiredTBaseObject(new InvoicePaymentFlowInstant(), InvoicePaymentFlowInstant.class);
+        var locationInfo = fillRequiredTBaseObject(new LocationInfo(), LocationInfo.class);
+        var response = fillRequiredTBaseObject(new StatPaymentResponse(), StatPaymentResponse.class);
 
         return response.setPayments(
                 List.of(payment
@@ -65,11 +65,13 @@ public class MagistaUtil {
     }
 
     public static StatChargebackResponse createSearchChargebackAllResponse() {
-        var chargeback = fillAllTBaseObject(new StatChargeback(), StatChargeback.class);
-        var stage = fillAllTBaseObject(new InvoicePaymentChargebackStage(), InvoicePaymentChargebackStage.class);
-        var reason = fillAllTBaseObject(new InvoicePaymentChargebackReason(), InvoicePaymentChargebackReason.class);
-        var status = fillAllTBaseObject(new InvoicePaymentChargebackStatus(), InvoicePaymentChargebackStatus.class);
-        var response = fillAllTBaseObject(new StatChargebackResponse(), StatChargebackResponse.class);
+        var chargeback = fillRequiredTBaseObject(new StatChargeback(), StatChargeback.class);
+        var stage = fillRequiredTBaseObject(new InvoicePaymentChargebackStage(), InvoicePaymentChargebackStage.class);
+        var reason =
+                fillRequiredTBaseObject(new InvoicePaymentChargebackReason(), InvoicePaymentChargebackReason.class);
+        var status =
+                fillRequiredTBaseObject(new InvoicePaymentChargebackStatus(), InvoicePaymentChargebackStatus.class);
+        var response = fillRequiredTBaseObject(new StatChargebackResponse(), StatChargebackResponse.class);
 
         return response.setChargebacks(
                 List.of(chargeback
@@ -83,13 +85,13 @@ public class MagistaUtil {
         return fillRequiredTBaseObject(new StatRefundResponse(), StatRefundResponse.class);
     }
 
-    public static StatRefundResponse createsearchRefundAllResponse() {
-        var refund = fillAllTBaseObject(new StatRefund(), StatRefund.class);
-        var cart = fillAllTBaseObject(new InvoiceCart(), InvoiceCart.class);
-        var line = fillAllTBaseObject(new InvoiceLine(), InvoiceLine.class);
-        var cash = fillAllTBaseObject(new Cash(), Cash.class);
-        var status = fillAllTBaseObject(new InvoicePaymentRefundStatus(), InvoicePaymentRefundStatus.class);
-        var response = fillAllTBaseObject(new StatRefundResponse(), StatRefundResponse.class);
+    public static StatRefundResponse createSearchRefundAllResponse() {
+        var refund = fillRequiredTBaseObject(new StatRefund(), StatRefund.class);
+        var cart = fillRequiredTBaseObject(new InvoiceCart(), InvoiceCart.class);
+        var line = fillRequiredTBaseObject(new InvoiceLine(), InvoiceLine.class);
+        var cash = fillRequiredTBaseObject(new Cash(), Cash.class);
+        var status = fillRequiredTBaseObject(new InvoicePaymentRefundStatus(), InvoicePaymentRefundStatus.class);
+        var response = fillRequiredTBaseObject(new StatRefundResponse(), StatRefundResponse.class);
 
         return response.setRefunds(
                 List.of(refund
@@ -104,13 +106,13 @@ public class MagistaUtil {
     }
 
     public static StatInvoiceResponse createSearchInvoiceAllResponse() {
-        var invoice = fillAllTBaseObject(new StatInvoice(), StatInvoice.class);
-        var cart = fillAllTBaseObject(new InvoiceCart(), InvoiceCart.class);
-        var line = fillAllTBaseObject(new InvoiceLine(), InvoiceLine.class);
-        var cash = fillAllTBaseObject(new Cash(), Cash.class);
-        var status = fillAllTBaseObject(new InvoiceStatus(),
+        var invoice = fillRequiredTBaseObject(new StatInvoice(), StatInvoice.class);
+        var cart = fillRequiredTBaseObject(new InvoiceCart(), InvoiceCart.class);
+        var line = fillRequiredTBaseObject(new InvoiceLine(), InvoiceLine.class);
+        var cash = fillRequiredTBaseObject(new Cash(), Cash.class);
+        var status = fillRequiredTBaseObject(new InvoiceStatus(),
                 InvoiceStatus.class);
-        var response = fillAllTBaseObject(new StatInvoiceResponse(), StatInvoiceResponse.class);
+        var response = fillRequiredTBaseObject(new StatInvoiceResponse(), StatInvoiceResponse.class);
 
         return response.setInvoices(
                 List.of(invoice
@@ -125,11 +127,11 @@ public class MagistaUtil {
     }
 
     public static StatPayoutResponse createSearchPayoutAllResponse() {
-        var payout = fillAllTBaseObject(new StatPayout(), StatPayout.class);
-        var toolInfo = fillAllTBaseObject(new PayoutToolInfo(), PayoutToolInfo.class);
-        var bank = fillAllTBaseObject(new RussianBankAccount(), RussianBankAccount.class);
-        var status = fillAllTBaseObject(new PayoutStatus(), PayoutStatus.class);
-        var response = fillAllTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
+        var payout = fillRequiredTBaseObject(new StatPayout(), StatPayout.class);
+        var toolInfo = fillRequiredTBaseObject(new PayoutToolInfo(), PayoutToolInfo.class);
+        var bank = fillRequiredTBaseObject(new RussianBankAccount(), RussianBankAccount.class);
+        var status = fillRequiredTBaseObject(new PayoutStatus(), PayoutStatus.class);
+        var response = fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
         toolInfo.setRussianBankAccount(bank);
         return response.setPayouts(
                 List.of(payout
@@ -138,13 +140,18 @@ public class MagistaUtil {
         );
     }
 
-    @SneakyThrows
-    public static <T extends TBase> T fillRequiredTBaseObject(T tbase, Class<T> type) {
-        return mockRequiredTBaseProcessor.process(tbase, new TBaseHandler<>(type));
+    public static ContextFragment createContextFragment() {
+        return fillRequiredTBaseObject(new ContextFragment(), ContextFragment.class);
+    }
+
+    public static Judgement createJudgementAllowed() {
+        Resolution resolution = new Resolution();
+        resolution.setAllowed(new ResolutionAllowed());
+        return new Judgement().setResolution(resolution);
     }
 
     @SneakyThrows
-    public static <T extends TBase> T fillAllTBaseObject(T tbase, Class<T> type) {
-        return mockFullTBaseProcessor.process(tbase, new TBaseHandler<>(type));
+    public static <T extends TBase> T fillRequiredTBaseObject(T tbase, Class<T> type) {
+        return mockRequiredTBaseProcessor.process(tbase, new TBaseHandler<>(type));
     }
 }
