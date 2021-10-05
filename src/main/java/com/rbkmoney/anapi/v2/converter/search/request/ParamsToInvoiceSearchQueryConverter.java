@@ -31,14 +31,14 @@ public class ParamsToInvoiceSearchQueryConverter {
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setPaymentParams(
-                        getPaymentParams(invoiceAmountFrom, invoiceAmountTo)
+                        mapPaymentParams(invoiceAmountFrom, invoiceAmountTo)
                 )
                 .setInvoiceStatus(invoiceStatus != null ? mapStatus(invoiceStatus) : null)
                 .setInvoiceIds(merge(invoiceID, invoiceIDs))
                 .setExternalId(externalID);
     }
 
-    private PaymentParams getPaymentParams(Long invoiceAmountFrom, Long invoiceAmountTo) {
+    protected PaymentParams mapPaymentParams(Long invoiceAmountFrom, Long invoiceAmountTo) {
         var params = new PaymentParams();
         if (invoiceAmountFrom != null) {
             params.setPaymentAmountFrom(invoiceAmountFrom);
@@ -49,15 +49,11 @@ public class ParamsToInvoiceSearchQueryConverter {
         return params;
     }
 
-    private InvoiceStatus mapStatus(String statusParam) {
-        var status = Enum.valueOf(com.rbkmoney.openapi.anapi_v2.model.InvoiceStatus.StatusEnum.class, statusParam);
-        return switch (status) {
-            case CANCELLED -> InvoiceStatus.cancelled;
-            case FULFILLED -> InvoiceStatus.fulfilled;
-            case PAID -> InvoiceStatus.paid;
-            case UNPAID -> InvoiceStatus.unpaid;
-            default -> throw new BadRequestException(
-                    String.format("Invoice status %s cannot be processed", status));
-        };
+    protected InvoiceStatus mapStatus(String status) {
+        try {
+            return InvoiceStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(String.format("Invoice status %s cannot be processed", status));
+        }
     }
 }

@@ -29,7 +29,7 @@ public class OpenApiUtil {
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
         params.add("invoiceIDs", randomInteger(1, 10));
         params.add("invoiceIDs", randomInteger(11, 20));
-        params.add("paymentStatus", PaymentStatus.StatusEnum.PENDING.name());
+        params.add("paymentStatus", PaymentStatus.StatusEnum.PENDING.getValue());
         params.add("paymentFlow", "instant");
         params.add("paymentMethod", "paymentTerminal");
         params.add("paymentTerminalProvider", TerminalPaymentProvider.alipay.name());
@@ -43,8 +43,8 @@ public class OpenApiUtil {
         params.add("last4", randomInteger(1000, 9999));
         params.add("rrn", "123456789010");
         params.add("approvalCode", "QWERTY");
-        params.add("bankCardTokenProvider", BankCardTokenProvider.APPLEPAY.name());
-        params.add("bankCardPaymentSystem", BankCardPaymentSystem.MASTERCARD.name());
+        params.add("bankCardTokenProvider", "applepay");
+        params.add("bankCardPaymentSystem", "mastercard");
         params.add("paymentAmountFrom", randomInteger(1, 9999));
         params.add("paymentAmountTo", randomInteger(9999, 999999));
         params.add("excludedShops", randomInteger(1, 10));
@@ -63,10 +63,10 @@ public class OpenApiUtil {
         params.add("invoiceID", randomInteger(1, 1000));
         params.add("paymentID", randomInteger(1, 1000));
         params.add("chargebackID", randomInteger(1, 1000));
-        params.add("chargebackStatuses", ChargebackStatus.PENDING.name());
-        params.add("chargebackStages", ChargebackStage.CHARGEBACK.name());
-        params.add("chargebackCategories", ChargebackCategory.AUTHORISATION.name());
-        //params.add("continuationToken", "test");
+        params.add("chargebackStatuses", ChargebackStatus.PENDING.getValue());
+        params.add("chargebackStages", ChargebackStage.CHARGEBACK.getValue());
+        params.add("chargebackCategories", ChargebackCategory.AUTHORISATION.getValue());
+        params.add("continuationToken", "test");
         return params;
     }
 
@@ -83,7 +83,7 @@ public class OpenApiUtil {
         params.add("paymentID", randomInteger(1, 1000));
         params.add("refundID", randomInteger(1, 1000));
         params.add("externalID", randomInteger(1, 1000));
-        params.add("refundStatus", RefundStatus.StatusEnum.PENDING.name());
+        params.add("refundStatus", "pending");
         params.add("excludedShops", randomInteger(1, 10));
         params.add("excludedShops", randomInteger(11, 20));
         params.add("continuationToken", "test");
@@ -98,7 +98,7 @@ public class OpenApiUtil {
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
         params.add("invoiceIDs", randomInteger(1, 10));
         params.add("invoiceIDs", randomInteger(11, 20));
-        params.add("invoiceStatus", Invoice.StatusEnum.PAID.name());
+        params.add("invoiceStatus", "paid");
         params.add("invoiceID", randomInteger(1, 1000));
         params.add("externalID", randomInteger(1, 1000));
         params.add("invoiceAmountFrom", randomInteger(1, 1000));

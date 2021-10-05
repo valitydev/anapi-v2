@@ -25,10 +25,10 @@ public class ParamsToPayoutSearchQueryConverter {
                 .setCommonSearchQueryParams(
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setPayoutId(payoutID)
-                .setPayoutType(payoutToolType != null ? mapToPayoutToolType(payoutToolType) : null);
+                .setPayoutType(payoutToolType != null ? mapPayoutToolType(payoutToolType) : null);
     }
 
-    private PayoutToolType mapToPayoutToolType(String payoutToolType) {
+    protected PayoutToolType mapPayoutToolType(String payoutToolType) {
         return switch (payoutToolType) {
             case "PayoutAccount" -> PayoutToolType.payout_account;
             case "Wallet" -> PayoutToolType.wallet;
