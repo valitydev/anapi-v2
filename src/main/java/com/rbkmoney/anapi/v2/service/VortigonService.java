@@ -17,15 +17,15 @@ public class VortigonService {
 
     @SneakyThrows
     public List<String> getShopIds(String partyId, String realm) {
-        return vortigonClient.getShopsIds(partyId, mapToRealm(realm));
+        return vortigonClient.getShopsIds(partyId, mapRealm(realm));
     }
 
-    private PaymentInstitutionRealm mapToRealm(String realm) {
-        return switch (realm) {
-            case "live" -> PaymentInstitutionRealm.live;
-            case "test" -> PaymentInstitutionRealm.test;
-            default -> throw new BadRequestException(
+    private PaymentInstitutionRealm mapRealm(String realm) {
+        try {
+            return PaymentInstitutionRealm.valueOf(realm);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
                     String.format("Realm %s cannot be processed", realm));
-        };
+        }
     }
 }

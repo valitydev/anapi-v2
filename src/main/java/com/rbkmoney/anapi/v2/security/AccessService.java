@@ -61,8 +61,6 @@ public class AccessService {
         }
 
         return new ArrayList<>(shopIds);
-
-
     }
 
     private AnapiBouncerContext buildAnapiBouncerContext(String operationId, String partyId, List<String> shopIds) {

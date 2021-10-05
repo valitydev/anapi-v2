@@ -74,6 +74,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                               @Min(1L) @Valid Long paymentAmountTo,
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService
                 .getAccessibleShops("searchPayments", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
@@ -105,6 +106,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 excludedShops,
                 continuationToken);
         InlineResponse20010 response = searchService.findPayments(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -118,7 +120,8 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Size(min = 1, max = 40) @Valid String shopID,
                                                                 @Valid List<String> shopIDs,
                                                                 @Valid String paymentInstitutionRealm,
-                                                                @Min(0L) @Valid Integer offset,
+                                                                //Not used by magista
+                                                                @Min(0L) @Valid @Deprecated Integer offset,
                                                                 @Size(min = 1, max = 40) @Valid String invoiceID,
                                                                 @Size(min = 1, max = 40) @Valid String paymentID,
                                                                 @Size(min = 1, max = 40) @Valid String chargebackID,
@@ -126,6 +129,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                                 @Valid List<String> chargebackStages,
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService
                 .getAccessibleShops("searchChargebacks", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
@@ -143,6 +147,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 continuationToken);
         InlineResponse2008 response = searchService
                 .findChargebacks(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -162,8 +167,10 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Size(min = 1, max = 40) @Valid String externalID,
                                                              @Min(1L) @Valid Long invoiceAmountFrom,
                                                              @Min(1L) @Valid Long invoiceAmountTo,
-                                                             @Valid List<String> excludedShops,
+                                                             //Not used by magista
+                                                             @Valid @Deprecated List<String> excludedShops,
                                                              @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService
                 .getAccessibleShops("searchInvoices", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
@@ -180,6 +187,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 invoiceAmountTo,
                 continuationToken);
         InlineResponse2009 response = searchService.findInvoices(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -193,11 +201,14 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
-                                                             @Min(0L) @Valid Integer offset,
+                                                             //Not used by magista
+                                                             @Min(0L) @Valid @Deprecated Integer offset,
                                                              @Size(min = 1, max = 40) @Valid String payoutID,
                                                              @Valid String payoutToolType,
-                                                             @Valid List<String> excludedShops,
+                                                             //Not used by magista
+                                                             @Valid @Deprecated List<String> excludedShops,
                                                              @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService
                 .getAccessibleShops("searchPayouts", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
@@ -210,6 +221,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 payoutToolType,
                 continuationToken);
         InlineResponse20011 response = searchService.findPayouts(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -223,15 +235,18 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
-                                                             @Min(0L) @Valid Integer offset,
+                                                             //Not used by magista
+                                                             @Min(0L) @Valid @Deprecated Integer offset,
                                                              @Valid List<String> invoiceIDs,
                                                              @Size(min = 1, max = 40) @Valid String invoiceID,
                                                              @Size(min = 1, max = 40) @Valid String paymentID,
                                                              @Size(min = 1, max = 40) @Valid String refundID,
                                                              @Size(min = 1, max = 40) @Valid String externalID,
                                                              @Valid String refundStatus,
-                                                             @Valid List<String> excludedShops,
+                                                             //Not used by magista
+                                                             @Valid @Deprecated List<String> excludedShops,
                                                              @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService
                 .getAccessibleShops("searchRefunds", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
@@ -248,6 +263,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 refundStatus,
                 continuationToken);
         InlineResponse20012 response = searchService.findRefunds(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 }

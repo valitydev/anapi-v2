@@ -27,10 +27,10 @@ management:
 
 service:
   magista:
-    url: http://magista:8022/stat
+    url: http://localhost:8022/change_it
     networkTimeout: 5000
   vortigon:
-    url: http://hellgate:8022/v1/processing/partymgmt
+    url: http://localhost:8022/change_it
     networkTimeout: 5000
   orgManagement:
     url: http://localhost:8022/change_it

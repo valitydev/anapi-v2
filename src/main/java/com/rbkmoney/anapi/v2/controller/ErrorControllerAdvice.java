@@ -1,11 +1,13 @@
 package com.rbkmoney.anapi.v2.controller;
 
+import com.rbkmoney.anapi.v2.exception.AuthorizationException;
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.anapi.v2.exception.DeadlineException;
 import com.rbkmoney.openapi.anapi_v2.model.DefaultLogicError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -61,6 +63,18 @@ public class ErrorControllerAdvice {
         return new DefaultLogicError()
                 .code(DefaultLogicError.CodeEnum.INVALIDDEADLINE)
                 .message(e.getMessage());
+    }
+
+    @ExceptionHandler({AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public void handleAccessDeniedException(AccessDeniedException e) {
+        log.warn("<- Res [403]: Request denied access", e);
+    }
+
+    @ExceptionHandler({AuthorizationException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public void handleAccessDeniedException(AuthorizationException e) {
+        log.warn("<- Res [403]: Request denied access", e);
     }
 
     @ExceptionHandler(Exception.class)

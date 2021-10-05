@@ -29,10 +29,6 @@ public abstract class AbstractKeycloakOpenIdAsWiremockConfig {
         keycloakOpenIdStub.givenStub();
     }
 
-    protected String generateJwt(long iat, long exp, String... roles) {
-        return keycloakOpenIdStub.generateJwt(iat, exp, roles);
-    }
-
     protected String generateInvoicesReadJwt() {
         return keycloakOpenIdStub.generateJwt("invoices:read");
     }

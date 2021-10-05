@@ -10,9 +10,6 @@ import java.security.PrivateKey;
 import java.time.Instant;
 import java.util.UUID;
 
-/**
- * @since 04.07.17
- **/
 public class JwtTokenBuilder {
 
     public static final String DEFAULT_USERNAME = "Darth Vader";
@@ -36,18 +33,6 @@ public class JwtTokenBuilder {
         this.username = username;
         this.email = email;
         this.privateKey = privateKey;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public String generateJwtWithRoles(String issuer, String... roles) {
