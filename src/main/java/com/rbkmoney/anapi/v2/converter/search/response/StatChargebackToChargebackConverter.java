@@ -22,7 +22,7 @@ public class StatChargebackToChargebackConverter {
                 .fee(chargeback.getFee())
                 .chargebackReason(chargeback.getChargebackReason() != null
                         ? new ChargebackReason()
-                        .category(mapToChargebackCategory(chargeback.getChargebackReason().getCategory()))
+                        .category(mapCategory(chargeback.getChargebackReason().getCategory()))
                         .code(chargeback.getChargebackReason().getCode()) : null)
                 .content(chargeback.getContent() != null
                         ? new Content().data(chargeback.getContent().getData())
@@ -30,9 +30,8 @@ public class StatChargebackToChargebackConverter {
                 .bodyCurrency(chargeback.getCurrencyCode().getSymbolicCode());
     }
 
-    private ChargebackCategory mapToChargebackCategory(InvoicePaymentChargebackCategory chargebackCategory) {
+    protected ChargebackCategory mapCategory(InvoicePaymentChargebackCategory chargebackCategory) {
         if (chargebackCategory.isSetAuthorisation()) {
-            //TODO: Is it a typo? Could be fixed? (authorization)
             return ChargebackCategory.AUTHORISATION;
         }
 

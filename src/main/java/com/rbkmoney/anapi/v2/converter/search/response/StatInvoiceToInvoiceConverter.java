@@ -28,7 +28,7 @@ public class StatInvoiceToInvoiceConverter {
                         .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
                         .price(invoiceLine.getPrice().getAmount())
                         .product(invoiceLine.getProduct())
-                        .taxMode(getTaxMode(invoiceLine.getMetadata()))
+                        .taxMode(mapTaxMode(invoiceLine.getMetadata()))
                 ).collect(Collectors.toList()) : null)
                 .description(invoice.getDescription())
                 .dueDate(TypeUtil.stringToInstant(invoice.getDue()).atOffset(ZoneOffset.UTC))
@@ -36,11 +36,11 @@ public class StatInvoiceToInvoiceConverter {
                 .product(invoice.getProduct())
                 .shopID(invoice.getShopId());
 
-        fillStatusInfo(result, invoice.getStatus());
+        mapStatusInfo(result, invoice.getStatus());
         return result;
     }
 
-    private void fillStatusInfo(Invoice invoice, InvoiceStatus status) {
+    protected void mapStatusInfo(Invoice invoice, InvoiceStatus status) {
         if (status.isSetFulfilled()) {
             invoice.setStatus(Invoice.StatusEnum.FULFILLED);
             invoice.setReason(status.getFulfilled().getDetails());
@@ -67,7 +67,7 @@ public class StatInvoiceToInvoiceConverter {
                 String.format("Invoice status %s cannot be processed", status));
     }
 
-    private InvoiceLineTaxMode getTaxMode(Map<String, Value> metadata) {
+    protected InvoiceLineTaxMode mapTaxMode(Map<String, Value> metadata) {
         Value taxMode = metadata.get("TaxMode");
         if (taxMode != null) {
             return new InvoiceLineTaxVAT()
