@@ -18,8 +18,9 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
                 .description(statInvoiceTemplate.getDescription())
                 .invoiceTemplateId(statInvoiceTemplate.getInvoiceTemplateId())
                 .invoiceTemplateStatus(mapStatus(statInvoiceTemplate.getInvoiceTemplateStatus()))
-                .invoiceTemplateCreatedAt(TypeUtil.stringToInstant(statInvoiceTemplate.getInvoiceTemplateCreatedAt())
-                        .atOffset(ZoneOffset.UTC))
+                .invoiceTemplateCreatedAt(statInvoiceTemplate.getInvoiceTemplateCreatedAt() != null
+                        ? TypeUtil.stringToInstant(statInvoiceTemplate.getInvoiceTemplateCreatedAt())
+                        .atOffset(ZoneOffset.UTC) : null)
                 .invoiceValidUntil(
                         TypeUtil.stringToInstant(statInvoiceTemplate.getInvoiceValidUntil()).atOffset(ZoneOffset.UTC))
                 .details(mapDetails(statInvoiceTemplate.getDetails()))
@@ -30,14 +31,14 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
                 .shopID(statInvoiceTemplate.getShopId());
     }
 
-    private InvoiceTemplateDetails mapDetails(com.rbkmoney.damsel.domain.InvoiceTemplateDetails details) {
+    protected InvoiceTemplateDetails mapDetails(com.rbkmoney.damsel.domain.InvoiceTemplateDetails details) {
         if (details.isSetCart()) {
             return new InvoiceTemplateCart().cart(
                             details.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
                                             .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
                                             .price(invoiceLine.getPrice().getAmount())
                                             .product(invoiceLine.getProduct())
-                                            .taxMode(getTaxMode(invoiceLine.getMetadata()))
+                                            .taxMode(mapTaxMode(invoiceLine.getMetadata()))
                                             .quantity((long) invoiceLine.getQuantity()))
                                     .collect(Collectors.toList()))
                     .templateType("invoiceTemplateMultiLine");
@@ -56,7 +57,7 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
 
     }
 
-    private InvoiceTemplateProductPrice mapPrice(com.rbkmoney.damsel.domain.InvoiceTemplateProductPrice price) {
+    protected InvoiceTemplateProductPrice mapPrice(com.rbkmoney.damsel.domain.InvoiceTemplateProductPrice price) {
         if (price.isSetFixed()) {
             return mapCash(price.getFixed())
                     .costType("fixed");
@@ -76,20 +77,20 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
                 String.format("InvoiceTemplateProductPrice %s cannot be processed", price));
     }
 
-    private Cash mapCash(com.rbkmoney.damsel.domain.Cash cash) {
+    protected Cash mapCash(com.rbkmoney.damsel.domain.Cash cash) {
         return new Cash()
                 .amount(cash.getAmount())
                 .currency(cash.getCurrency().getSymbolicCode());
     }
 
-    private CashRange mapCashRange(com.rbkmoney.damsel.domain.CashRange cash) {
+    protected CashRange mapCashRange(com.rbkmoney.damsel.domain.CashRange cash) {
         return new CashRange()
                 .lowerBound(cash.getLower().getInclusive().getAmount())
                 .upperBound(cash.getUpper().getInclusive().getAmount())
                 .currency(cash.getLower().getInclusive().getCurrency().getSymbolicCode());
     }
 
-    private InvoiceLineTaxMode getTaxMode(Map<String, Value> metadata) {
+    protected InvoiceLineTaxMode mapTaxMode(Map<String, Value> metadata) {
         Value taxMode = metadata.get("TaxMode");
         if (taxMode != null) {
             return new InvoiceLineTaxVAT()
@@ -99,12 +100,12 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
         return null;
     }
 
-    private InvoiceTemplate.InvoiceTemplateStatusEnum mapStatus(InvoiceTemplateStatus invoiceTemplateStatus) {
-        return switch (invoiceTemplateStatus) {
-            case created -> InvoiceTemplate.InvoiceTemplateStatusEnum.CREATED;
-            case deleted -> InvoiceTemplate.InvoiceTemplateStatusEnum.DELETED;
-            default -> throw new IllegalArgumentException(
+    protected InvoiceTemplate.InvoiceTemplateStatusEnum mapStatus(InvoiceTemplateStatus invoiceTemplateStatus) {
+        try {
+            return InvoiceTemplate.InvoiceTemplateStatusEnum.fromValue(invoiceTemplateStatus.name());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
                     String.format("InvoiceTemplate status %s cannot be processed", invoiceTemplateStatus.name()));
-        };
+        }
     }
 }

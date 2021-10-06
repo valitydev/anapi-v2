@@ -4,6 +4,7 @@ import com.rbkmoney.bouncer.ctx.ContextFragment;
 import com.rbkmoney.bouncer.decisions.Judgement;
 import com.rbkmoney.bouncer.decisions.Resolution;
 import com.rbkmoney.bouncer.decisions.ResolutionAllowed;
+import com.rbkmoney.damsel.base.Content;
 import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
 import com.rbkmoney.damsel.domain.InvoiceStatus;
 import com.rbkmoney.damsel.domain.*;
@@ -21,8 +22,12 @@ import lombok.experimental.UtilityClass;
 import org.apache.thrift.TBase;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomInt;
+import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;
 
 @UtilityClass
 public class MagistaUtil {
@@ -33,7 +38,7 @@ public class MagistaUtil {
         mockRequiredTBaseProcessor = new MockTBaseProcessor(MockMode.REQUIRED_ONLY, 15, 1);
         Map.Entry<FieldHandler, String[]> timeFields = Map.entry(
                 structHandler -> structHandler.value(Instant.now().toString()),
-                new String[] {"created_at", "at", "due", "status_changed_at"}
+                new String[] {"created_at", "at", "due", "status_changed_at", "invoice_valid_until", "event_created_at"}
         );
         mockRequiredTBaseProcessor.addFieldHandler(timeFields.getKey(), timeFields.getValue());
     }
@@ -137,6 +142,33 @@ public class MagistaUtil {
                 List.of(payout
                         .setPayoutToolInfo(toolInfo)
                         .setStatus(status))
+        );
+    }
+
+    public static StatInvoiceTemplateResponse createSearchInvoiceTemplateAllResponse() {
+        var invoiceTemplate = fillRequiredTBaseObject(new StatInvoiceTemplate(), StatInvoiceTemplate.class);
+        var cash = fillRequiredTBaseObject(new Cash(), Cash.class);
+        var context = fillRequiredTBaseObject(new Content(), Content.class);
+        var response = fillRequiredTBaseObject(new StatInvoiceTemplateResponse(), StatInvoiceTemplateResponse.class);
+
+        return response.setInvoiceTemplates(
+                List.of(invoiceTemplate
+                        .setDescription(randomString(10))
+                        .setDetails(InvoiceTemplateDetails.cart(
+                                new InvoiceCart()
+                                        .setLines(List.of(
+                                                        new InvoiceLine()
+                                                                .setPrice(cash)
+                                                                .setProduct(randomString(10))
+                                                                .setQuantity(randomInt(1, 1000))
+                                                                .setMetadata(new HashMap<>())
+                                                )
+                                        )))
+                        .setContext(context)
+                        .setName(randomString(10))
+                        .setInvoiceTemplateStatus(InvoiceTemplateStatus.created)
+                        .setInvoiceTemplateCreatedAt(Instant.now().toString())
+                )
         );
     }
 

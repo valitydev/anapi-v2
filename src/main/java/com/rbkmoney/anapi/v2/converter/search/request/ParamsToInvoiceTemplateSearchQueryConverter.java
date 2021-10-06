@@ -35,12 +35,12 @@ public class ParamsToInvoiceTemplateSearchQueryConverter {
                 .setInvoiceValidUntil(TypeUtil.temporalToString(invoiceValidUntil));
     }
 
-    private InvoiceTemplateStatus mapStatus(String status) {
-        return switch (status) {
-            case "created" -> InvoiceTemplateStatus.created;
-            case "deleted" -> InvoiceTemplateStatus.deleted;
-            default -> throw new BadRequestException(
+    protected InvoiceTemplateStatus mapStatus(String status) {
+        try {
+            return InvoiceTemplateStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
                     String.format("InvoiceTemplate status %s cannot be processed", status));
-        };
+        }
     }
 }
