@@ -19,15 +19,15 @@ public class StatRefundToRefundSearchResultConverter {
                 .currency(refund.getCurrencySymbolicCode())
                 .id(refund.getId())
                 .shopID(refund.getShopId())
-                .status(mapToRefundStatus(refund.getStatus()))
+                .status(mapStatus(refund.getStatus()))
                 .externalID(refund.getExternalId())
-                .error(mapToRefundStatusError(refund.getStatus()))
+                .error(mapStatusError(refund.getStatus()))
                 .invoiceID(refund.getInvoiceId())
                 .paymentID(refund.getPaymentId())
                 .reason(refund.getReason());
     }
 
-    private RefundStatusError mapToRefundStatusError(InvoicePaymentRefundStatus status) {
+    protected RefundStatusError mapStatusError(InvoicePaymentRefundStatus status) {
         if (status.isSetFailed() && status.getFailed().getFailure().isSetFailure()) {
             var failure = status.getFailed().getFailure().getFailure();
             return new RefundStatusError()
@@ -38,7 +38,7 @@ public class StatRefundToRefundSearchResultConverter {
         return null;
     }
 
-    private RefundSearchResult.StatusEnum mapToRefundStatus(InvoicePaymentRefundStatus status) {
+    protected RefundSearchResult.StatusEnum mapStatus(InvoicePaymentRefundStatus status) {
         if (status.isSetPending()) {
             return RefundSearchResult.StatusEnum.PENDING;
         }

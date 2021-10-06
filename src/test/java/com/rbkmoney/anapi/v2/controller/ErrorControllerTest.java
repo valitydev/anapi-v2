@@ -1,12 +1,17 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
-import com.rbkmoney.anapi.v2.converter.search.request.*;
+import com.rbkmoney.anapi.v2.converter.search.request.ParamsToRefundSearchQueryConverter;
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.anapi.v2.service.SearchService;
 import com.rbkmoney.anapi.v2.testutil.OpenApiUtil;
+import com.rbkmoney.bouncer.decisions.ArbiterSrv;
+import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
 import com.rbkmoney.openapi.anapi_v2.model.DefaultLogicError;
+import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -15,7 +20,10 @@ import org.springframework.util.MultiValueMap;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
+import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createContextFragment;
+import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createJudgementAllowed;
 import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -28,19 +36,30 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private SearchService searchService;
-    @MockBean
-    private ParamsToPaymentSearchQueryConverter paymentSearchConverter;
-    @MockBean
-    private ParamsToChargebackSearchQueryConverter chargebackSearchConverter;
-    @MockBean
-    private ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
-    @MockBean
-    private ParamsToPayoutSearchQueryConverter payoutSearchConverter;
     @MockBean
     private ParamsToRefundSearchQueryConverter refundSearchConverter;
+    @MockBean
+    public VortigonServiceSrv.Iface vortigonClient;
+    @MockBean
+    public AuthContextProviderSrv.Iface orgMgmtClient;
+    @MockBean
+    public ArbiterSrv.Iface bouncerClient;
+
+    private AutoCloseable mocks;
+
+    private Object[] preparedMocks;
+
+    @BeforeEach
+    public void init() {
+        mocks = MockitoAnnotations.openMocks(this);
+        preparedMocks = new Object[] {refundSearchConverter, vortigonClient, orgMgmtClient, bouncerClient};
+    }
+
+    @AfterEach
+    public void clean() throws Exception {
+        verifyNoMoreInteractions(preparedMocks);
+        mocks.close();
+    }
 
     @Test
     void testConstraintViolationException() throws Exception {
@@ -48,9 +67,9 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         params.set("limit", "1001");
 
         mockMvc.perform(
-                get("/payments")
-                        .header("Authorization", "Bearer " + generateInvoicesReadJwt())
-                        .header("X-Request-ID", randomUUID())
+                        get("/payments")
+                                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                                .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -63,31 +82,34 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Test
     void testBadRequestException() throws Exception {
+        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         String message = "Error!";
         doThrow(new BadRequestException(message)).when(refundSearchConverter)
                 .convert(any(), any(), any(), any(),
-                        any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
 
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
 
         mockMvc.perform(
-                get("/refunds")
-                        .header("Authorization", "Bearer " + generateInvoicesReadJwt())
-                        .header("X-Request-ID", randomUUID())
-                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(""))
+                        get("/refunds")
+                                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                                .header("X-Request-ID", randomUUID())
+                                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                                .params(params)
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(""))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALIDREQUEST.getValue()))
                 .andExpect(jsonPath("$.message").value(message));
-
+        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(bouncerClient, times(1)).judge(any(), any());
         verify(refundSearchConverter, times(1))
                 .convert(any(), any(), any(), any(),
-                        any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
     }
@@ -130,28 +152,32 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Test
     void testInternalException() throws Exception {
+        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         doThrow(new RuntimeException()).when(refundSearchConverter)
                 .convert(any(), any(), any(), any(),
-                        any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
 
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
 
         mockMvc.perform(
-                get("/refunds")
-                        .header("Authorization", "Bearer " + generateInvoicesReadJwt())
-                        .header("X-Request-ID", randomUUID())
-                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(""))
+                        get("/refunds")
+                                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                                .header("X-Request-ID", randomUUID())
+                                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                                .params(params)
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(""))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$").doesNotExist());
+        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(bouncerClient, times(1)).judge(any(), any());
         verify(refundSearchConverter, times(1))
                 .convert(any(), any(), any(), any(),
-                        any(), any(), any(), any(),
                         any(), any(), any(), any(),
                         any(), any(), any(), any());
     }

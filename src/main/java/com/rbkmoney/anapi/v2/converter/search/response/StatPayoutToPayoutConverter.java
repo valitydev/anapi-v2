@@ -21,16 +21,16 @@ public class StatPayoutToPayoutConverter {
                 .currency(payout.getCurrencySymbolicCode())
                 .fee(payout.getFee())
                 .id(payout.getId())
-                .payoutToolDetails(mapToPayoutToolDetails(payout.getPayoutToolInfo()))
+                .payoutToolDetails(mapPayoutToolDetails(payout.getPayoutToolInfo()))
                 .shopID(payout.getShopId())
-                .status(mapToPayoutStatus(payout.getStatus()))
+                .status(mapStatus(payout.getStatus()))
                 .cancellationDetails(
                         payout.getStatus().isSetCancelled()
                                 ? payout.getStatus().getCancelled().getDetails()
                                 : null);
     }
 
-    private String mapToPayoutStatus(PayoutStatus status) {
+    protected String mapStatus(PayoutStatus status) {
         if (status.isSetCancelled()) {
             return "Cancelled";
         }
@@ -51,7 +51,7 @@ public class StatPayoutToPayoutConverter {
                 String.format("Payout status %s cannot be processed", status));
     }
 
-    private PayoutToolDetails mapToPayoutToolDetails(PayoutToolInfo payoutToolInfo) {
+    protected PayoutToolDetails mapPayoutToolDetails(PayoutToolInfo payoutToolInfo) {
         if (payoutToolInfo.isSetRussianBankAccount()) {
             var account = payoutToolInfo.getRussianBankAccount();
             return new PayoutToolDetailsBankAccount()
@@ -71,11 +71,12 @@ public class StatPayoutToPayoutConverter {
                             ? new InternationalBankDetails()
                             .name(account.getBank().getName())
                             .bic(account.getBank().getBic())
-                            .countryCode(getCountryCode(account.getBank().getCountry()))
+                            .countryCode(mapCountryCode(account.getBank().getCountry()))
                             .address(account.getBank().getAddress())
                             .abartn(account.getBank().getAbaRtn())
                             : null)
-                    .correspondentBankAccount(mapToInternationalCorrespondentBankAccount(account))
+                    .correspondentBankAccount(
+                            mapInternationalCorrespondentBankAccount(account.getCorrespondentAccount()))
                     .detailsType("PayoutToolDetailsInternationalBankAccount");
         }
 
@@ -95,15 +96,18 @@ public class StatPayoutToPayoutConverter {
 
     }
 
-    private String getCountryCode(@Nullable CountryCode countryCode) {
+    protected String mapCountryCode(@Nullable CountryCode countryCode) {
         if (countryCode == null) {
             return null;
         }
         return countryCode.name();
     }
 
-    private InternationalCorrespondentBankAccount mapToInternationalCorrespondentBankAccount(
+    protected InternationalCorrespondentBankAccount mapInternationalCorrespondentBankAccount(
             com.rbkmoney.damsel.domain.InternationalBankAccount account) {
+        if (account == null) {
+            return null;
+        }
         var details = account.getBank();
         return new InternationalCorrespondentBankAccount()
                 .bankDetails(details != null
@@ -117,7 +121,7 @@ public class StatPayoutToPayoutConverter {
                 .iban(account.getIban())
                 .number(account.getNumber())
                 .correspondentBankAccount(account.getCorrespondentAccount() != null
-                        ? mapToInternationalCorrespondentBankAccount(account.getCorrespondentAccount())
+                        ? mapInternationalCorrespondentBankAccount(account.getCorrespondentAccount())
                         : null);
     }
 }

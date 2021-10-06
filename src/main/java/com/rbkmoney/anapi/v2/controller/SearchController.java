@@ -1,6 +1,7 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.converter.search.request.*;
+import com.rbkmoney.anapi.v2.security.AccessService;
 import com.rbkmoney.anapi.v2.service.SearchService;
 import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.api.*;
@@ -18,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 
 
@@ -30,6 +32,7 @@ public class SearchController
         implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi, InvoiceTemplatesApi {
 
     private final SearchService searchService;
+    private final AccessService accessService;
     private final ParamsToPaymentSearchQueryConverter paymentSearchConverter;
     private final ParamsToChargebackSearchQueryConverter chargebackSearchConverter;
     private final ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
@@ -67,20 +70,22 @@ public class SearchController
                                                               @Pattern(regexp = "^\\d{4}$") @Valid String last4,
                                                               @Pattern(regexp = "^[a-zA-Z0-9]{12}$") @Valid String rrn,
                                                               @Size(min = 1, max = 40) @Valid String approvalCode,
-                                                              @Valid BankCardTokenProvider bankCardTokenProvider,
-                                                              @Valid BankCardPaymentSystem bankCardPaymentSystem,
+                                                              @Valid String bankCardTokenProvider,
+                                                              @Valid String bankCardPaymentSystem,
                                                               @Min(1L) @Valid Long paymentAmountFrom,
                                                               @Min(1L) @Valid Long paymentAmountTo,
                                                               @Valid List<String> excludedShops,
                                                               @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchPayments", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
+
         PaymentSearchQuery query = paymentSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
                 invoiceIDs,
                 paymentStatus, paymentFlow,
                 paymentMethod,
@@ -103,6 +108,7 @@ public class SearchController
                 excludedShops,
                 continuationToken);
         InlineResponse20010 response = searchService.findPayments(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -116,7 +122,8 @@ public class SearchController
                                                                 @Size(min = 1, max = 40) @Valid String shopID,
                                                                 @Valid List<String> shopIDs,
                                                                 @Valid String paymentInstitutionRealm,
-                                                                @Min(0L) @Valid Integer offset,
+                                                                //Not used by magista
+                                                                @Min(0L) @Valid @Deprecated Integer offset,
                                                                 @Size(min = 1, max = 40) @Valid String invoiceID,
                                                                 @Size(min = 1, max = 40) @Valid String paymentID,
                                                                 @Size(min = 1, max = 40) @Valid String chargebackID,
@@ -124,15 +131,15 @@ public class SearchController
                                                                 @Valid List<String> chargebackStages,
                                                                 @Valid List<String> chargebackCategories,
                                                                 @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchChargebacks", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         ChargebackSearchQuery query = chargebackSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
-                offset,
                 invoiceID,
                 paymentID,
                 chargebackID,
@@ -142,6 +149,7 @@ public class SearchController
                 continuationToken);
         InlineResponse2008 response = searchService
                 .findChargebacks(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -161,25 +169,27 @@ public class SearchController
                                                              @Size(min = 1, max = 40) @Valid String externalID,
                                                              @Min(1L) @Valid Long invoiceAmountFrom,
                                                              @Min(1L) @Valid Long invoiceAmountTo,
-                                                             @Valid List<String> excludedShops,
+                                                             //Not used by magista
+                                                             @Valid @Deprecated List<String> excludedShops,
                                                              @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchInvoices", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         InvoiceSearchQuery query = invoiceSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
                 invoiceIDs,
                 invoiceStatus,
                 invoiceID,
                 externalID,
                 invoiceAmountFrom,
                 invoiceAmountTo,
-                excludedShops,
                 continuationToken);
         InlineResponse2009 response = searchService.findInvoices(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -193,25 +203,27 @@ public class SearchController
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
-                                                             @Min(0L) @Valid Integer offset,
+                                                             //Not used by magista
+                                                             @Min(0L) @Valid @Deprecated Integer offset,
                                                              @Size(min = 1, max = 40) @Valid String payoutID,
                                                              @Valid String payoutToolType,
-                                                             @Valid List<String> excludedShops,
+                                                             //Not used by magista
+                                                             @Valid @Deprecated List<String> excludedShops,
                                                              @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchPayouts", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         PayoutSearchQuery query = payoutSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
-                offset,
                 payoutID,
                 payoutToolType,
-                excludedShops,
                 continuationToken);
         InlineResponse20011 response = searchService.findPayouts(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -225,50 +237,56 @@ public class SearchController
                                                              @Size(min = 1, max = 40) @Valid String shopID,
                                                              @Valid List<String> shopIDs,
                                                              @Valid String paymentInstitutionRealm,
-                                                             @Min(0L) @Valid Integer offset,
+                                                             //Not used by magista
+                                                             @Min(0L) @Valid @Deprecated Integer offset,
                                                              @Valid List<String> invoiceIDs,
                                                              @Size(min = 1, max = 40) @Valid String invoiceID,
                                                              @Size(min = 1, max = 40) @Valid String paymentID,
                                                              @Size(min = 1, max = 40) @Valid String refundID,
                                                              @Size(min = 1, max = 40) @Valid String externalID,
                                                              @Valid String refundStatus,
-                                                             @Valid List<String> excludedShops,
+                                                             //Not used by magista
+                                                             @Valid @Deprecated List<String> excludedShops,
                                                              @Valid String continuationToken) {
+        log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchRefunds", partyID, merge(shopID, shopIDs), paymentInstitutionRealm);
         RefundSearchQuery query = refundSearchConverter.convert(partyID,
                 fromTime,
                 toTime,
                 limit,
-                shopID,
                 shopIDs,
-                paymentInstitutionRealm,
-                offset,
                 invoiceIDs,
                 invoiceID,
                 paymentID,
                 refundID,
                 externalID,
                 refundStatus,
-                excludedShops,
                 continuationToken);
         InlineResponse20012 response = searchService.findRefunds(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<InlineResponse20013> searchInvoiceTemplates(String xRequestID,
-                                                                      @NotNull @Size(min = 1, max = 40) @Valid String partyID,
+                                                                      @NotNull @Size(min = 1, max = 40) @Valid
+                                                                              String partyID,
                                                                       @NotNull @Valid OffsetDateTime fromTime,
                                                                       @NotNull @Valid OffsetDateTime toTime,
-                                                                      @NotNull @Min(1L) @Max(1000L) @Valid Integer limit,
+                                                                      @NotNull @Min(1L) @Max(1000L) @Valid
+                                                                              Integer limit,
                                                                       String xRequestDeadline,
                                                                       @Valid List<String> shopIDs,
                                                                       @Valid String invoiceTemplateStatus,
-                                                                      @Size(min = 1, max = 40) @Valid String invoiceTemplateID,
+                                                                      @Size(min = 1, max = 40) @Valid
+                                                                              String invoiceTemplateID,
                                                                       @Valid String continuationToken,
                                                                       @Size(min = 1, max = 40) @Valid String name,
                                                                       @Size(min = 1, max = 40) @Valid String product,
-                                                                      @Size(min = 1, max = 40) @Valid OffsetDateTime invoiceValidUntil) {
+                                                                      @Size(min = 1, max = 40) @Valid
+                                                                              OffsetDateTime invoiceValidUntil) {
         checkDeadline(xRequestDeadline, xRequestID);
         InvoiceTemplateSearchQuery query = invoiceTempateSearchConverter.convert(partyID,
                 fromTime,

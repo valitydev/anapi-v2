@@ -53,6 +53,17 @@
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
+            <artifactId>bouncer-proto</artifactId>
+            <version>1.27-cc50cc4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>org-management-proto</artifactId>
+            <version>1.3-39d8513</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
             <artifactId>payout-manager-proto</artifactId>
             <version>1.17-8aa3eb8</version>
         </dependency>
@@ -64,8 +75,14 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.18-e470bc7</version>
         </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>vortigon-proto</artifactId>
+            <version>1.13-0c92608</version>
+        </dependency>
+
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>
             <artifactId>serializer</artifactId>

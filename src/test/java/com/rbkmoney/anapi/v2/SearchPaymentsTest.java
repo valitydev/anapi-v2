@@ -3,8 +3,11 @@ package com.rbkmoney.anapi.v2;
 import com.rbkmoney.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
 import com.rbkmoney.anapi.v2.testutil.MagistaUtil;
 import com.rbkmoney.anapi.v2.testutil.OpenApiUtil;
+import com.rbkmoney.bouncer.decisions.ArbiterSrv;
+import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
 import com.rbkmoney.magista.MerchantStatisticsServiceSrv;
 import com.rbkmoney.openapi.anapi_v2.model.DefaultLogicError;
+import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
 import lombok.SneakyThrows;
 import org.apache.thrift.TException;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +22,10 @@ import org.springframework.util.MultiValueMap;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
+import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createContextFragment;
+import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createJudgementAllowed;
 import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -33,6 +39,12 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @MockBean
     public MerchantStatisticsServiceSrv.Iface magistaClient;
+    @MockBean
+    public VortigonServiceSrv.Iface vortigonClient;
+    @MockBean
+    public AuthContextProviderSrv.Iface orgMgmtClient;
+    @MockBean
+    public ArbiterSrv.Iface bouncerClient;
 
     @Autowired
     private MockMvc mvc;
@@ -44,7 +56,7 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[] {magistaClient};
+        preparedMocks = new Object[] {magistaClient, vortigonClient, orgMgmtClient, bouncerClient};
     }
 
     @AfterEach
@@ -56,6 +68,9 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void searchPaymentsRequiredParamsRequestSuccess() {
+        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentRequiredResponse());
         mvc.perform(get("/payments")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
@@ -67,12 +82,18 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
+        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchPayments(any());
     }
 
     @Test
     @SneakyThrows
     void searchPaymentsAllParamsRequestSuccess() {
+        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentAllResponse());
         mvc.perform(get("/payments")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
@@ -84,6 +105,9 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
+        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchPayments(any());
     }
 
@@ -108,6 +132,9 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void searchPaymentsRequestMagistaUnavailable() {
+        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenThrow(TException.class);
         mvc.perform(get("/payments")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
@@ -118,6 +145,9 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .content(""))
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
+        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchPayments(any());
     }
 }

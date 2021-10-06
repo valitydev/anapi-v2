@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
-import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
 
 @Component
 public class ParamsToChargebackSearchQueryConverter {
@@ -22,10 +21,7 @@ public class ParamsToChargebackSearchQueryConverter {
                                          OffsetDateTime fromTime,
                                          OffsetDateTime toTime,
                                          Integer limit,
-                                         String shopID,
                                          List<String> shopIDs,
-                                         String paymentInstitutionRealm,
-                                         Integer offset,
                                          String invoiceID,
                                          String paymentID,
                                          String chargebackID,
@@ -33,76 +29,90 @@ public class ParamsToChargebackSearchQueryConverter {
                                          List<String> chargebackStages,
                                          List<String> chargebackCategories,
                                          String continuationToken) {
-        //TODO: Mapping for paymentInstitutionRealm, offset
         return new ChargebackSearchQuery()
                 .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
-                                continuationToken))
+                        fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setInvoiceIds(invoiceID != null ? List.of(invoiceID) : null)
                 .setPaymentId(paymentID)
                 .setChargebackId(chargebackID)
                 .setChargebackStatuses(chargebackStatuses != null
                         ? chargebackStatuses.stream()
-                        .map(this::mapToDamselStatus)
+                        .map(this::mapStatus)
                         .collect(Collectors.toList())
                         : null
                 )
                 .setChargebackStages(chargebackStages != null
                         ? chargebackStages.stream()
-                        .map(this::mapToDamselStage)
+                        .map(this::mapStage)
                         .collect(Collectors.toList())
                         : null
                 )
                 .setChargebackCategories(chargebackCategories != null
                         ? chargebackCategories.stream()
-                        .map(this::mapToDamselCategory)
+                        .map(this::mapCategory)
                         .collect(Collectors.toList())
                         : null);
     }
 
-    private InvoicePaymentChargebackStage mapToDamselStage(String chargebackStage) {
-        var stage = Enum.valueOf(ChargebackStage.class, chargebackStage);
-        var damselStage = new InvoicePaymentChargebackStage();
-        switch (stage) {
-            case CHARGEBACK -> damselStage.setChargeback(new InvoicePaymentChargebackStageChargeback());
-            case PRE_ARBITRATION -> damselStage.setPreArbitration(new InvoicePaymentChargebackStagePreArbitration());
-            case ARBITRATION -> damselStage.setArbitration(new InvoicePaymentChargebackStageArbitration());
-            default -> throw new BadRequestException(
-                    String.format("Chargeback stage %s cannot be processed", chargebackStage));
-        }
+    protected InvoicePaymentChargebackStage mapStage(String chargebackStage) {
+        try {
+            var stage = ChargebackStage.fromValue(chargebackStage);
+            var damselStage = new InvoicePaymentChargebackStage();
+            switch (stage) {
+                case CHARGEBACK -> damselStage.setChargeback(new InvoicePaymentChargebackStageChargeback());
+                case PRE_ARBITRATION -> damselStage.setPreArbitration(
+                        new InvoicePaymentChargebackStagePreArbitration());
+                case ARBITRATION -> damselStage.setArbitration(new InvoicePaymentChargebackStageArbitration());
+                default -> throw new BadRequestException(
+                        String.format("Chargeback stage %s cannot be processed", chargebackStage));
+            }
 
-        return damselStage;
+            return damselStage;
+
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 
-    private InvoicePaymentChargebackStatus mapToDamselStatus(String chargebackStatus) {
-        var status = Enum.valueOf(ChargebackStatus.class, chargebackStatus);
-        var damselStatus = new InvoicePaymentChargebackStatus();
-        switch (status) {
-            case PENDING -> damselStatus.setPending(new InvoicePaymentChargebackPending());
-            case ACCEPTED -> damselStatus.setAccepted(new InvoicePaymentChargebackAccepted());
-            case REJECTED -> damselStatus.setRejected(new InvoicePaymentChargebackRejected());
-            case CANCELLED -> damselStatus.setCancelled(new InvoicePaymentChargebackCancelled());
-            default -> throw new BadRequestException(
-                    String.format("Chargeback status %s cannot be processed", chargebackStatus));
-        }
+    protected InvoicePaymentChargebackStatus mapStatus(String chargebackStatus) {
+        try {
+            var status = ChargebackStatus.fromValue(chargebackStatus);
+            var damselStatus = new InvoicePaymentChargebackStatus();
+            switch (status) {
+                case PENDING -> damselStatus.setPending(new InvoicePaymentChargebackPending());
+                case ACCEPTED -> damselStatus.setAccepted(new InvoicePaymentChargebackAccepted());
+                case REJECTED -> damselStatus.setRejected(new InvoicePaymentChargebackRejected());
+                case CANCELLED -> damselStatus.setCancelled(new InvoicePaymentChargebackCancelled());
+                default -> throw new BadRequestException(
+                        String.format("Chargeback status %s cannot be processed", chargebackStatus));
+            }
 
-        return damselStatus;
+            return damselStatus;
+
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 
-    private InvoicePaymentChargebackCategory mapToDamselCategory(String chargebackCategory) {
-        var category = Enum.valueOf(ChargebackCategory.class, chargebackCategory);
-        var damselCategory = new InvoicePaymentChargebackCategory();
-        switch (category) {
-            case FRAUD -> damselCategory.setFraud(new InvoicePaymentChargebackCategoryFraud());
-            case DISPUTE -> damselCategory.setDispute(new InvoicePaymentChargebackCategoryDispute());
-            case AUTHORISATION -> damselCategory
-                    .setAuthorisation(new InvoicePaymentChargebackCategoryAuthorisation());
-            case PROCESSING_ERROR -> damselCategory
-                    .setProcessingError(new InvoicePaymentChargebackCategoryProcessingError());
-            default -> throw new BadRequestException(
-                    String.format("Chargeback category %s cannot be processed", chargebackCategory));
-        }
+    protected InvoicePaymentChargebackCategory mapCategory(String chargebackCategory) {
+        try {
+            var category = ChargebackCategory.fromValue(chargebackCategory);
+            var damselCategory = new InvoicePaymentChargebackCategory();
+            switch (category) {
+                case FRAUD -> damselCategory.setFraud(new InvoicePaymentChargebackCategoryFraud());
+                case DISPUTE -> damselCategory.setDispute(new InvoicePaymentChargebackCategoryDispute());
+                case AUTHORISATION -> damselCategory
+                        .setAuthorisation(new InvoicePaymentChargebackCategoryAuthorisation());
+                case PROCESSING_ERROR -> damselCategory
+                        .setProcessingError(new InvoicePaymentChargebackCategoryProcessingError());
+                default -> throw new BadRequestException(
+                        String.format("Chargeback category %s cannot be processed", chargebackCategory));
+            }
 
-        return damselCategory;
+            return damselCategory;
+
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 }

@@ -27,8 +27,24 @@ management:
 
 service:
   magista:
-    url: http://magista:8022/stat
+    url: http://localhost:8022/change_it
     networkTimeout: 5000
+  vortigon:
+    url: http://localhost:8022/change_it
+    networkTimeout: 5000
+  orgManagement:
+    url: http://localhost:8022/change_it
+    networkTimeout: 5000
+  bouncer:
+    url: http://localhost:8022/change_it
+    networkTimeout: 10000
+    context-fragment-id: anapi
+    deployment-id: production
+    auth-method: SessionToken
+    realm: external
+    rule-set-id: change_it
+    auth:
+      enabled: false
 
 spring:
   application:

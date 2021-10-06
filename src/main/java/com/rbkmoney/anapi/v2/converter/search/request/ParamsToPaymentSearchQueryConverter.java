@@ -4,11 +4,7 @@ import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.damsel.domain.LegacyBankCardPaymentSystem;
 import com.rbkmoney.damsel.domain.LegacyBankCardTokenProvider;
 import com.rbkmoney.damsel.domain.LegacyTerminalPaymentProvider;
-import com.rbkmoney.magista.InvoicePaymentStatus;
-import com.rbkmoney.magista.PaymentParams;
-import com.rbkmoney.magista.PaymentSearchQuery;
-import com.rbkmoney.openapi.anapi_v2.model.BankCardPaymentSystem;
-import com.rbkmoney.openapi.anapi_v2.model.BankCardTokenProvider;
+import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.model.PaymentStatus;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +13,9 @@ import java.util.List;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
-import static com.rbkmoney.magista.InvoicePaymentFlowType.hold;
-import static com.rbkmoney.magista.InvoicePaymentFlowType.instant;
 import static com.rbkmoney.magista.InvoicePaymentStatus.*;
-import static com.rbkmoney.magista.PaymentTool.bank_card;
-import static com.rbkmoney.magista.PaymentTool.payment_terminal;
+import static com.rbkmoney.magista.PaymentToolType.bank_card;
+import static com.rbkmoney.magista.PaymentToolType.payment_terminal;
 
 @Component
 public class ParamsToPaymentSearchQueryConverter {
@@ -30,9 +24,7 @@ public class ParamsToPaymentSearchQueryConverter {
                                       OffsetDateTime fromTime,
                                       OffsetDateTime toTime,
                                       Integer limit,
-                                      String shopID,
                                       List<String> shopIDs,
-                                      String paymentInstitutionRealm,
                                       List<String> invoiceIDs,
                                       String paymentStatus, String paymentFlow,
                                       String paymentMethod,
@@ -48,34 +40,26 @@ public class ParamsToPaymentSearchQueryConverter {
                                       String last4,
                                       String rrn,
                                       String approvalCode,
-                                      BankCardTokenProvider bankCardTokenProvider,
-                                      BankCardPaymentSystem bankCardPaymentSystem,
+                                      String bankCardTokenProvider,
+                                      String bankCardPaymentSystem,
                                       Long paymentAmountFrom,
                                       Long paymentAmountTo,
                                       List<String> excludedShops,
                                       String continuationToken) {
-        //TODO: Mapping for paymentInstitutionRealm
         PaymentSearchQuery query = new PaymentSearchQuery()
                 .setCommonSearchQueryParams(
-                        fillCommonParams(fromTime, toTime, limit, partyID, merge(shopID, shopIDs),
-                                continuationToken))
+                        fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setExcludedShopIds(excludedShops)
                 .setExternalId(externalID)
                 .setInvoiceIds(merge(invoiceID, invoiceIDs));
 
         PaymentParams paymentParams = new PaymentParams()
-                .setPaymentTool(paymentMethod != null ? mapToPaymentTool(paymentMethod) : null)
-                .setPaymentFlow(paymentFlow != null ? mapToInvoicePaymentFlow(paymentFlow) : null)
+                .setPaymentTool(paymentMethod != null ? mapPaymentTool(paymentMethod) : null)
+                .setPaymentFlow(paymentFlow != null ? mapInvoicePaymentFlow(paymentFlow) : null)
                 .setPaymentTerminalProvider(
-                        paymentTerminalProvider != null
-                                ? LegacyTerminalPaymentProvider.valueOf(paymentTerminalProvider) :
-                                null)
+                        paymentTerminalProvider != null ? mapTerminalProvider(paymentTerminalProvider) : null)
                 .setPaymentTokenProvider(
-                        bankCardTokenProvider != null
-                                ?
-                                LegacyBankCardTokenProvider
-                                        .valueOf(bankCardTokenProvider.getValue()) :
-                                null)
+                        bankCardTokenProvider != null ? mapTokenProvider(bankCardTokenProvider) : null)
                 .setPaymentEmail(payerEmail)
                 .setPaymentApprovalCode(approvalCode)
                 .setPaymentCustomerId(customerID)
@@ -87,8 +71,7 @@ public class ParamsToPaymentSearchQueryConverter {
                 .setPaymentRrn(rrn)
                 .setPaymentStatus(paymentStatus != null ? mapStatus(paymentStatus) : null)
                 .setPaymentSystem(bankCardPaymentSystem != null
-                        ? LegacyBankCardPaymentSystem.valueOf(bankCardPaymentSystem.getValue()) :
-                        null);
+                        ? mapPaymentSystem(bankCardPaymentSystem) : null);
         if (paymentAmountFrom != null) {
             paymentParams.setPaymentAmountFrom(paymentAmountFrom);
         }
@@ -99,7 +82,32 @@ public class ParamsToPaymentSearchQueryConverter {
         return query;
     }
 
-    private com.rbkmoney.magista.PaymentTool mapToPaymentTool(String paymentMethod) {
+    protected LegacyTerminalPaymentProvider mapTerminalProvider(String provider) {
+        try {
+            return LegacyTerminalPaymentProvider.valueOf(provider);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(String.format("Terminal provider %s cannot be processed", provider));
+        }
+    }
+
+    protected LegacyBankCardTokenProvider mapTokenProvider(String provider) {
+        try {
+            return LegacyBankCardTokenProvider.valueOf(provider);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(String.format("Token provider %s cannot be processed", provider));
+        }
+    }
+
+    protected LegacyBankCardPaymentSystem mapPaymentSystem(String system) {
+        try {
+            return LegacyBankCardPaymentSystem.valueOf(system);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
+                    String.format("Payment system %s cannot be processed", system));
+        }
+    }
+
+    protected PaymentToolType mapPaymentTool(String paymentMethod) {
         return switch (paymentMethod) {
             case "bankCard" -> bank_card;
             case "paymentTerminal" -> payment_terminal;
@@ -108,26 +116,31 @@ public class ParamsToPaymentSearchQueryConverter {
         };
     }
 
-    private com.rbkmoney.magista.InvoicePaymentFlowType mapToInvoicePaymentFlow(String paymentFlow) {
-        return switch (paymentFlow) {
-            case "instant" -> instant;
-            case "hold" -> hold;
-            default -> throw new BadRequestException(
+    protected com.rbkmoney.magista.InvoicePaymentFlowType mapInvoicePaymentFlow(String paymentFlow) {
+        try {
+            return InvoicePaymentFlowType.valueOf(paymentFlow);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(
                     String.format("Payment flow %s cannot be processed", paymentFlow));
-        };
+        }
     }
 
-    private InvoicePaymentStatus mapStatus(String paymentStatus) {
-        var status = Enum.valueOf(PaymentStatus.StatusEnum.class, paymentStatus);
-        return switch (status) {
-            case PENDING -> pending;
-            case PROCESSED -> processed;
-            case CAPTURED -> captured;
-            case CANCELLED -> cancelled;
-            case REFUNDED -> refunded;
-            case FAILED -> failed;
-            default -> throw new BadRequestException(
-                    String.format("Payment status %s cannot be processed", paymentStatus));
-        };
+    protected InvoicePaymentStatus mapStatus(String paymentStatus) {
+        try {
+            var status = PaymentStatus.StatusEnum.fromValue(paymentStatus);
+            return switch (status) {
+                case PENDING -> pending;
+                case PROCESSED -> processed;
+                case CAPTURED -> captured;
+                case CANCELLED -> cancelled;
+                case REFUNDED -> refunded;
+                case FAILED -> failed;
+                case CHARGEDBACK -> charged_back;
+                default -> throw new BadRequestException(
+                        String.format("Payment status %s cannot be processed", paymentStatus));
+            };
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage());
+        }
     }
 }

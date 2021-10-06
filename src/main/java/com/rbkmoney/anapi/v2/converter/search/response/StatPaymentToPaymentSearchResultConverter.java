@@ -33,7 +33,7 @@ public class StatPaymentToPaymentSearchResultConverter {
                 .id(payment.getId())
                 .invoiceID(payment.getInvoiceId())
                 .makeRecurrent(payment.isMakeRecurrent())
-                .payer(getPayer(payment))
+                .payer(mapPayer(payment.getPayer()))
                 .shopID(payment.getShopId())
                 .shortID(payment.getShortId())
                 .transactionInfo(payment.getAdditionalTransactionInfo() != null
@@ -43,27 +43,25 @@ public class StatPaymentToPaymentSearchResultConverter {
                         : null);
     }
 
-    private Payer getPayer(StatPayment payment) {
-        var statPayer = payment.getPayer();
-        Payer payer = new Payer();
+    protected Payer mapPayer(com.rbkmoney.magista.Payer payer) {
 
-        if (statPayer.isSetCustomer()) {
-            return payer.payerType(Payer.PayerTypeEnum.CUSTOMERPAYER);
+        if (payer.isSetCustomer()) {
+            return new Payer().payerType(Payer.PayerTypeEnum.CUSTOMERPAYER);
         }
 
-        if (statPayer.isSetPaymentResource()) {
-            return payer.payerType(Payer.PayerTypeEnum.PAYMENTRESOURCEPAYER);
+        if (payer.isSetPaymentResource()) {
+            return new Payer().payerType(Payer.PayerTypeEnum.PAYMENTRESOURCEPAYER);
         }
 
-        if (statPayer.isSetRecurrent()) {
-            return payer.payerType(Payer.PayerTypeEnum.RECURRENTPAYER);
+        if (payer.isSetRecurrent()) {
+            return new Payer().payerType(Payer.PayerTypeEnum.RECURRENTPAYER);
         }
 
         throw new IllegalArgumentException(
-                String.format("Payer %s cannot be processed", statPayer));
+                String.format("Payer %s cannot be processed", payer));
     }
 
-    private PaymentSearchResult.StatusEnum mapStatus(InvoicePaymentStatus status) {
+    protected PaymentSearchResult.StatusEnum mapStatus(InvoicePaymentStatus status) {
         return switch (status) {
             case pending -> PENDING;
             case processed -> PROCESSED;
@@ -71,7 +69,7 @@ public class StatPaymentToPaymentSearchResultConverter {
             case cancelled -> CANCELLED;
             case refunded -> REFUNDED;
             case failed -> FAILED;
-            //case charged_back ->; TODO: OpenAPI missing status, should be added?
+            case charged_back -> CHARGEDBACK;
             default -> throw new IllegalArgumentException(
                     String.format("Payment status %s cannot be processed", status));
 
