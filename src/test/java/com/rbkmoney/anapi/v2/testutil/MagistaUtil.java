@@ -172,6 +172,10 @@ public class MagistaUtil {
         );
     }
 
+    public static StatInvoiceTemplateResponse createSearchInvoiceTemplateRequiredResponse() {
+        return fillRequiredTBaseObject(new StatInvoiceTemplateResponse(), StatInvoiceTemplateResponse.class);
+    }
+
     public static ContextFragment createContextFragment() {
         return fillRequiredTBaseObject(new ContextFragment(), ContextFragment.class);
     }

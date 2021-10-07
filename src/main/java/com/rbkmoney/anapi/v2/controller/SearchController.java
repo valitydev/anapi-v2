@@ -279,14 +279,17 @@ public class SearchController
                                                                               Integer limit,
                                                                       String xRequestDeadline,
                                                                       @Valid List<String> shopIDs,
+                                                                      @Valid String paymentInstitutionRealm,
                                                                       @Valid String invoiceTemplateStatus,
                                                                       @Size(min = 1, max = 40) @Valid
                                                                               String invoiceTemplateID,
                                                                       @Valid String continuationToken,
                                                                       @Size(min = 1, max = 40) @Valid String name,
                                                                       @Size(min = 1, max = 40) @Valid String product,
-                                                                      @Size(min = 1, max = 40) @Valid
-                                                                              OffsetDateTime invoiceValidUntil) {
+                                                                      @Valid OffsetDateTime invoiceValidUntil) {
+        log.info("-> Req: xRequestID={}", xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchInvoiceTemplates", partyID, shopIDs, paymentInstitutionRealm);
         checkDeadline(xRequestDeadline, xRequestID);
         InvoiceTemplateSearchQuery query = invoiceTempateSearchConverter.convert(partyID,
                 fromTime,
@@ -300,6 +303,7 @@ public class SearchController
                 product,
                 invoiceValidUntil);
         InlineResponse20013 response = searchService.findInvoiceTemplates(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 }

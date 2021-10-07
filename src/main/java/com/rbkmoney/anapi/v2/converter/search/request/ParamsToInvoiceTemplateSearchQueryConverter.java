@@ -29,10 +29,12 @@ public class ParamsToInvoiceTemplateSearchQueryConverter {
                         fillCommonParams(fromTime, toTime, limit, partyID, shopIDs,
                                 continuationToken))
                 .setInvoiceTemplateId(invoiceTemplateID)
-                .setInvoiceTemplateStatus(mapStatus(invoiceTemplateStatus))
+                .setInvoiceTemplateStatus(invoiceTemplateStatus != null
+                        ? mapStatus(invoiceTemplateStatus) : null)
                 .setName(name)
                 .setProduct(product)
-                .setInvoiceValidUntil(TypeUtil.temporalToString(invoiceValidUntil));
+                .setInvoiceValidUntil(invoiceValidUntil != null
+                        ? TypeUtil.temporalToString(invoiceValidUntil) : null);
     }
 
     protected InvoiceTemplateStatus mapStatus(String status) {
