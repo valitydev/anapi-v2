@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.converter.search.response;
 
+import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.InvoicePaymentStatus;
 import com.rbkmoney.magista.StatPayment;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import org.springframework.stereotype.Component;
@@ -28,6 +28,9 @@ public class StatPaymentToPaymentSearchResultConverter {
                         .countryGeoID(payment.getLocationInfo().getCountryGeoId())
                         : null)
                 .status(mapStatus(payment.getStatus()))
+                .error(payment.getStatus().isSetFailed()
+                        ? new PaymentError().code(payment.getStatus().getFailed().getFailure().getFailure().getCode())
+                        : null)
                 .statusChangedAt(payment.getStatusChangedAt() != null
                         ? TypeUtil.stringToInstant(payment.getStatusChangedAt()).atOffset(ZoneOffset.UTC) : null)
                 .id(payment.getId())
@@ -62,17 +65,29 @@ public class StatPaymentToPaymentSearchResultConverter {
     }
 
     protected PaymentSearchResult.StatusEnum mapStatus(InvoicePaymentStatus status) {
-        return switch (status) {
-            case pending -> PENDING;
-            case processed -> PROCESSED;
-            case captured -> CAPTURED;
-            case cancelled -> CANCELLED;
-            case refunded -> REFUNDED;
-            case failed -> FAILED;
-            case charged_back -> CHARGEDBACK;
-            default -> throw new IllegalArgumentException(
-                    String.format("Payment status %s cannot be processed", status));
+        if (status.isSetPending()) {
+            return PENDING;
+        }
+        if (status.isSetProcessed()) {
+            return PROCESSED;
+        }
+        if (status.isSetCaptured()) {
+            return CAPTURED;
+        }
+        if (status.isSetCancelled()) {
+            return CANCELLED;
+        }
+        if (status.isSetRefunded()) {
+            return REFUNDED;
+        }
+        if (status.isSetFailed()) {
+            return FAILED;
+        }
+        if (status.isSetChargedBack()) {
+            return CHARGEDBACK;
+        }
+        throw new IllegalArgumentException(
+                String.format("Payment status %s cannot be processed", status));
 
-        };
     }
 }

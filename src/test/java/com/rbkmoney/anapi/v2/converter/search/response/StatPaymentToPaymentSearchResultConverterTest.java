@@ -1,9 +1,12 @@
 package com.rbkmoney.anapi.v2.converter.search.response;
 
-import com.rbkmoney.damsel.domain.AdditionalTransactionInfo;
-import com.rbkmoney.damsel.domain.PaymentResourcePayer;
-import com.rbkmoney.damsel.domain.RecurrentPayer;
+import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
+import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.geck.common.util.TypeUtil;
+import com.rbkmoney.magista.CustomerPayer;
+import com.rbkmoney.magista.InvoicePaymentFlow;
+import com.rbkmoney.magista.InvoicePaymentFlowHold;
+import com.rbkmoney.magista.Payer;
 import com.rbkmoney.magista.*;
 import com.rbkmoney.openapi.anapi_v2.model.PaymentFlow;
 import com.rbkmoney.openapi.anapi_v2.model.PaymentSearchResult;
@@ -14,6 +17,7 @@ import java.time.OffsetDateTime;
 import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createSearchPaymentAllResponse;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;
 import static com.rbkmoney.openapi.anapi_v2.model.Payer.PayerTypeEnum.*;
+import static com.rbkmoney.openapi.anapi_v2.model.PaymentSearchResult.StatusEnum.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StatPaymentToPaymentSearchResultConverterTest {
@@ -66,8 +70,27 @@ class StatPaymentToPaymentSearchResultConverterTest {
 
     @Test
     void mapStatus() {
-        for (InvoicePaymentStatus status : InvoicePaymentStatus.values()) {
-            assertNotNull(converter.mapStatus(status));
-        }
+        var status = InvoicePaymentStatus.pending(new InvoicePaymentPending());
+        assertEquals(PENDING, converter.mapStatus(status));
+
+        status = InvoicePaymentStatus.processed(new InvoicePaymentProcessed());
+        assertEquals(PROCESSED, converter.mapStatus(status));
+
+        status = InvoicePaymentStatus.captured(new InvoicePaymentCaptured());
+        assertEquals(CAPTURED, converter.mapStatus(status));
+
+        status = InvoicePaymentStatus.cancelled(new InvoicePaymentCancelled());
+        assertEquals(CANCELLED, converter.mapStatus(status));
+
+        status = InvoicePaymentStatus.refunded(new InvoicePaymentRefunded());
+        assertEquals(REFUNDED, converter.mapStatus(status));
+
+        status = InvoicePaymentStatus.failed(new InvoicePaymentFailed());
+        assertEquals(FAILED, converter.mapStatus(status));
+
+        status = InvoicePaymentStatus.charged_back(new InvoicePaymentChargedBack());
+        assertEquals(CHARGEDBACK, converter.mapStatus(status));
+
+        assertThrows(IllegalArgumentException.class, () -> converter.mapStatus(new InvoicePaymentStatus()));
     }
 }

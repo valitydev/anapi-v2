@@ -74,7 +74,7 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.18-e470bc7</version>
+            <version>1.19-50148e1</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
