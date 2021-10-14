@@ -20,34 +20,30 @@ public class StatChargebackToChargebackConverter {
                 .createdAt(TypeUtil.stringToInstant(chargeback.getCreatedAt()).atOffset(ZoneOffset.UTC))
                 .chargebackId(chargeback.getChargebackId())
                 .fee(chargeback.getFee())
-                .chargebackReason(chargeback.getChargebackReason() != null
+                .chargebackReason(chargeback.isSetChargebackReason()
                         ? new ChargebackReason()
                         .category(mapCategory(chargeback.getChargebackReason().getCategory()))
                         .code(chargeback.getChargebackReason().getCode()) : null)
-                .content(chargeback.getContent() != null
+                .content(chargeback.isSetContent()
                         ? new Content().data(chargeback.getContent().getData())
                         .type(chargeback.getContent().getType()) : null)
                 .bodyCurrency(chargeback.getCurrencyCode().getSymbolicCode());
     }
 
     protected ChargebackCategory mapCategory(InvoicePaymentChargebackCategory chargebackCategory) {
-        if (chargebackCategory.isSetAuthorisation()) {
-            return ChargebackCategory.AUTHORISATION;
+        try {
+            var field = InvoicePaymentChargebackCategory._Fields.findByName(
+                    chargebackCategory.getSetField().getFieldName());
+            return switch (field) {
+                case FRAUD -> ChargebackCategory.FRAUD;
+                case DISPUTE -> ChargebackCategory.DISPUTE;
+                case AUTHORISATION -> ChargebackCategory.AUTHORISATION;
+                case PROCESSING_ERROR -> ChargebackCategory.PROCESSING_ERROR;
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Chargeback category %s cannot be processed", chargebackCategory));
         }
-
-        if (chargebackCategory.isSetDispute()) {
-            return ChargebackCategory.DISPUTE;
-        }
-
-        if (chargebackCategory.isSetFraud()) {
-            return ChargebackCategory.FRAUD;
-        }
-
-        if (chargebackCategory.isSetProcessingError()) {
-            return ChargebackCategory.PROCESSING_ERROR;
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Chargeback category %s cannot be processed", chargebackCategory));
     }
 }

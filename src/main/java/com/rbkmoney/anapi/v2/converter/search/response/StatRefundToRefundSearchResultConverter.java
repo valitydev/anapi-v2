@@ -39,19 +39,17 @@ public class StatRefundToRefundSearchResultConverter {
     }
 
     protected RefundSearchResult.StatusEnum mapStatus(InvoicePaymentRefundStatus status) {
-        if (status.isSetPending()) {
-            return RefundSearchResult.StatusEnum.PENDING;
+        try {
+            var field = InvoicePaymentRefundStatus._Fields.findByName(status.getSetField().getFieldName());
+            return switch (field) {
+                case PENDING -> RefundSearchResult.StatusEnum.PENDING;
+                case SUCCEEDED -> RefundSearchResult.StatusEnum.SUCCEEDED;
+                case FAILED -> RefundSearchResult.StatusEnum.FAILED;
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Refund status %s cannot be processed", status));
         }
-
-        if (status.isSetFailed()) {
-            return RefundSearchResult.StatusEnum.FAILED;
-        }
-
-        if (status.isSetSucceeded()) {
-            return RefundSearchResult.StatusEnum.SUCCEEDED;
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Refund status %s cannot be processed", status));
     }
 }

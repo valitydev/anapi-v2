@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.converter.search.response;
 
+import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.InvoicePaymentStatus;
 import com.rbkmoney.magista.StatPayment;
 import com.rbkmoney.openapi.anapi_v2.model.*;
 import org.springframework.stereotype.Component;
@@ -23,12 +23,15 @@ public class StatPaymentToPaymentSearchResultConverter {
                 .flow(new PaymentFlow()
                         .type(payment.getFlow().isSetHold() ? PaymentFlow.TypeEnum.PAYMENTFLOWHOLD :
                                 PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT))
-                .geoLocationInfo(payment.getLocationInfo() != null ? new GeoLocationInfo()
+                .geoLocationInfo(payment.isSetLocationInfo() ? new GeoLocationInfo()
                         .cityGeoID(payment.getLocationInfo().getCityGeoId())
                         .countryGeoID(payment.getLocationInfo().getCountryGeoId())
                         : null)
                 .status(mapStatus(payment.getStatus()))
-                .statusChangedAt(payment.getStatusChangedAt() != null
+                .error(payment.getStatus().isSetFailed()
+                        ? new PaymentError().code(payment.getStatus().getFailed().getFailure().getFailure().getCode())
+                        : null)
+                .statusChangedAt(payment.isSetStatusChangedAt()
                         ? TypeUtil.stringToInstant(payment.getStatusChangedAt()).atOffset(ZoneOffset.UTC) : null)
                 .id(payment.getId())
                 .invoiceID(payment.getInvoiceId())
@@ -36,7 +39,7 @@ public class StatPaymentToPaymentSearchResultConverter {
                 .payer(mapPayer(payment.getPayer()))
                 .shopID(payment.getShopId())
                 .shortID(payment.getShortId())
-                .transactionInfo(payment.getAdditionalTransactionInfo() != null
+                .transactionInfo(payment.isSetAdditionalTransactionInfo()
                         ? new TransactionInfo()
                         .approvalCode(payment.getAdditionalTransactionInfo().getApprovalCode())
                         .rrn(payment.getAdditionalTransactionInfo().getRrn())
@@ -44,35 +47,37 @@ public class StatPaymentToPaymentSearchResultConverter {
     }
 
     protected Payer mapPayer(com.rbkmoney.magista.Payer payer) {
-
-        if (payer.isSetCustomer()) {
-            return new Payer().payerType(Payer.PayerTypeEnum.CUSTOMERPAYER);
+        try {
+            var field = com.rbkmoney.magista.Payer._Fields.findByName(payer.getSetField().getFieldName());
+            return switch (field) {
+                case CUSTOMER -> new Payer().payerType(Payer.PayerTypeEnum.CUSTOMERPAYER);
+                case PAYMENT_RESOURCE -> new Payer().payerType(Payer.PayerTypeEnum.PAYMENTRESOURCEPAYER);
+                case RECURRENT -> new Payer().payerType(Payer.PayerTypeEnum.RECURRENTPAYER);
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Payer %s cannot be processed", payer));
         }
-
-        if (payer.isSetPaymentResource()) {
-            return new Payer().payerType(Payer.PayerTypeEnum.PAYMENTRESOURCEPAYER);
-        }
-
-        if (payer.isSetRecurrent()) {
-            return new Payer().payerType(Payer.PayerTypeEnum.RECURRENTPAYER);
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Payer %s cannot be processed", payer));
     }
 
     protected PaymentSearchResult.StatusEnum mapStatus(InvoicePaymentStatus status) {
-        return switch (status) {
-            case pending -> PENDING;
-            case processed -> PROCESSED;
-            case captured -> CAPTURED;
-            case cancelled -> CANCELLED;
-            case refunded -> REFUNDED;
-            case failed -> FAILED;
-            case charged_back -> CHARGEDBACK;
-            default -> throw new IllegalArgumentException(
+        try {
+            var field = InvoicePaymentStatus._Fields.findByName(status.getSetField().getFieldName());
+            return switch (field) {
+                case PENDING -> PENDING;
+                case PROCESSED -> PROCESSED;
+                case CAPTURED -> CAPTURED;
+                case CANCELLED -> CANCELLED;
+                case REFUNDED -> REFUNDED;
+                case FAILED -> FAILED;
+                case CHARGED_BACK -> CHARGEDBACK;
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
                     String.format("Payment status %s cannot be processed", status));
+        }
 
-        };
     }
 }

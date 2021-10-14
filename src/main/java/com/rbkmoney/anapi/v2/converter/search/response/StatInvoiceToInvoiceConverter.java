@@ -23,7 +23,7 @@ public class StatInvoiceToInvoiceConverter {
                 .createdAt(TypeUtil.stringToInstant(invoice.getCreatedAt()).atOffset(ZoneOffset.UTC))
                 .currency(invoice.getCurrencySymbolicCode())
                 .externalID(invoice.getExternalId())
-                .cart(invoice.getCart() != null
+                .cart(invoice.isSetCart()
                         ? invoice.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
                         .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
                         .price(invoiceLine.getPrice().getAmount())
@@ -41,30 +41,25 @@ public class StatInvoiceToInvoiceConverter {
     }
 
     protected void mapStatusInfo(Invoice invoice, InvoiceStatus status) {
-        if (status.isSetFulfilled()) {
-            invoice.setStatus(Invoice.StatusEnum.FULFILLED);
-            invoice.setReason(status.getFulfilled().getDetails());
-            return;
+        try {
+            var field = InvoiceStatus._Fields.findByName(status.getSetField().getFieldName());
+            switch (field) {
+                case FULFILLED -> {
+                    invoice.setReason(status.getFulfilled().getDetails());
+                    invoice.setStatus(Invoice.StatusEnum.FULFILLED);
+                }
+                case CANCELLED -> {
+                    invoice.setReason(status.getCancelled().getDetails());
+                    invoice.setStatus(Invoice.StatusEnum.CANCELLED);
+                }
+                case PAID -> invoice.setStatus(Invoice.StatusEnum.PAID);
+                case UNPAID -> invoice.setStatus(Invoice.StatusEnum.UNPAID);
+                default -> throw new IllegalArgumentException();
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Invoice status %s cannot be processed", status));
         }
-
-        if (status.isSetPaid()) {
-            invoice.setStatus(Invoice.StatusEnum.PAID);
-            return;
-        }
-
-        if (status.isSetUnpaid()) {
-            invoice.setStatus(Invoice.StatusEnum.UNPAID);
-            return;
-        }
-
-        if (status.isSetCancelled()) {
-            invoice.setStatus(Invoice.StatusEnum.CANCELLED);
-            invoice.setReason(status.getCancelled().getDetails());
-            return;
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Invoice status %s cannot be processed", status));
     }
 
     protected InvoiceLineTaxMode mapTaxMode(Map<String, Value> metadata) {

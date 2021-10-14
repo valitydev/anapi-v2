@@ -6,6 +6,7 @@ import com.rbkmoney.bouncer.decisions.Resolution;
 import com.rbkmoney.bouncer.decisions.ResolutionAllowed;
 import com.rbkmoney.damsel.base.Content;
 import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
+import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
 import com.rbkmoney.damsel.domain.InvoiceStatus;
 import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.damsel.geo_ip.LocationInfo;
@@ -15,7 +16,6 @@ import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.magista.InvoicePaymentFlow;
 import com.rbkmoney.magista.InvoicePaymentFlowInstant;
-import com.rbkmoney.magista.InvoicePaymentStatus;
 import com.rbkmoney.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -53,6 +53,8 @@ public class MagistaUtil {
 
     public static StatPaymentResponse createSearchPaymentAllResponse() {
         var payment = fillRequiredTBaseObject(new StatPayment(), StatPayment.class);
+        var status = new InvoicePaymentStatus();
+        status.setPending(new InvoicePaymentPending());
         var cart = fillRequiredTBaseObject(new InvoiceCart(), InvoiceCart.class);
         var line = fillRequiredTBaseObject(new InvoiceLine(), InvoiceLine.class);
         var instant = fillRequiredTBaseObject(new InvoicePaymentFlowInstant(), InvoicePaymentFlowInstant.class);
@@ -61,8 +63,7 @@ public class MagistaUtil {
 
         return response.setPayments(
                 List.of(payment
-                        .setStatus(InvoicePaymentStatus
-                                .pending)
+                        .setStatus(status)
                         .setCart(cart.setLines(List.of(line)))
                         .setFlow(InvoicePaymentFlow
                                 .instant(instant))
