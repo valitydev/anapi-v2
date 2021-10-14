@@ -31,68 +31,66 @@ public class StatPayoutToPayoutConverter {
     }
 
     protected String mapStatus(PayoutStatus status) {
-        if (status.isSetCancelled()) {
-            return "Cancelled";
+        try {
+            var field = PayoutStatus._Fields.findByName(status.getSetField().getFieldName());
+            return switch (field) {
+                case UNPAID -> "Unpaid";
+                case PAID -> "Paid";
+                case CANCELLED -> "Cancelled";
+                case CONFIRMED -> "Confirmed";
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Payout status %s cannot be processed", status));
         }
-
-        if (status.isSetPaid()) {
-            return "Paid";
-        }
-
-        if (status.isSetConfirmed()) {
-            return "Confirmed";
-        }
-
-        if (status.isSetUnpaid()) {
-            return "Unpaid";
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Payout status %s cannot be processed", status));
     }
 
     protected PayoutToolDetails mapPayoutToolDetails(PayoutToolInfo payoutToolInfo) {
-        if (payoutToolInfo.isSetRussianBankAccount()) {
-            var account = payoutToolInfo.getRussianBankAccount();
-            return new PayoutToolDetailsBankAccount()
-                    .account(account.getAccount())
-                    .bankBik(account.getBankBik())
-                    .bankName(account.getBankName())
-                    .bankPostAccount(account.getBankPostAccount())
-                    .detailsType("PayoutToolDetailsBankAccount");
+        try {
+            var field = PayoutToolInfo._Fields.findByName(payoutToolInfo.getSetField().getFieldName());
+            switch (field) {
+                case RUSSIAN_BANK_ACCOUNT -> {
+                    var account = payoutToolInfo.getRussianBankAccount();
+                    return new PayoutToolDetailsBankAccount()
+                            .account(account.getAccount())
+                            .bankBik(account.getBankBik())
+                            .bankName(account.getBankName())
+                            .bankPostAccount(account.getBankPostAccount())
+                            .detailsType("PayoutToolDetailsBankAccount");
+                }
+                case INTERNATIONAL_BANK_ACCOUNT -> {
+                    var account = payoutToolInfo.getInternationalBankAccount();
+                    return new PayoutToolDetailsInternationalBankAccount()
+                            .iban(account.getIban())
+                            .number(account.getNumber())
+                            .bankDetails(account.isSetBank()
+                                    ? new InternationalBankDetails()
+                                    .name(account.getBank().getName())
+                                    .bic(account.getBank().getBic())
+                                    .countryCode(mapCountryCode(account.getBank().getCountry()))
+                                    .address(account.getBank().getAddress())
+                                    .abartn(account.getBank().getAbaRtn())
+                                    : null)
+                            .correspondentBankAccount(
+                                    mapInternationalCorrespondentBankAccount(account.getCorrespondentAccount()))
+                            .detailsType("PayoutToolDetailsInternationalBankAccount");
+                }
+                case WALLET_INFO -> {
+                    return new PayoutToolDetailsWalletInfo()
+                            .walletID(payoutToolInfo.getWalletInfo().getWalletId())
+                            .detailsType("PayoutToolDetailsWalletInfo");
+                }
+                case PAYMENT_INSTITUTION_ACCOUNT -> {
+                    return new PayoutToolDetailsPaymentInstitutionAccount()
+                            .detailsType("PayoutToolDetailsPaymentInstitutionAccount");
+                }
+                default -> throw new IllegalArgumentException();
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("PayoutToolInfo %s cannot be processed", payoutToolInfo));
         }
-
-        if (payoutToolInfo.isSetInternationalBankAccount()) {
-            var account = payoutToolInfo.getInternationalBankAccount();
-            return new PayoutToolDetailsInternationalBankAccount()
-                    .iban(account.getIban())
-                    .number(account.getNumber())
-                    .bankDetails(account.isSetBank()
-                            ? new InternationalBankDetails()
-                            .name(account.getBank().getName())
-                            .bic(account.getBank().getBic())
-                            .countryCode(mapCountryCode(account.getBank().getCountry()))
-                            .address(account.getBank().getAddress())
-                            .abartn(account.getBank().getAbaRtn())
-                            : null)
-                    .correspondentBankAccount(
-                            mapInternationalCorrespondentBankAccount(account.getCorrespondentAccount()))
-                    .detailsType("PayoutToolDetailsInternationalBankAccount");
-        }
-
-        if (payoutToolInfo.isSetPaymentInstitutionAccount()) {
-            return new PayoutToolDetailsPaymentInstitutionAccount()
-                    .detailsType("PayoutToolDetailsPaymentInstitutionAccount");
-        }
-
-        if (payoutToolInfo.isSetWalletInfo()) {
-            return new PayoutToolDetailsWalletInfo()
-                    .walletID(payoutToolInfo.getWalletInfo().getWalletId())
-                    .detailsType("PayoutToolDetailsWalletInfo");
-        }
-
-        throw new IllegalArgumentException(
-                String.format("PayoutToolInfo %s cannot be processed", payoutToolInfo));
 
     }
 

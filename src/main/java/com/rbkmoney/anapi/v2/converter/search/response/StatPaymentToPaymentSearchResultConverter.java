@@ -47,47 +47,37 @@ public class StatPaymentToPaymentSearchResultConverter {
     }
 
     protected Payer mapPayer(com.rbkmoney.magista.Payer payer) {
-
-        if (payer.isSetCustomer()) {
-            return new Payer().payerType(Payer.PayerTypeEnum.CUSTOMERPAYER);
+        try {
+            var field = com.rbkmoney.magista.Payer._Fields.findByName(payer.getSetField().getFieldName());
+            return switch (field) {
+                case CUSTOMER -> new Payer().payerType(Payer.PayerTypeEnum.CUSTOMERPAYER);
+                case PAYMENT_RESOURCE -> new Payer().payerType(Payer.PayerTypeEnum.PAYMENTRESOURCEPAYER);
+                case RECURRENT -> new Payer().payerType(Payer.PayerTypeEnum.RECURRENTPAYER);
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Payer %s cannot be processed", payer));
         }
-
-        if (payer.isSetPaymentResource()) {
-            return new Payer().payerType(Payer.PayerTypeEnum.PAYMENTRESOURCEPAYER);
-        }
-
-        if (payer.isSetRecurrent()) {
-            return new Payer().payerType(Payer.PayerTypeEnum.RECURRENTPAYER);
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Payer %s cannot be processed", payer));
     }
 
     protected PaymentSearchResult.StatusEnum mapStatus(InvoicePaymentStatus status) {
-        if (status.isSetPending()) {
-            return PENDING;
+        try {
+            var field = InvoicePaymentStatus._Fields.findByName(status.getSetField().getFieldName());
+            return switch (field) {
+                case PENDING -> PENDING;
+                case PROCESSED -> PROCESSED;
+                case CAPTURED -> CAPTURED;
+                case CANCELLED -> CANCELLED;
+                case REFUNDED -> REFUNDED;
+                case FAILED -> FAILED;
+                case CHARGED_BACK -> CHARGEDBACK;
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Payment status %s cannot be processed", status));
         }
-        if (status.isSetProcessed()) {
-            return PROCESSED;
-        }
-        if (status.isSetCaptured()) {
-            return CAPTURED;
-        }
-        if (status.isSetCancelled()) {
-            return CANCELLED;
-        }
-        if (status.isSetRefunded()) {
-            return REFUNDED;
-        }
-        if (status.isSetFailed()) {
-            return FAILED;
-        }
-        if (status.isSetChargedBack()) {
-            return CHARGEDBACK;
-        }
-        throw new IllegalArgumentException(
-                String.format("Payment status %s cannot be processed", status));
 
     }
 }

@@ -31,23 +31,19 @@ public class StatChargebackToChargebackConverter {
     }
 
     protected ChargebackCategory mapCategory(InvoicePaymentChargebackCategory chargebackCategory) {
-        if (chargebackCategory.isSetAuthorisation()) {
-            return ChargebackCategory.AUTHORISATION;
+        try {
+            var field = InvoicePaymentChargebackCategory._Fields.findByName(
+                    chargebackCategory.getSetField().getFieldName());
+            return switch (field) {
+                case FRAUD -> ChargebackCategory.FRAUD;
+                case DISPUTE -> ChargebackCategory.DISPUTE;
+                case AUTHORISATION -> ChargebackCategory.AUTHORISATION;
+                case PROCESSING_ERROR -> ChargebackCategory.PROCESSING_ERROR;
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Chargeback category %s cannot be processed", chargebackCategory));
         }
-
-        if (chargebackCategory.isSetDispute()) {
-            return ChargebackCategory.DISPUTE;
-        }
-
-        if (chargebackCategory.isSetFraud()) {
-            return ChargebackCategory.FRAUD;
-        }
-
-        if (chargebackCategory.isSetProcessingError()) {
-            return ChargebackCategory.PROCESSING_ERROR;
-        }
-
-        throw new IllegalArgumentException(
-                String.format("Chargeback category %s cannot be processed", chargebackCategory));
     }
 }
