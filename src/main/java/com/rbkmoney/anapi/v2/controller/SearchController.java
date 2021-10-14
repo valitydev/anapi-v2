@@ -28,7 +28,8 @@ import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 @Controller
 @RequiredArgsConstructor
 @SuppressWarnings("ParameterName")
-public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi {
+public class SearchController
+        implements PaymentsApi, ChargebacksApi, InvoicesApi, PayoutsApi, RefundsApi, InvoiceTemplatesApi {
 
     private final SearchService searchService;
     private final AccessService accessService;
@@ -37,6 +38,7 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
     private final ParamsToInvoiceSearchQueryConverter invoiceSearchConverter;
     private final ParamsToPayoutSearchQueryConverter payoutSearchConverter;
     private final ParamsToRefundSearchQueryConverter refundSearchConverter;
+    private final ParamsToInvoiceTemplateSearchQueryConverter invoiceTempateSearchConverter;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -263,6 +265,44 @@ public class SearchController implements PaymentsApi, ChargebacksApi, InvoicesAp
                 refundStatus,
                 continuationToken);
         InlineResponse20012 response = searchService.findRefunds(query);
+        log.info("<- Res [200]: xRequestID={}", xRequestID);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<InlineResponse20013> searchInvoiceTemplates(String xRequestID,
+                                                                      @NotNull @Size(min = 1, max = 40) @Valid
+                                                                              String partyID,
+                                                                      @NotNull @Valid OffsetDateTime fromTime,
+                                                                      @NotNull @Valid OffsetDateTime toTime,
+                                                                      @NotNull @Min(1L) @Max(1000L) @Valid
+                                                                              Integer limit,
+                                                                      String xRequestDeadline,
+                                                                      @Valid List<String> shopIDs,
+                                                                      @Valid String paymentInstitutionRealm,
+                                                                      @Valid String invoiceTemplateStatus,
+                                                                      @Size(min = 1, max = 40) @Valid
+                                                                              String invoiceTemplateID,
+                                                                      @Valid String continuationToken,
+                                                                      @Size(min = 1, max = 40) @Valid String name,
+                                                                      @Size(min = 1, max = 40) @Valid String product,
+                                                                      @Valid OffsetDateTime invoiceValidUntil) {
+        log.info("-> Req: xRequestID={}", xRequestID);
+        shopIDs = accessService
+                .getAccessibleShops("searchInvoiceTemplates", partyID, shopIDs, paymentInstitutionRealm);
+        checkDeadline(xRequestDeadline, xRequestID);
+        InvoiceTemplateSearchQuery query = invoiceTempateSearchConverter.convert(partyID,
+                fromTime,
+                toTime,
+                limit,
+                shopIDs,
+                invoiceTemplateStatus,
+                invoiceTemplateID,
+                continuationToken,
+                name,
+                product,
+                invoiceValidUntil);
+        InlineResponse20013 response = searchService.findInvoiceTemplates(query);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }

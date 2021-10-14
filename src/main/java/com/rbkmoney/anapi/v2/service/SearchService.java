@@ -19,6 +19,7 @@ public class SearchService {
     private final StatInvoiceToInvoiceConverter invoiceResponseConverter;
     private final StatPayoutToPayoutConverter payoutResponseConverter;
     private final StatRefundToRefundSearchResultConverter refundResponseConverter;
+    private final StatInvoiceTemplateToInvoiceTemplateConverter invoiceTemplateResponseConverter;
 
     @SneakyThrows
     public InlineResponse20010 findPayments(PaymentSearchQuery query) {
@@ -71,4 +72,13 @@ public class SearchService {
                 .continuationToken(magistaResponse.getContinuationToken());
     }
 
+    @SneakyThrows
+    public InlineResponse20013 findInvoiceTemplates(InvoiceTemplateSearchQuery query) {
+        StatInvoiceTemplateResponse magistaResponse = magistaClient.searchInvoiceTemplates(query);
+        return new InlineResponse20013()
+                .result(magistaResponse.getInvoiceTemplates().stream()
+                        .map(invoiceTemplateResponseConverter::convert)
+                        .collect(Collectors.toList()))
+                .continuationToken(magistaResponse.getContinuationToken());
+    }
 }

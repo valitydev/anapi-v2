@@ -33,7 +33,7 @@ public class AccessService {
 
         List<String> shopIds = vortigonService.getShopIds(partyId, Objects.requireNonNullElse(realm, "live"));
 
-        if (!requestShopIds.isEmpty()) {
+        if (requestShopIds != null && !requestShopIds.isEmpty()) {
             shopIds = requestShopIds.stream()
                     .filter(shopIds::contains)
                     .collect(Collectors.toList());
