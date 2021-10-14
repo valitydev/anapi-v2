@@ -20,11 +20,11 @@ public class StatChargebackToChargebackConverter {
                 .createdAt(TypeUtil.stringToInstant(chargeback.getCreatedAt()).atOffset(ZoneOffset.UTC))
                 .chargebackId(chargeback.getChargebackId())
                 .fee(chargeback.getFee())
-                .chargebackReason(chargeback.getChargebackReason() != null
+                .chargebackReason(chargeback.isSetChargebackReason()
                         ? new ChargebackReason()
                         .category(mapCategory(chargeback.getChargebackReason().getCategory()))
                         .code(chargeback.getChargebackReason().getCode()) : null)
-                .content(chargeback.getContent() != null
+                .content(chargeback.isSetContent()
                         ? new Content().data(chargeback.getContent().getData())
                         .type(chargeback.getContent().getType()) : null)
                 .bodyCurrency(chargeback.getCurrencyCode().getSymbolicCode());

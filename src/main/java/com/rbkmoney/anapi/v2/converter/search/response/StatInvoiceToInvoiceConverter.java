@@ -23,7 +23,7 @@ public class StatInvoiceToInvoiceConverter {
                 .createdAt(TypeUtil.stringToInstant(invoice.getCreatedAt()).atOffset(ZoneOffset.UTC))
                 .currency(invoice.getCurrencySymbolicCode())
                 .externalID(invoice.getExternalId())
-                .cart(invoice.getCart() != null
+                .cart(invoice.isSetCart()
                         ? invoice.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
                         .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
                         .price(invoiceLine.getPrice().getAmount())

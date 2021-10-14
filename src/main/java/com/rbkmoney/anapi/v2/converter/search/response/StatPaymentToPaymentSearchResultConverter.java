@@ -23,7 +23,7 @@ public class StatPaymentToPaymentSearchResultConverter {
                 .flow(new PaymentFlow()
                         .type(payment.getFlow().isSetHold() ? PaymentFlow.TypeEnum.PAYMENTFLOWHOLD :
                                 PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT))
-                .geoLocationInfo(payment.getLocationInfo() != null ? new GeoLocationInfo()
+                .geoLocationInfo(payment.isSetLocationInfo() ? new GeoLocationInfo()
                         .cityGeoID(payment.getLocationInfo().getCityGeoId())
                         .countryGeoID(payment.getLocationInfo().getCountryGeoId())
                         : null)
@@ -31,7 +31,7 @@ public class StatPaymentToPaymentSearchResultConverter {
                 .error(payment.getStatus().isSetFailed()
                         ? new PaymentError().code(payment.getStatus().getFailed().getFailure().getFailure().getCode())
                         : null)
-                .statusChangedAt(payment.getStatusChangedAt() != null
+                .statusChangedAt(payment.isSetStatusChangedAt()
                         ? TypeUtil.stringToInstant(payment.getStatusChangedAt()).atOffset(ZoneOffset.UTC) : null)
                 .id(payment.getId())
                 .invoiceID(payment.getInvoiceId())
@@ -39,7 +39,7 @@ public class StatPaymentToPaymentSearchResultConverter {
                 .payer(mapPayer(payment.getPayer()))
                 .shopID(payment.getShopId())
                 .shortID(payment.getShortId())
-                .transactionInfo(payment.getAdditionalTransactionInfo() != null
+                .transactionInfo(payment.isSetAdditionalTransactionInfo()
                         ? new TransactionInfo()
                         .approvalCode(payment.getAdditionalTransactionInfo().getApprovalCode())
                         .rrn(payment.getAdditionalTransactionInfo().getRrn())

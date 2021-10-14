@@ -67,7 +67,7 @@ public class StatPayoutToPayoutConverter {
             return new PayoutToolDetailsInternationalBankAccount()
                     .iban(account.getIban())
                     .number(account.getNumber())
-                    .bankDetails(account.getBank() != null
+                    .bankDetails(account.isSetBank()
                             ? new InternationalBankDetails()
                             .name(account.getBank().getName())
                             .bic(account.getBank().getBic())
@@ -120,7 +120,7 @@ public class StatPayoutToPayoutConverter {
                         : null)
                 .iban(account.getIban())
                 .number(account.getNumber())
-                .correspondentBankAccount(account.getCorrespondentAccount() != null
+                .correspondentBankAccount(account.isSetCorrespondentAccount()
                         ? mapInternationalCorrespondentBankAccount(account.getCorrespondentAccount())
                         : null);
     }
