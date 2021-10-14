@@ -32,49 +32,47 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
     }
 
     protected InvoiceTemplateDetails mapDetails(com.rbkmoney.damsel.domain.InvoiceTemplateDetails details) {
-        if (details.isSetCart()) {
-            return new InvoiceTemplateCart().cart(
-                            details.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
-                                            .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
-                                            .price(invoiceLine.getPrice().getAmount())
-                                            .product(invoiceLine.getProduct())
-                                            .taxMode(mapTaxMode(invoiceLine.getMetadata()))
-                                            .quantity((long) invoiceLine.getQuantity()))
-                                    .collect(Collectors.toList()))
-                    .templateType("invoiceTemplateMultiLine");
+        try {
+            var field = com.rbkmoney.damsel.domain.InvoiceTemplateDetails._Fields.findByName(
+                    details.getSetField().getFieldName());
+            return switch (field) {
+                case CART -> new InvoiceTemplateCart().cart(
+                                details.getCart().getLines().stream().map(invoiceLine -> new InvoiceLine()
+                                                .cost(invoiceLine.getQuantity() * invoiceLine.getPrice().getAmount())
+                                                .price(invoiceLine.getPrice().getAmount())
+                                                .product(invoiceLine.getProduct())
+                                                .taxMode(mapTaxMode(invoiceLine.getMetadata()))
+                                                .quantity((long) invoiceLine.getQuantity()))
+                                        .collect(Collectors.toList()))
+                        .templateType("invoiceTemplateMultiLine");
+                case PRODUCT -> new InvoiceTemplateProduct()
+                        .product(details.getProduct().getProduct())
+                        .price(mapPrice(details.getProduct().getPrice()))
+                        .metadata(details.getFieldMetaData())
+                        .templateType("invoiceTemplateSingleLine");
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("InvoiceTemplateDetails %s cannot be processed", details));
         }
-
-        if (details.isSetProduct()) {
-            return new InvoiceTemplateProduct()
-                    .product(details.getProduct().getProduct())
-                    .price(mapPrice(details.getProduct().getPrice()))
-                    .metadata(details.getFieldMetaData())
-                    .templateType("invoiceTemplateSingleLine");
-        }
-
-        throw new IllegalArgumentException(
-                String.format("InvoiceTemplateDetails %s cannot be processed", details));
 
     }
 
     protected InvoiceTemplateProductPrice mapPrice(com.rbkmoney.damsel.domain.InvoiceTemplateProductPrice price) {
-        if (price.isSetFixed()) {
-            return mapCash(price.getFixed())
-                    .costType("fixed");
+        try {
+            var field = com.rbkmoney.damsel.domain.InvoiceTemplateProductPrice._Fields.findByName(
+                    price.getSetField().getFieldName());
+            return switch (field) {
+                case FIXED -> mapCash(price.getFixed()).costType("fixed");
+                case RANGE -> mapCashRange(price.getRange()).costType("range");
+                case UNLIM -> new CashUnlim().costType("unlim");
+                default -> throw new IllegalArgumentException();
+            };
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("InvoiceTemplateProductPrice %s cannot be processed", price));
         }
-
-        if (price.isSetRange()) {
-            return mapCashRange(price.getRange())
-                    .costType("range");
-        }
-
-        if (price.isSetUnlim()) {
-            return new CashUnlim()
-                    .costType("unlim");
-        }
-
-        throw new IllegalArgumentException(
-                String.format("InvoiceTemplateProductPrice %s cannot be processed", price));
     }
 
     protected Cash mapCash(com.rbkmoney.damsel.domain.Cash cash) {
