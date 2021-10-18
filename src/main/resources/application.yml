@@ -32,7 +32,7 @@ service:
   vortigon:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
-  orgManagement:
+  orgManager:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
   bouncer:

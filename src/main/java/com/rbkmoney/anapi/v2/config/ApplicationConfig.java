@@ -42,8 +42,8 @@ public class ApplicationConfig {
 
     @Bean
     public AuthContextProviderSrv.Iface orgManagerClient(
-            @Value("${service.orgManagement.url}") Resource resource,
-            @Value("${service.orgManagement.networkTimeout}") int networkTimeout
+            @Value("${service.orgManager.url}") Resource resource,
+            @Value("${service.orgManager.networkTimeout}") int networkTimeout
     ) throws IOException {
         return new THSpawnClientBuilder()
                 .withNetworkTimeout(networkTimeout)
