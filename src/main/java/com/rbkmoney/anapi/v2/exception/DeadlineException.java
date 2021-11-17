@@ -1,9 +1,6 @@
 package com.rbkmoney.anapi.v2.exception;
 
-public class DeadlineException extends RuntimeException {
-
-    public DeadlineException() {
-    }
+public class DeadlineException extends AnapiV24xxException {
 
     public DeadlineException(String message) {
         super(message);
@@ -11,13 +8,5 @@ public class DeadlineException extends RuntimeException {
 
     public DeadlineException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public DeadlineException(Throwable cause) {
-        super(cause);
-    }
-
-    public DeadlineException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

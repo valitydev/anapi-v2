@@ -2,7 +2,7 @@ package com.rbkmoney.anapi.v2.security;
 
 import com.rbkmoney.anapi.v2.config.properties.BouncerProperties;
 import com.rbkmoney.anapi.v2.service.KeycloakService;
-import com.rbkmoney.anapi.v2.service.OrgMgmtService;
+import com.rbkmoney.anapi.v2.service.OrgManagerService;
 import com.rbkmoney.bouncer.base.Entity;
 import com.rbkmoney.bouncer.context.v1.*;
 import com.rbkmoney.bouncer.ctx.ContextFragmentType;
@@ -14,7 +14,6 @@ import org.keycloak.representations.AccessToken;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -22,29 +21,28 @@ import java.util.stream.Collectors;
 public class BouncerContextFactory {
 
     private final BouncerProperties bouncerProperties;
-    private final OrgMgmtService orgMgmtService;
+    private final OrgManagerService orgManagerService;
     private final KeycloakService keycloakService;
 
     @SneakyThrows
     public Context buildContext(AnapiBouncerContext bouncerContext) {
-        ContextFragment contextFragment = buildContextFragment(bouncerContext);
+        var contextFragment = buildContextFragment(bouncerContext);
         var serializer = new TSerializer();
         var fragment = new com.rbkmoney.bouncer.ctx.ContextFragment()
                 .setType(ContextFragmentType.v1_thrift_binary)
                 .setContent(serializer.serialize(contextFragment));
-
-        com.rbkmoney.bouncer.ctx.ContextFragment
-                userFragment = orgMgmtService.getUserAuthContext(keycloakService.getAccessToken().getSubject());
-        Context context = new Context();
+        var userFragment = orgManagerService.getUserAuthContext(
+                keycloakService.getAccessToken().getSubject());
+        var context = new Context();
         context.putToFragments(bouncerProperties.getContextFragmentId(), fragment);
         context.putToFragments("user", userFragment);
         return context;
     }
 
     private ContextFragment buildContextFragment(AnapiBouncerContext bouncerContext) {
-        Environment env = buildEnvironment();
-        AccessToken accessToken = keycloakService.getAccessToken();
-        ContextAnalyticsAPI contextAnalyticsApi = buildAnapiContext(bouncerContext);
+        var env = buildEnvironment();
+        var accessToken = keycloakService.getAccessToken();
+        var contextAnalyticsApi = buildAnapiContext(bouncerContext);
         return new ContextFragment()
                 .setAuth(buildAuth(bouncerContext, accessToken))
                 .setEnv(env)
@@ -52,8 +50,8 @@ public class BouncerContextFactory {
     }
 
     private Auth buildAuth(AnapiBouncerContext bouncerContext, AccessToken accessToken) {
-        Auth auth = new Auth();
-        Set<AuthScope> authScopeSet = bouncerContext.getShopIds().stream()
+        var auth = new Auth();
+        var authScopeSet = bouncerContext.getShopIds().stream()
                 .map(shopId -> new AuthScope()
                         .setParty(new Entity().setId(bouncerContext.getPartyId()))
                         .setShop(new Entity().setId(shopId)))
@@ -65,7 +63,7 @@ public class BouncerContextFactory {
     }
 
     private Environment buildEnvironment() {
-        Deployment deployment = new Deployment()
+        var deployment = new Deployment()
                 .setId(bouncerProperties.getDeploymentId());
         return new Environment()
                 .setDeployment(deployment)
@@ -77,5 +75,4 @@ public class BouncerContextFactory {
                 .setOp(new AnalyticsAPIOperation()
                         .setId(ctx.getOperationId()));
     }
-
 }

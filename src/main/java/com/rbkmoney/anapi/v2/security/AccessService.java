@@ -1,17 +1,16 @@
 package com.rbkmoney.anapi.v2.security;
 
 import com.rbkmoney.anapi.v2.exception.AuthorizationException;
+import com.rbkmoney.anapi.v2.exception.BouncerException;
 import com.rbkmoney.anapi.v2.service.BouncerService;
 import com.rbkmoney.anapi.v2.service.KeycloakService;
 import com.rbkmoney.anapi.v2.service.VortigonService;
 import com.rbkmoney.bouncer.base.Entity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,43 +27,52 @@ public class AccessService {
     @Value("${service.bouncer.auth.enabled}")
     private boolean authEnabled;
 
-    public List<String> getAccessibleShops(String operationId, String partyId, List<String> requestShopIds,
-                                           String realm) {
+    public List<String> getAccessibleShops(String operationId, String partyId, String realm) {
+        return getAccessibleShops(operationId, partyId, null, realm);
+    }
 
-        List<String> shopIds = vortigonService.getShopIds(partyId, Objects.requireNonNullElse(realm, "live"));
-
+    public List<String> getAccessibleShops(
+            String operationId,
+            String partyId,
+            List<String> requestShopIds,
+            String realm) {
+        var shopIds = vortigonService.getShopIds(partyId, Objects.requireNonNullElse(realm, "live"));
         if (requestShopIds != null && !requestShopIds.isEmpty()) {
             shopIds = requestShopIds.stream()
                     .filter(shopIds::contains)
                     .collect(Collectors.toList());
         }
-
         log.info("Check the user's rights to perform the operation {}", operationId);
         var ctx = buildAnapiBouncerContext(operationId, partyId, shopIds);
         var resolution = bouncerService.getResolution(ctx);
-        if (resolution.isSetForbidden()) {
-            if (authEnabled) {
-                throw new AuthorizationException(String.format("No rights to perform %s", operationId));
-            } else {
-                log.warn("No rights to perform {}", operationId);
+        switch (resolution.getSetField()) {
+            case FORBIDDEN: {
+                if (authEnabled) {
+                    throw new AuthorizationException(String.format("No rights to perform %s", operationId));
+                } else {
+                    log.warn("No rights to perform {}", operationId);
+                    return List.copyOf(shopIds);
+                }
             }
-        }
-
-        if (resolution.isSetRestricted()) {
-            if (authEnabled) {
-                return resolution.getRestricted().getRestrictions().getAnapi().getOp().getShops().stream()
-                        .map(Entity::getId)
-                        .collect(Collectors.toList());
-            } else {
-                log.warn("Rights to perform {} are restricted", operationId);
+            case RESTRICTED: {
+                if (authEnabled) {
+                    return resolution.getRestricted().getRestrictions().getAnapi().getOp().getShops().stream()
+                            .map(Entity::getId)
+                            .collect(Collectors.toList());
+                } else {
+                    log.warn("Rights to perform {} are restricted", operationId);
+                    return List.copyOf(shopIds);
+                }
             }
+            case ALLOWED:
+                return List.copyOf(shopIds);
+            default:
+                throw new BouncerException(String.format("Resolution %s cannot be processed", resolution));
         }
-
-        return new ArrayList<>(shopIds);
     }
 
     private AnapiBouncerContext buildAnapiBouncerContext(String operationId, String partyId, List<String> shopIds) {
-        AccessToken token = keycloakService.getAccessToken();
+        var token = keycloakService.getAccessToken();
         return AnapiBouncerContext.builder()
                 .operationId(operationId)
                 .partyId(partyId)

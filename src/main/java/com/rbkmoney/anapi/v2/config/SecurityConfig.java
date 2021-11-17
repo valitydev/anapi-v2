@@ -1,5 +1,6 @@
 package com.rbkmoney.anapi.v2.config;
 
+import lombok.SneakyThrows;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
@@ -25,7 +26,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -122,14 +122,11 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         return adapterConfig;
     }
 
+    @SneakyThrows
     private String readKeyFromFile(String filePath) {
-        try {
-            List<String> strings = Files.readAllLines(Paths.get(filePath));
-            strings.remove(strings.size() - 1);
-            strings.remove(0);
-            return strings.stream().map(String::trim).collect(Collectors.joining());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        List<String> strings = Files.readAllLines(Paths.get(filePath));
+        strings.remove(strings.size() - 1);
+        strings.remove(0);
+        return strings.stream().map(String::trim).collect(Collectors.joining());
     }
 }

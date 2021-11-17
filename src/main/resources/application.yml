@@ -29,6 +29,9 @@ service:
   magista:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
+  analytics:
+    url: http://localhost:8022/change_it
+    networkTimeout: 5000
   vortigon:
     url: http://localhost:8022/change_it
     networkTimeout: 5000

@@ -14,8 +14,11 @@ import com.rbkmoney.geck.serializer.kit.mock.FieldHandler;
 import com.rbkmoney.geck.serializer.kit.mock.MockMode;
 import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
 import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
+import com.rbkmoney.magista.CustomerPayer;
 import com.rbkmoney.magista.InvoicePaymentFlow;
+import com.rbkmoney.magista.InvoicePaymentFlowHold;
 import com.rbkmoney.magista.InvoicePaymentFlowInstant;
+import com.rbkmoney.magista.Payer;
 import com.rbkmoney.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -38,7 +41,8 @@ public class MagistaUtil {
         mockRequiredTBaseProcessor = new MockTBaseProcessor(MockMode.REQUIRED_ONLY, 15, 1);
         Map.Entry<FieldHandler, String[]> timeFields = Map.entry(
                 structHandler -> structHandler.value(Instant.now().toString()),
-                new String[] {"created_at", "at", "due", "status_changed_at", "invoice_valid_until", "event_created_at"}
+                new String[] {"created_at", "at", "due", "status_changed_at", "invoice_valid_until", "event_created_at",
+                        "held_until"}
         );
         mockRequiredTBaseProcessor.addFieldHandler(timeFields.getKey(), timeFields.getValue());
     }
@@ -52,6 +56,9 @@ public class MagistaUtil {
     }
 
     public static StatPaymentResponse createSearchPaymentAllResponse() {
+        var payer = fillRequiredTBaseObject(new CustomerPayer(), CustomerPayer.class);
+        payer.setPaymentTool(createBankCardPaymentTool())
+                .setCustomerId(randomString(3));
         var payment = fillRequiredTBaseObject(new StatPayment(), StatPayment.class);
         var status = new InvoicePaymentStatus();
         status.setPending(new InvoicePaymentPending());
@@ -67,6 +74,7 @@ public class MagistaUtil {
                         .setCart(cart.setLines(List.of(line)))
                         .setFlow(InvoicePaymentFlow
                                 .instant(instant))
+                        .setPayer(Payer.customer(payer))
                         .setLocationInfo(locationInfo)));
     }
 
@@ -185,6 +193,43 @@ public class MagistaUtil {
         Resolution resolution = new Resolution();
         resolution.setAllowed(new ResolutionAllowed());
         return new Judgement().setResolution(resolution);
+    }
+
+    public static InvoicePaymentFlow createInvoicePaymentFlowHold() {
+        return InvoicePaymentFlow.hold(
+                fillRequiredTBaseObject(new InvoicePaymentFlowHold(), InvoicePaymentFlowHold.class));
+    }
+
+    public static PaymentTool createBankCardPaymentTool() {
+        return PaymentTool.bank_card(new BankCard().setBin(randomString(4))
+                .setLastDigits(randomString(4))
+                .setBankName(randomString(4))
+                .setToken(randomString(4))
+                .setPaymentSystemDeprecated(LegacyBankCardPaymentSystem.maestro)
+                .setTokenProviderDeprecated(LegacyBankCardTokenProvider.applepay)
+        );
+    }
+
+    public static PaymentTool createPaymentTerminalPaymentTool() {
+        return PaymentTool.payment_terminal(new PaymentTerminal()
+                .setTerminalTypeDeprecated(LegacyTerminalPaymentProvider.alipay));
+    }
+
+    public static PaymentTool createMobileCommercePaymentTool() {
+        return PaymentTool.mobile_commerce(new MobileCommerce()
+                .setOperatorDeprecated(LegacyMobileOperator.mts)
+                .setPhone(new MobilePhone()
+                        .setCc("7")
+                        .setCtn("1234567890")));
+    }
+
+    public static PaymentTool createCryptoCurrencyPaymentTool() {
+        return PaymentTool.crypto_currency(new CryptoCurrencyRef()
+                .setId(randomString(1)));
+    }
+
+    public static PaymentTool createLegacyCryptoCurrencyPaymentTool() {
+        return PaymentTool.crypto_currency_deprecated(LegacyCryptoCurrency.bitcoin);
     }
 
     @SneakyThrows

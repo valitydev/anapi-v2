@@ -23,11 +23,10 @@ public class DeadlineUtil {
         }
         try {
             Instant instant = Instant.parse(xRequestDeadline);
-
             if (Instant.now().isAfter(instant)) {
                 throw new DeadlineException(String.format("Deadline has expired, xRequestId=%s ", xRequestId));
             }
-        } catch (Exception ex) {
+        } catch (Exception e) {
             throw new DeadlineException(
                     String.format("Deadline has invalid 'Instant' format, xRequestId=%s ", xRequestId));
         }

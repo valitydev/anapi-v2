@@ -1,12 +1,12 @@
 package com.rbkmoney.anapi.v2.controller;
 
 import com.rbkmoney.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
-import com.rbkmoney.anapi.v2.converter.search.request.ParamsToRefundSearchQueryConverter;
+import com.rbkmoney.anapi.v2.converter.magista.request.ParamsToRefundSearchQueryConverter;
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
+import com.rbkmoney.anapi.v2.model.DefaultLogicError;
 import com.rbkmoney.anapi.v2.testutil.OpenApiUtil;
 import com.rbkmoney.bouncer.decisions.ArbiterSrv;
 import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
-import com.rbkmoney.openapi.anapi_v2.model.DefaultLogicError;
 import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @MockBean
     public VortigonServiceSrv.Iface vortigonClient;
     @MockBean
-    public AuthContextProviderSrv.Iface orgMgmtClient;
+    public AuthContextProviderSrv.Iface orgManagerClient;
     @MockBean
     public ArbiterSrv.Iface bouncerClient;
 
@@ -52,7 +52,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[] {refundSearchConverter, vortigonClient, orgMgmtClient, bouncerClient};
+        preparedMocks = new Object[]{refundSearchConverter, vortigonClient, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -67,7 +67,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         params.set("limit", "1001");
 
         mockMvc.perform(
-                        get("/payments")
+                        get("/lk/v2/payments")
                                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                                 .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -83,7 +83,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testBadRequestException() throws Exception {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         String message = "Error!";
         doThrow(new BadRequestException(message)).when(refundSearchConverter)
@@ -94,7 +94,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
 
         mockMvc.perform(
-                        get("/refunds")
+                get("/lk/v2/refunds")
                                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                                 .header("X-Request-ID", randomUUID())
                                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -106,7 +106,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALIDREQUEST.getValue()))
                 .andExpect(jsonPath("$.message").value(message));
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(refundSearchConverter, times(1))
                 .convert(any(), any(), any(), any(),
@@ -121,7 +121,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         params.remove("limit");
 
         mockMvc.perform(
-                get("/refunds")
+                get("/lk/v2/refunds")
                         .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -137,7 +137,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testDeadlineException() throws Exception {
         mockMvc.perform(
-                get("/refunds")
+                get("/lk/v2/refunds")
                         .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", "fail")
@@ -153,7 +153,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testInternalException() throws Exception {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         doThrow(new RuntimeException()).when(refundSearchConverter)
                 .convert(any(), any(), any(), any(),
@@ -163,7 +163,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
 
         mockMvc.perform(
-                        get("/refunds")
+                get("/lk/v2/refunds")
                                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                                 .header("X-Request-ID", randomUUID())
                                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -174,7 +174,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$").doesNotExist());
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(refundSearchConverter, times(1))
                 .convert(any(), any(), any(), any(),
@@ -185,7 +185,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testUnauthorizedException() throws Exception {
         mockMvc.perform(
-                get("/refunds")
+                get("/lk/v2/refunds")
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", "fail")
                         .params(OpenApiUtil.getSearchRequiredParams())

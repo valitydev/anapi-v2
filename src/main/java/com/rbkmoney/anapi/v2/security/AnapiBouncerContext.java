@@ -15,4 +15,5 @@ public class AnapiBouncerContext {
     private final String operationId;
     private final String partyId;
     private final List<String> shopIds;
+
 }

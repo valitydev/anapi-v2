@@ -5,8 +5,6 @@ import com.rbkmoney.anapi.v2.exception.BouncerException;
 import com.rbkmoney.anapi.v2.security.AnapiBouncerContext;
 import com.rbkmoney.anapi.v2.security.BouncerContextFactory;
 import com.rbkmoney.bouncer.decisions.ArbiterSrv;
-import com.rbkmoney.bouncer.decisions.Context;
-import com.rbkmoney.bouncer.decisions.Judgement;
 import com.rbkmoney.bouncer.decisions.Resolution;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +22,12 @@ public class BouncerService {
 
     public Resolution getResolution(AnapiBouncerContext bouncerContext) {
         log.debug("Check access with bouncer context: {}", bouncerContext);
-        Context context = bouncerContextFactory.buildContext(bouncerContext);
+        var context = bouncerContextFactory.buildContext(bouncerContext);
         log.debug("Built thrift context: {}", context);
         try {
-            Judgement judge = bouncerClient.judge(bouncerProperties.getRuleSetId(), context);
+            var judge = bouncerClient.judge(bouncerProperties.getRuleSetId(), context);
             log.debug("Have judge: {}", judge);
-            Resolution resolution = judge.getResolution();
+            var resolution = judge.getResolution();
             log.debug("Resolution: {}", resolution);
             return resolution;
         } catch (TException e) {

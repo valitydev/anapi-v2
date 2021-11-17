@@ -1,19 +1,27 @@
 package com.rbkmoney.anapi.v2.exception;
 
-import com.rbkmoney.openapi.anapi_v2.model.DefaultLogicError;
+import com.rbkmoney.anapi.v2.model.DefaultLogicError;
 import lombok.Getter;
 
-public class BadRequestException extends IllegalArgumentException {
+@Getter
+public class BadRequestException extends AnapiV24xxException {
 
-    @Getter
-    private DefaultLogicError.CodeEnum errorCode = DefaultLogicError.CodeEnum.INVALIDREQUEST;
+    private final Object response;
 
-    public BadRequestException(String s) {
-        super(s);
+    public BadRequestException(String message, Throwable cause, Object response) {
+        super(message, cause);
+        this.response = response;
     }
 
-    public BadRequestException(String s, DefaultLogicError.CodeEnum errorCode) {
-        super(s);
-        this.errorCode = errorCode;
+    public BadRequestException(String message, Object response) {
+        super(message);
+        this.response = response;
+    }
+
+    public BadRequestException(String message) {
+        super(message);
+        this.response = new DefaultLogicError()
+                .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                .message(message);
     }
 }

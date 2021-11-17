@@ -1,12 +1,12 @@
 package com.rbkmoney.anapi.v2;
 
 import com.rbkmoney.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
+import com.rbkmoney.anapi.v2.model.DefaultLogicError;
 import com.rbkmoney.anapi.v2.testutil.MagistaUtil;
 import com.rbkmoney.anapi.v2.testutil.OpenApiUtil;
 import com.rbkmoney.bouncer.decisions.ArbiterSrv;
 import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
 import com.rbkmoney.magista.MerchantStatisticsServiceSrv;
-import com.rbkmoney.openapi.anapi_v2.model.DefaultLogicError;
 import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
 import lombok.SneakyThrows;
 import org.apache.thrift.TException;
@@ -41,7 +41,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @MockBean
     public VortigonServiceSrv.Iface vortigonClient;
     @MockBean
-    public AuthContextProviderSrv.Iface orgMgmtClient;
+    public AuthContextProviderSrv.Iface orgManagerClient;
     @MockBean
     public ArbiterSrv.Iface bouncerClient;
 
@@ -55,7 +55,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[] {magistaClient, vortigonClient, orgMgmtClient, bouncerClient};
+        preparedMocks = new Object[]{magistaClient, vortigonClient, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -68,10 +68,10 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @SneakyThrows
     void searchPayoutsRequiredParamsRequestSuccess() {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayouts(any())).thenReturn(MagistaUtil.createSearchPayoutRequiredResponse());
-        mvc.perform(get("/payouts")
+        mvc.perform(get("/lk/v2/payouts")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -82,7 +82,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchPayouts(any());
     }
@@ -91,10 +91,10 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @SneakyThrows
     void searchPayoutsAllParamsRequestSuccess() {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayouts(any())).thenReturn(MagistaUtil.createSearchPayoutAllResponse());
-        mvc.perform(get("/payouts")
+        mvc.perform(get("/lk/v2/payouts")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -105,7 +105,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchPayouts(any());
     }
@@ -115,7 +115,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     void searchPayoutsRequestInvalid() {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
         params.remove("partyID");
-        mvc.perform(get("/payouts")
+        mvc.perform(get("/lk/v2/payouts")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -132,10 +132,10 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @SneakyThrows
     void searchPayoutsRequestMagistaUnavailable() {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(orgMgmtClient.getUserContext(any())).thenReturn(createContextFragment());
+        when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayouts(any())).thenThrow(TException.class);
-        mvc.perform(get("/payouts")
+        mvc.perform(get("/lk/v2/payouts")
                 .header("Authorization", "Bearer " + generateInvoicesReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -145,7 +145,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(orgMgmtClient, times(1)).getUserContext(any());
+        verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchPayouts(any());
     }
