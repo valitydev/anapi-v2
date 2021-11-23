@@ -18,7 +18,7 @@ import java.util.List;
 import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 
 @Service
-@PreAuthorize("hasAuthority('invoices:read')")
+@PreAuthorize("hasAuthority('party:read')")
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings({"ParameterName", "LineLength"})

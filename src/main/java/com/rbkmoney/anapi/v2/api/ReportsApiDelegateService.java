@@ -27,6 +27,7 @@ import static com.rbkmoney.anapi.v2.util.DeadlineUtil.checkDeadline;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings({"ParameterName"})
 public class ReportsApiDelegateService implements ReportsApiDelegate {
 
     private final AccessService accessService;
