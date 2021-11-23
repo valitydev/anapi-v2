@@ -86,6 +86,11 @@
             <artifactId>analytics-proto</artifactId>
             <version>1.31-d96f45a</version>
         </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>reporter-proto</artifactId>
+            <version>1.9-aafbfac</version>
+        </dependency>
 
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>
