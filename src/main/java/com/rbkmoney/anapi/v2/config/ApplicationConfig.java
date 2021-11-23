@@ -5,6 +5,7 @@ import com.rbkmoney.damsel.analytics.AnalyticsServiceSrv;
 import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
 import com.rbkmoney.magista.MerchantStatisticsServiceSrv;
 import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
+import com.rbkmoney.reporter.ReportingSrv;
 import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
 import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
 import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
@@ -74,5 +75,15 @@ public class ApplicationConfig {
                 .withNetworkTimeout(networkTimeout)
                 .withAddress(resource.getURI())
                 .build(ArbiterSrv.Iface.class);
+    }
+
+    @Bean
+    public ReportingSrv.Iface reporterClient(
+            @Value("${service.reporter.url}") Resource resource,
+            @Value("${service.reporter.networkTimeout}") int networkTimeout) throws IOException {
+        return new THSpawnClientBuilder()
+                .withNetworkTimeout(networkTimeout)
+                .withAddress(resource.getURI())
+                .build(ReportingSrv.Iface.class);
     }
 }
