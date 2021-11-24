@@ -73,7 +73,7 @@ class SearchChargebacksTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchChargebacks(any())).thenReturn(MagistaUtil.createSearchChargebackRequiredResponse());
         mvc.perform(get("/lk/v2/chargebacks")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())
@@ -96,7 +96,7 @@ class SearchChargebacksTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchChargebacks(any())).thenReturn(MagistaUtil.createSearchChargebackAllResponse());
         mvc.perform(get("/lk/v2/chargebacks")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchChargebackAllParams())
@@ -137,7 +137,7 @@ class SearchChargebacksTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/chargebacks")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())

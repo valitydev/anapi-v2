@@ -72,7 +72,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenReturn(AnalyticsUtil.createAveragePaymentRequiredResponse());
         mvc.perform(get("/lk/v2/analytics/payments/average")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getAnalyticsRequiredParams())
@@ -95,7 +95,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenReturn(AnalyticsUtil.createAveragePaymentAllResponse());
         mvc.perform(get("/lk/v2/analytics/payments/average")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getAnalyticsAllParams())
@@ -136,7 +136,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/analytics/payments/average")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getAnalyticsRequiredParams())

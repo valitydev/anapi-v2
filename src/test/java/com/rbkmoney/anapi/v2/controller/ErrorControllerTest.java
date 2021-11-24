@@ -95,7 +95,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
         mockMvc.perform(
                 get("/lk/v2/refunds")
-                                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
                                 .header("X-Request-ID", randomUUID())
                                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                                 .params(params)
@@ -138,7 +138,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     void testDeadlineException() throws Exception {
         mockMvc.perform(
                 get("/lk/v2/refunds")
-                        .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                        .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", "fail")
                         .params(OpenApiUtil.getSearchRequiredParams())
@@ -164,7 +164,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
         mockMvc.perform(
                 get("/lk/v2/refunds")
-                                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
                                 .header("X-Request-ID", randomUUID())
                                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                                 .params(params)

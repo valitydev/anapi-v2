@@ -57,11 +57,11 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                                                String shopID, String paymentInstitutionRealm) {
         log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
-        accessService.getAccessibleShops(
-                "CreateReport",
-                partyID,
-                List.of(shopID),
-                paymentInstitutionRealm);
+        if (shopID != null) {
+            accessService.getAccessibleShops("CreateReport", partyID, List.of(shopID), paymentInstitutionRealm);
+        } else {
+            accessService.getAccessibleShops("CreateReport", partyID, paymentInstitutionRealm);
+        }
         var request = getReportRequest(partyID, shopID, fromTime, toTime);
         var reportId = reporterService.createReport(request, reportType);
         var response = reporterService.getReport(reportId);

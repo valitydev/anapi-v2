@@ -12,6 +12,7 @@ import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -84,14 +85,15 @@ public class ReporterService {
                 .toTime(TypeUtil.stringToInstant(response.getTimeRange().getToTime()).atOffset(ZoneOffset.UTC))
                 .status(Report.StatusEnum.fromValue(response.getStatus().name()))
                 .reportType(Report.ReportTypeEnum.fromValue(response.getReportType()))
-                .files(response.getFiles().stream()
+                .files(response.getFiles() != null
+                        ? response.getFiles().stream()
                         .map(fileReporter -> new FileMeta()
                                 .id(fileReporter.getFileId())
                                 .filename(fileReporter.getFilename())
                                 .signatures(new FileMetaSignatures()
                                         .md5(fileReporter.getSignature().getMd5())
                                         .sha256(fileReporter.getSignature().getSha256())))
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()) : Collections.emptyList());
     }
 
 }

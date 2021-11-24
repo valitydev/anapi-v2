@@ -42,7 +42,7 @@ public class MagistaUtil {
         Map.Entry<FieldHandler, String[]> timeFields = Map.entry(
                 structHandler -> structHandler.value(Instant.now().toString()),
                 new String[] {"created_at", "at", "due", "status_changed_at", "invoice_valid_until", "event_created_at",
-                        "held_until"}
+                        "held_until", "from_time", "to_time"}
         );
         mockRequiredTBaseProcessor.addFieldHandler(timeFields.getKey(), timeFields.getValue());
     }
