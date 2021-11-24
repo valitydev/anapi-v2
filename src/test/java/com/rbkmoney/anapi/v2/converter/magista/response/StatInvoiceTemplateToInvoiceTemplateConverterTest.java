@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.rbkmoney.anapi.v2.testutil.DamselUtil.fillRequiredTBaseObject;
 import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createSearchInvoiceTemplateAllResponse;
-import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.fillRequiredTBaseObject;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomInt;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;
 import static org.junit.jupiter.api.Assertions.*;

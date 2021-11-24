@@ -10,42 +10,24 @@ import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
 import com.rbkmoney.damsel.domain.InvoiceStatus;
 import com.rbkmoney.damsel.domain.*;
 import com.rbkmoney.damsel.geo_ip.LocationInfo;
-import com.rbkmoney.geck.serializer.kit.mock.FieldHandler;
-import com.rbkmoney.geck.serializer.kit.mock.MockMode;
-import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
-import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
 import com.rbkmoney.magista.CustomerPayer;
 import com.rbkmoney.magista.InvoicePaymentFlow;
 import com.rbkmoney.magista.InvoicePaymentFlowHold;
 import com.rbkmoney.magista.InvoicePaymentFlowInstant;
 import com.rbkmoney.magista.Payer;
 import com.rbkmoney.magista.*;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import org.apache.thrift.TBase;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import static com.rbkmoney.anapi.v2.testutil.DamselUtil.fillRequiredTBaseObject;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomInt;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;
 
 @UtilityClass
 public class MagistaUtil {
-
-    private static final MockTBaseProcessor mockRequiredTBaseProcessor;
-    
-    static {
-        mockRequiredTBaseProcessor = new MockTBaseProcessor(MockMode.REQUIRED_ONLY, 15, 1);
-        Map.Entry<FieldHandler, String[]> timeFields = Map.entry(
-                structHandler -> structHandler.value(Instant.now().toString()),
-                new String[] {"created_at", "at", "due", "status_changed_at", "invoice_valid_until", "event_created_at",
-                        "held_until", "from_time", "to_time"}
-        );
-        mockRequiredTBaseProcessor.addFieldHandler(timeFields.getKey(), timeFields.getValue());
-    }
 
     public static StatPaymentResponse createSearchPaymentRequiredResponse() {
         return fillRequiredTBaseObject(new StatPaymentResponse(), StatPaymentResponse.class);
@@ -232,8 +214,4 @@ public class MagistaUtil {
         return PaymentTool.crypto_currency_deprecated(LegacyCryptoCurrency.bitcoin);
     }
 
-    @SneakyThrows
-    public static <T extends TBase> T fillRequiredTBaseObject(T tbase, Class<T> type) {
-        return mockRequiredTBaseProcessor.process(tbase, new TBaseHandler<>(type));
-    }
 }
