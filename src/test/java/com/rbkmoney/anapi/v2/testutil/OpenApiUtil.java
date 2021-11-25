@@ -142,4 +142,27 @@ public class OpenApiUtil {
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
         return params;
     }
+
+    public static MultiValueMap<String, String> getReportsRequiredParams() {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("partyID", randomIntegerAsString(1, 1000));
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getCreateReportRequiredParams() {
+        MultiValueMap<String, String> params = getReportsRequiredParams();
+        params.add("fromTime", "2007-12-03T10:15:30+01:00");
+        params.add("toTime", "2020-12-03T10:15:30+01:00");
+        params.add("reportType", "paymentRegistry");
+        return params;
+    }
+
+    public static MultiValueMap<String, String> getSearchReportsRequiredParams() {
+        MultiValueMap<String, String> params = getReportsRequiredParams();
+        params.add("fromTime", "2007-12-03T10:15:30+01:00");
+        params.add("toTime", "2020-12-03T10:15:30+01:00");
+        params.add("reportTypes", "{paymentRegistry}");
+        params.add("limit", "10");
+        return params;
+    }
 }

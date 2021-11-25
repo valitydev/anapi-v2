@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.rbkmoney</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>2.0.11</version>
+        <version>2.0.13</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.57-7bc52db-server</version>
+            <version>1.59-0eed1ae-server</version>
         </dependency>
         <dependency>
             <groupId>com.rbkmoney</groupId>
@@ -86,6 +86,11 @@
             <artifactId>analytics-proto</artifactId>
             <version>1.31-d96f45a</version>
         </dependency>
+        <dependency>
+            <groupId>com.rbkmoney</groupId>
+            <artifactId>reporter-proto</artifactId>
+            <version>1.9-aafbfac</version>
+        </dependency>
 
         <dependency>
             <groupId>com.rbkmoney.geck</groupId>
@@ -104,12 +109,10 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>5.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>5.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>

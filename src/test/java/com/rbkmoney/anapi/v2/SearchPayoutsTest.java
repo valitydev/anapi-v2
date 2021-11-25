@@ -72,7 +72,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayouts(any())).thenReturn(MagistaUtil.createSearchPayoutRequiredResponse());
         mvc.perform(get("/lk/v2/payouts")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())
@@ -95,7 +95,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayouts(any())).thenReturn(MagistaUtil.createSearchPayoutAllResponse());
         mvc.perform(get("/lk/v2/payouts")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchPayoutAllParams())
@@ -136,7 +136,7 @@ class SearchPayoutsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayouts(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/payouts")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generatePartyReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())

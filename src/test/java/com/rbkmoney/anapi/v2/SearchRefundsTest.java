@@ -72,7 +72,7 @@ class SearchRefundsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchRefunds(any())).thenReturn(MagistaUtil.createSearchRefundRequiredResponse());
         mvc.perform(get("/lk/v2/refunds")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())
@@ -95,7 +95,7 @@ class SearchRefundsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchRefunds(any())).thenReturn(MagistaUtil.createSearchRefundAllResponse());
         mvc.perform(get("/lk/v2/refunds")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRefundAllParams())
@@ -136,7 +136,7 @@ class SearchRefundsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchRefunds(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/refunds")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())

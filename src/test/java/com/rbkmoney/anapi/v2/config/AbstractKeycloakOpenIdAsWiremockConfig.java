@@ -32,4 +32,16 @@ public abstract class AbstractKeycloakOpenIdAsWiremockConfig {
     protected String generateInvoicesReadJwt() {
         return keycloakOpenIdStub.generateJwt("invoices:read");
     }
+
+    protected String generatePartyWriteJwt() {
+        return keycloakOpenIdStub.generateJwt("party:write");
+    }
+
+    protected String generatePartyReadJwt() {
+        return keycloakOpenIdStub.generateJwt("party:read");
+    }
+
+    protected String generateInvoicesPaymentsReadJwt() {
+        return keycloakOpenIdStub.generateJwt("invoices:read", "payments:read");
+    }
 }

@@ -48,6 +48,10 @@ service:
     rule-set-id: change_it
     auth:
       enabled: false
+  reporter:
+    url: http://localhost:8022/change_it
+    networkTimeout: 10000
+    reportUrlLifetimeSec: 60
 
 spring:
   application:
