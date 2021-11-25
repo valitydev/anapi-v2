@@ -57,26 +57,13 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                                                String shopID, String paymentInstitutionRealm) {
         log.info("-> Req: xRequestID={}", xRequestID);
         checkDeadline(xRequestDeadline, xRequestID);
-        if (shopID != null) {
-            accessService.getAccessibleShops("CreateReport", partyID, List.of(shopID), paymentInstitutionRealm);
-        } else {
-            accessService.getAccessibleShops("CreateReport", partyID, paymentInstitutionRealm);
-        }
+        var shops = shopID != null ? List.of(shopID) : null;
+        accessService.getAccessibleShops("CreateReport", partyID, shops, paymentInstitutionRealm);
         var request = getReportRequest(partyID, shopID, fromTime, toTime);
         var reportId = reporterService.createReport(request, reportType);
         var response = reporterService.getReport(reportId);
         log.info("<- Res [201]: xRequestID={}", xRequestID);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    private ReportRequest getReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
-                                           OffsetDateTime toTime) {
-        return new ReportRequest()
-                .setPartyId(partyId)
-                .setShopId(shopId)
-                .setTimeRange(new ReportTimeRange()
-                        .setFromTime(fromTime.toString())
-                        .setToTime(toTime.toString()));
     }
 
     @PreAuthorize("hasAuthority('party:read')")
@@ -128,6 +115,16 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         var response = reporterService.getReports(request);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
+    }
+
+    private ReportRequest getReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
+                                           OffsetDateTime toTime) {
+        return new ReportRequest()
+                .setPartyId(partyId)
+                .setShopId(shopId)
+                .setTimeRange(new ReportTimeRange()
+                        .setFromTime(fromTime.toString())
+                        .setToTime(toTime.toString()));
     }
 
     private StatReportRequest getStatReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
