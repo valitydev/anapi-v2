@@ -1,13 +1,13 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.InvoiceLineTaxVAT;
-import com.rbkmoney.anapi.v2.model.InvoiceTemplate;
-import com.rbkmoney.anapi.v2.model.InvoiceTemplateCart;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.damsel.msgpack.Value;
-import com.rbkmoney.magista.InvoiceTemplateStatus;
-import com.rbkmoney.magista.StatInvoiceTemplate;
-import com.rbkmoney.magista.StatInvoiceTemplateResponse;
+import dev.vality.anapi.v2.model.InvoiceLineTaxVAT;
+import dev.vality.anapi.v2.model.InvoiceTemplate;
+import dev.vality.anapi.v2.model.InvoiceTemplateCart;
+import dev.vality.damsel.domain.*;
+import dev.vality.damsel.msgpack.Value;
+import dev.vality.magista.InvoiceTemplateStatus;
+import dev.vality.magista.StatInvoiceTemplate;
+import dev.vality.magista.StatInvoiceTemplateResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -89,7 +89,7 @@ class StatInvoiceTemplateToInvoiceTemplateConverterTest {
                         .setPrice(InvoiceTemplateProductPrice.unlim(new InvoiceTemplateCostUnlimited()))
                         .setProduct(randomString(10)));
 
-        var actualProduct = (com.rbkmoney.anapi.v2.model.InvoiceTemplateProduct) converter.mapDetails(details);
+        var actualProduct = (dev.vality.anapi.v2.model.InvoiceTemplateProduct) converter.mapDetails(details);
         var expectedProduct = details.getProduct();
 
         assertAll(

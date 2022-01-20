@@ -1,12 +1,12 @@
 package com.rbkmoney.anapi.v2.config;
 
-import com.rbkmoney.bouncer.decisions.ArbiterSrv;
-import com.rbkmoney.magista.MerchantStatisticsServiceSrv;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityUsernameExtensionKit;
-import com.rbkmoney.woody.thrift.impl.http.THSpawnClientBuilder;
+import dev.vality.bouncer.decisions.ArbiterSrv;
+import dev.vality.magista.MerchantStatisticsServiceSrv;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityUsernameExtensionKit;
+import dev.vality.woody.thrift.impl.http.THSpawnClientBuilder;
 import dev.vality.damsel.analytics.AnalyticsServiceSrv;
 import dev.vality.damsel.vortigon.VortigonServiceSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;

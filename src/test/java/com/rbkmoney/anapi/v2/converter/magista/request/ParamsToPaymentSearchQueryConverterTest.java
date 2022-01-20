@@ -1,13 +1,13 @@
 package com.rbkmoney.anapi.v2.converter.magista.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.anapi.v2.model.PaymentStatus;
-import com.rbkmoney.damsel.domain.LegacyBankCardPaymentSystem;
-import com.rbkmoney.damsel.domain.LegacyBankCardTokenProvider;
-import com.rbkmoney.damsel.domain.LegacyTerminalPaymentProvider;
-import com.rbkmoney.magista.InvoicePaymentFlowType;
-import com.rbkmoney.magista.PaymentSearchQuery;
-import com.rbkmoney.magista.PaymentToolType;
+import dev.vality.anapi.v2.model.PaymentStatus;
+import dev.vality.damsel.domain.LegacyBankCardPaymentSystem;
+import dev.vality.damsel.domain.LegacyBankCardTokenProvider;
+import dev.vality.damsel.domain.LegacyTerminalPaymentProvider;
+import dev.vality.magista.InvoicePaymentFlowType;
+import dev.vality.magista.PaymentSearchQuery;
+import dev.vality.magista.PaymentToolType;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;

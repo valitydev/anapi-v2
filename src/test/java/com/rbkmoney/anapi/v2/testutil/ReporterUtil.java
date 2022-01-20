@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.testutil;
 
-import com.rbkmoney.reporter.Report;
-import com.rbkmoney.reporter.StatReportResponse;
+import dev.vality.reporter.Report;
+import dev.vality.reporter.StatReportResponse;
 import lombok.experimental.UtilityClass;
 
 import static com.rbkmoney.anapi.v2.testutil.DamselUtil.fillRequiredTBaseObject;

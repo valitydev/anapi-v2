@@ -1,18 +1,18 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.*;
-import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
-import com.rbkmoney.damsel.domain.PaymentTool;
+import dev.vality.damsel.domain.InvoicePaymentStatus;
+import dev.vality.damsel.domain.PaymentTool;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.InvoicePaymentFlow;
-import com.rbkmoney.magista.StatPayment;
+import dev.vality.magista.InvoicePaymentFlow;
+import dev.vality.magista.StatPayment;
+import dev.vality.anapi.v2.model.*;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 
-import static com.rbkmoney.anapi.v2.model.PaymentSearchResult.StatusEnum.*;
 import static com.rbkmoney.anapi.v2.util.MaskUtil.constructCardNumber;
 import static com.rbkmoney.anapi.v2.util.MaskUtil.constructPhoneNumber;
+import static dev.vality.anapi.v2.model.PaymentSearchResult.StatusEnum.*;
 
 @Component
 public class StatPaymentToPaymentSearchResultConverter {
@@ -62,9 +62,9 @@ public class StatPaymentToPaymentSearchResultConverter {
         }
     }
 
-    protected Payer mapPayer(com.rbkmoney.magista.Payer payer) {
+    protected Payer mapPayer(dev.vality.magista.Payer payer) {
         try {
-            var field = com.rbkmoney.magista.Payer._Fields.findByName(payer.getSetField().getFieldName());
+            var field = dev.vality.magista.Payer._Fields.findByName(payer.getSetField().getFieldName());
             switch (field) {
                 case CUSTOMER -> {
                     var customer = payer.getCustomer();
@@ -115,7 +115,7 @@ public class StatPaymentToPaymentSearchResultConverter {
     }
 
     protected String getPaymentToolToken(PaymentTool paymentTool) {
-        var field = com.rbkmoney.damsel.domain.PaymentTool._Fields.findByName(paymentTool.getSetField().getFieldName());
+        var field = dev.vality.damsel.domain.PaymentTool._Fields.findByName(paymentTool.getSetField().getFieldName());
         return switch (field) {
             case BANK_CARD -> paymentTool.getBankCard().getToken();
             case DIGITAL_WALLET -> paymentTool.getDigitalWallet().getToken();
@@ -124,7 +124,7 @@ public class StatPaymentToPaymentSearchResultConverter {
     }
 
     protected PaymentToolDetails mapPaymentToolDetails(PaymentTool paymentTool) {
-        var field = com.rbkmoney.damsel.domain.PaymentTool._Fields.findByName(paymentTool.getSetField().getFieldName());
+        var field = dev.vality.damsel.domain.PaymentTool._Fields.findByName(paymentTool.getSetField().getFieldName());
         switch (field) {
             case BANK_CARD -> {
                 var card = paymentTool.getBankCard();

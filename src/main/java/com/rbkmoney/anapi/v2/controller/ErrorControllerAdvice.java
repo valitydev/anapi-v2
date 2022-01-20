@@ -4,7 +4,7 @@ import com.rbkmoney.anapi.v2.exception.AuthorizationException;
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.anapi.v2.exception.DeadlineException;
 import com.rbkmoney.anapi.v2.exception.NotFoundException;
-import com.rbkmoney.anapi.v2.model.DefaultLogicError;
+import dev.vality.anapi.v2.model.DefaultLogicError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

@@ -1,12 +1,12 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.Chargeback;
-import com.rbkmoney.anapi.v2.model.ChargebackCategory;
-import com.rbkmoney.anapi.v2.model.ChargebackReason;
-import com.rbkmoney.anapi.v2.model.Content;
-import com.rbkmoney.damsel.domain.InvoicePaymentChargebackCategory;
+import dev.vality.anapi.v2.model.Chargeback;
+import dev.vality.anapi.v2.model.ChargebackCategory;
+import dev.vality.anapi.v2.model.ChargebackReason;
+import dev.vality.anapi.v2.model.Content;
+import dev.vality.damsel.domain.InvoicePaymentChargebackCategory;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.StatChargeback;
+import dev.vality.magista.StatChargeback;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;

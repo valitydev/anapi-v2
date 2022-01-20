@@ -1,17 +1,17 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.Invoice;
-import com.rbkmoney.anapi.v2.model.InvoiceLineTaxVAT;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.damsel.msgpack.Value;
-import com.rbkmoney.magista.StatInvoice;
-import com.rbkmoney.magista.StatInvoiceResponse;
+import dev.vality.anapi.v2.model.Invoice;
+import dev.vality.anapi.v2.model.InvoiceLineTaxVAT;
+import dev.vality.damsel.domain.*;
+import dev.vality.damsel.msgpack.Value;
+import dev.vality.magista.StatInvoice;
+import dev.vality.magista.StatInvoiceResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.rbkmoney.anapi.v2.model.Invoice.StatusEnum.*;
+import static dev.vality.anapi.v2.model.Invoice.StatusEnum.*;
 import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createSearchInvoiceAllResponse;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomInt;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;

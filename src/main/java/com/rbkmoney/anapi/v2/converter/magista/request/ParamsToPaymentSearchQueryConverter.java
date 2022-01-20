@@ -1,11 +1,11 @@
 package com.rbkmoney.anapi.v2.converter.magista.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.anapi.v2.model.PaymentStatus;
-import com.rbkmoney.damsel.domain.LegacyBankCardPaymentSystem;
-import com.rbkmoney.damsel.domain.LegacyBankCardTokenProvider;
-import com.rbkmoney.damsel.domain.LegacyTerminalPaymentProvider;
-import com.rbkmoney.magista.*;
+import dev.vality.anapi.v2.model.PaymentStatus;
+import dev.vality.damsel.domain.LegacyBankCardPaymentSystem;
+import dev.vality.damsel.domain.LegacyBankCardTokenProvider;
+import dev.vality.damsel.domain.LegacyTerminalPaymentProvider;
+import dev.vality.magista.*;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
@@ -13,9 +13,9 @@ import java.util.List;
 
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.fillCommonParams;
 import static com.rbkmoney.anapi.v2.util.ConverterUtil.merge;
-import static com.rbkmoney.magista.InvoicePaymentStatus.*;
-import static com.rbkmoney.magista.PaymentToolType.bank_card;
-import static com.rbkmoney.magista.PaymentToolType.payment_terminal;
+import static dev.vality.magista.InvoicePaymentStatus.*;
+import static dev.vality.magista.PaymentToolType.bank_card;
+import static dev.vality.magista.PaymentToolType.payment_terminal;
 
 @Component
 public class ParamsToPaymentSearchQueryConverter {
@@ -116,7 +116,7 @@ public class ParamsToPaymentSearchQueryConverter {
         };
     }
 
-    protected com.rbkmoney.magista.InvoicePaymentFlowType mapInvoicePaymentFlow(String paymentFlow) {
+    protected dev.vality.magista.InvoicePaymentFlowType mapInvoicePaymentFlow(String paymentFlow) {
         try {
             return InvoicePaymentFlowType.valueOf(paymentFlow);
         } catch (IllegalArgumentException e) {

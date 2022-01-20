@@ -1,8 +1,8 @@
 package com.rbkmoney.anapi.v2.converter.magista.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.magista.PayoutSearchQuery;
-import com.rbkmoney.magista.PayoutToolType;
+import dev.vality.magista.PayoutSearchQuery;
+import dev.vality.magista.PayoutToolType;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;

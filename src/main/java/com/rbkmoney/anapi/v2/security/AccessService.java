@@ -5,7 +5,7 @@ import com.rbkmoney.anapi.v2.exception.BouncerException;
 import com.rbkmoney.anapi.v2.service.BouncerService;
 import com.rbkmoney.anapi.v2.service.KeycloakService;
 import com.rbkmoney.anapi.v2.service.VortigonService;
-import com.rbkmoney.bouncer.base.Entity;
+import dev.vality.bouncer.base.Entity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

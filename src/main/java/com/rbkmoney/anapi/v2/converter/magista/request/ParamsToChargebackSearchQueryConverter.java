@@ -1,11 +1,11 @@
 package com.rbkmoney.anapi.v2.converter.magista.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.anapi.v2.model.ChargebackCategory;
-import com.rbkmoney.anapi.v2.model.ChargebackStage;
-import com.rbkmoney.anapi.v2.model.ChargebackStatus;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.magista.ChargebackSearchQuery;
+import dev.vality.anapi.v2.model.ChargebackCategory;
+import dev.vality.anapi.v2.model.ChargebackStage;
+import dev.vality.anapi.v2.model.ChargebackStatus;
+import dev.vality.damsel.domain.*;
+import dev.vality.magista.ChargebackSearchQuery;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;

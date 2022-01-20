@@ -1,24 +1,24 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.*;
+import dev.vality.anapi.v2.model.*;
 import com.rbkmoney.anapi.v2.util.MaskUtil;
-import com.rbkmoney.damsel.domain.ClientInfo;
-import com.rbkmoney.damsel.domain.ContactInfo;
-import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
-import com.rbkmoney.damsel.domain.PaymentResourcePayer;
-import com.rbkmoney.damsel.domain.RecurrentPayer;
-import com.rbkmoney.damsel.domain.*;
+import dev.vality.damsel.domain.ClientInfo;
+import dev.vality.damsel.domain.ContactInfo;
+import dev.vality.damsel.domain.InvoicePaymentStatus;
+import dev.vality.damsel.domain.PaymentResourcePayer;
+import dev.vality.damsel.domain.RecurrentPayer;
+import dev.vality.damsel.domain.*;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.CustomerPayer;
-import com.rbkmoney.magista.InvoicePaymentFlow;
-import com.rbkmoney.magista.InvoicePaymentFlowInstant;
-import com.rbkmoney.magista.Payer;
-import com.rbkmoney.magista.*;
+import dev.vality.magista.CustomerPayer;
+import dev.vality.magista.InvoicePaymentFlow;
+import dev.vality.magista.InvoicePaymentFlowInstant;
+import dev.vality.magista.Payer;
+import dev.vality.magista.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 
-import static com.rbkmoney.anapi.v2.model.PaymentSearchResult.StatusEnum.*;
+import static dev.vality.anapi.v2.model.PaymentSearchResult.StatusEnum.*;
 import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.*;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,7 +77,7 @@ class StatPaymentToPaymentSearchResultConverterTest {
         customerPayer.setPaymentTool(tool)
                 .setCustomerId("1");
         var openapiCustomerPayer =
-                (com.rbkmoney.anapi.v2.model.CustomerPayer) converter.mapPayer(payer);
+                (dev.vality.anapi.v2.model.CustomerPayer) converter.mapPayer(payer);
         var paymentToolDetails = (PaymentToolDetailsBankCard) openapiCustomerPayer.getPaymentToolDetails();
         assertAll(
                 () -> assertEquals("1", openapiCustomerPayer.getCustomerID()),
@@ -103,13 +103,14 @@ class StatPaymentToPaymentSearchResultConverterTest {
                                 .setIpAddress("127.0.0.1")))
                 .setContactInfo(contactInfo);
         var paymentResourcePayer =
-                (com.rbkmoney.anapi.v2.model.PaymentResourcePayer) converter.mapPayer(payer);
+                (dev.vality.anapi.v2.model.PaymentResourcePayer) converter.mapPayer(payer);
         var resourcePayerPaymentToolDetails = (PaymentToolDetailsBankCard) paymentResourcePayer.getPaymentToolDetails();
         assertAll(
                 () -> assertEquals("1111", paymentResourcePayer.getPaymentToolToken()),
                 () -> assertEquals("1111", paymentResourcePayer.getPaymentSession()),
-                () -> assertEquals("print", paymentResourcePayer.getClientInfo().getFingerprint()),
-                () -> assertEquals("127.0.0.1", paymentResourcePayer.getClientInfo().getIp()),
+                () -> assertEquals("print", paymentResourcePayer.getClientInfo().get().getFingerprint()),
+                () -> assertTrue(paymentResourcePayer.getClientInfo().isPresent()),
+                () -> assertEquals("127.0.0.1", paymentResourcePayer.getClientInfo().get().getIp()),
                 () -> assertEquals("mail@mail.com", paymentResourcePayer.getContactInfo().getEmail()),
                 () -> assertEquals("88005553535", paymentResourcePayer.getContactInfo().getPhoneNumber()),
                 () -> assertEquals("1234", resourcePayerPaymentToolDetails.getBin()),
@@ -127,7 +128,7 @@ class StatPaymentToPaymentSearchResultConverterTest {
                         .setPaymentId("123")
                         .setInvoiceId("456"));
         var openapiRecurrentPayer =
-                (com.rbkmoney.anapi.v2.model.RecurrentPayer) converter.mapPayer(payer);
+                (dev.vality.anapi.v2.model.RecurrentPayer) converter.mapPayer(payer);
         var recurrentPayerPaymentToolDetails =
                 (PaymentToolDetailsBankCard) paymentResourcePayer.getPaymentToolDetails();
         assertAll(

@@ -1,13 +1,13 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.RefundSearchResult;
-import com.rbkmoney.anapi.v2.model.RefundStatusError;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.magista.StatRefund;
-import com.rbkmoney.magista.StatRefundResponse;
+import dev.vality.anapi.v2.model.RefundSearchResult;
+import dev.vality.anapi.v2.model.RefundStatusError;
+import dev.vality.damsel.domain.*;
+import dev.vality.magista.StatRefund;
+import dev.vality.magista.StatRefundResponse;
 import org.junit.jupiter.api.Test;
 
-import static com.rbkmoney.anapi.v2.model.RefundSearchResult.StatusEnum.*;
+import static dev.vality.anapi.v2.model.RefundSearchResult.StatusEnum.*;
 import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createSearchRefundAllResponse;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;
 import static org.junit.jupiter.api.Assertions.*;

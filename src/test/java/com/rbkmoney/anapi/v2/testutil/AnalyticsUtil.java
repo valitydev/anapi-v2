@@ -1,6 +1,6 @@
 package com.rbkmoney.anapi.v2.testutil;
 
-import com.rbkmoney.damsel.analytics.AmountResponse;
+import dev.vality.damsel.analytics.AmountResponse;
 
 import static com.rbkmoney.anapi.v2.testutil.DamselUtil.fillRequiredTBaseObject;
 

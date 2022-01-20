@@ -1,14 +1,15 @@
 package com.rbkmoney.anapi.v2.api;
 
-import com.rbkmoney.anapi.v2.model.InlineResponse20014;
-import com.rbkmoney.anapi.v2.model.Report;
-import com.rbkmoney.anapi.v2.model.ReportLink;
+import dev.vality.anapi.v2.api.ReportsApiDelegate;
+import dev.vality.anapi.v2.model.InlineResponse20014;
+import dev.vality.anapi.v2.model.Report;
+import dev.vality.anapi.v2.model.ReportLink;
 import com.rbkmoney.anapi.v2.security.AccessService;
 import com.rbkmoney.anapi.v2.service.ReporterService;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.reporter.ReportRequest;
-import com.rbkmoney.reporter.ReportTimeRange;
-import com.rbkmoney.reporter.StatReportRequest;
+import dev.vality.reporter.ReportRequest;
+import dev.vality.reporter.ReportTimeRange;
+import dev.vality.reporter.StatReportRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

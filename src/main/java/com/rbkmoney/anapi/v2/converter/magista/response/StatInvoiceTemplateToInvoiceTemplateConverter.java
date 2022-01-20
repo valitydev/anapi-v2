@@ -1,10 +1,10 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.*;
-import com.rbkmoney.damsel.msgpack.Value;
+import dev.vality.anapi.v2.model.*;
+import dev.vality.damsel.msgpack.Value;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.InvoiceTemplateStatus;
-import com.rbkmoney.magista.StatInvoiceTemplate;
+import dev.vality.magista.InvoiceTemplateStatus;
+import dev.vality.magista.StatInvoiceTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
@@ -31,9 +31,9 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
                 .shopID(statInvoiceTemplate.getShopId());
     }
 
-    protected InvoiceTemplateDetails mapDetails(com.rbkmoney.damsel.domain.InvoiceTemplateDetails details) {
+    protected InvoiceTemplateDetails mapDetails(dev.vality.damsel.domain.InvoiceTemplateDetails details) {
         try {
-            var field = com.rbkmoney.damsel.domain.InvoiceTemplateDetails._Fields.findByName(
+            var field = dev.vality.damsel.domain.InvoiceTemplateDetails._Fields.findByName(
                     details.getSetField().getFieldName());
             return switch (field) {
                 case CART -> new InvoiceTemplateCart().cart(
@@ -59,9 +59,9 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
 
     }
 
-    protected InvoiceTemplateProductPrice mapPrice(com.rbkmoney.damsel.domain.InvoiceTemplateProductPrice price) {
+    protected InvoiceTemplateProductPrice mapPrice(dev.vality.damsel.domain.InvoiceTemplateProductPrice price) {
         try {
-            var field = com.rbkmoney.damsel.domain.InvoiceTemplateProductPrice._Fields.findByName(
+            var field = dev.vality.damsel.domain.InvoiceTemplateProductPrice._Fields.findByName(
                     price.getSetField().getFieldName());
             return switch (field) {
                 case FIXED -> mapCash(price.getFixed()).costType("fixed");
@@ -75,13 +75,13 @@ public class StatInvoiceTemplateToInvoiceTemplateConverter {
         }
     }
 
-    protected Cash mapCash(com.rbkmoney.damsel.domain.Cash cash) {
+    protected Cash mapCash(dev.vality.damsel.domain.Cash cash) {
         return new Cash()
                 .amount(cash.getAmount())
                 .currency(cash.getCurrency().getSymbolicCode());
     }
 
-    protected CashRange mapCashRange(com.rbkmoney.damsel.domain.CashRange cash) {
+    protected CashRange mapCashRange(dev.vality.damsel.domain.CashRange cash) {
         return new CashRange()
                 .lowerBound(cash.getLower().getInclusive().getAmount())
                 .upperBound(cash.getUpper().getInclusive().getAmount())

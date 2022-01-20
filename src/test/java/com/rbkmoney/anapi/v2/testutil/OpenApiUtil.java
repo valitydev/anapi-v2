@@ -1,11 +1,11 @@
 package com.rbkmoney.anapi.v2.testutil;
 
-import com.rbkmoney.anapi.v2.model.ChargebackCategory;
-import com.rbkmoney.anapi.v2.model.ChargebackStage;
-import com.rbkmoney.anapi.v2.model.ChargebackStatus;
-import com.rbkmoney.anapi.v2.model.PaymentStatus;
-import com.rbkmoney.damsel.domain.PaymentInstitutionRealm;
-import com.rbkmoney.damsel.merch_stat.TerminalPaymentProvider;
+import dev.vality.anapi.v2.model.ChargebackCategory;
+import dev.vality.anapi.v2.model.ChargebackStage;
+import dev.vality.anapi.v2.model.ChargebackStatus;
+import dev.vality.anapi.v2.model.PaymentStatus;
+import dev.vality.damsel.domain.PaymentInstitutionRealm;
+import dev.vality.damsel.merch_stat.TerminalPaymentProvider;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;

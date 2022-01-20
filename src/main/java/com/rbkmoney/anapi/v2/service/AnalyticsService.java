@@ -1,11 +1,11 @@
 package com.rbkmoney.anapi.v2.service;
 
 import com.rbkmoney.anapi.v2.exception.AnalytycsException;
-import com.rbkmoney.anapi.v2.model.OffsetAmount;
-import com.rbkmoney.anapi.v2.model.OffsetCount;
-import com.rbkmoney.anapi.v2.model.SplitUnit;
-import com.rbkmoney.anapi.v2.model.SubError;
-import com.rbkmoney.anapi.v2.model.*;
+import dev.vality.anapi.v2.model.OffsetAmount;
+import dev.vality.anapi.v2.model.OffsetCount;
+import dev.vality.anapi.v2.model.SplitUnit;
+import dev.vality.anapi.v2.model.SubError;
+import dev.vality.anapi.v2.model.*;
 import dev.vality.damsel.analytics.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
@@ -192,14 +192,14 @@ public class AnalyticsService {
         }
     }
 
-    private SubError getSubError(SubError o) {
+    private SubError getSubError(dev.vality.damsel.analytics.SubError o) {
         return new SubError()
                 .code(o.getCode())
                 .subError(o.getSubError() != null ? getSubError(o.getSubError()) : null);
     }
 
     private SplitAmountResult createSplitAmountResult(GroupedCurrencyOffsetAmount groupedCurrencyOffsetAmount,
-                                                      SplitUnit splitUnit) {
+                                                      dev.vality.damsel.analytics.SplitUnit splitUnit) {
         var splitAmountResult = new SplitAmountResult();
         splitAmountResult.setSplitUnit(SplitUnit.valueOf(splitUnit.name()));
         splitAmountResult.setCurrency(groupedCurrencyOffsetAmount.getCurrency());
@@ -210,7 +210,7 @@ public class AnalyticsService {
     }
 
     private SplitCountResult createSplitCountResult(GroupedCurrencyOffsetCount groupedCurrencyOffsetCount,
-                                                    SplitUnit unit) {
+                                                    dev.vality.damsel.analytics.SplitUnit unit) {
         var splitCountResult = new SplitCountResult();
         splitCountResult.setSplitUnit(SplitUnit.valueOf(unit.name()));
         splitCountResult.setCurrency(groupedCurrencyOffsetCount.getCurrency());
@@ -229,14 +229,14 @@ public class AnalyticsService {
         return statusOffsetCount;
     }
 
-    private OffsetAmount createOffsetAmount(OffsetAmount offsetAmount) {
+    private OffsetAmount createOffsetAmount(dev.vality.damsel.analytics.OffsetAmount offsetAmount) {
         var result = new OffsetAmount();
         result.setAmount(offsetAmount.getAmount());
         result.setOffset(offsetAmount.getOffset());
         return result;
     }
 
-    private OffsetCount createOffsetCount(OffsetCount offsetCount) {
+    private OffsetCount createOffsetCount(dev.vality.damsel.analytics.OffsetCount offsetCount) {
         var offsetCountResult = new OffsetCount();
         offsetCountResult.setCount(offsetCount.getCount());
         offsetCountResult.setOffset(offsetCount.getOffset());

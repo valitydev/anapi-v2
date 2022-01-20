@@ -1,13 +1,13 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.Chargeback;
-import com.rbkmoney.damsel.base.Content;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.magista.StatChargeback;
-import com.rbkmoney.magista.StatChargebackResponse;
+import dev.vality.anapi.v2.model.Chargeback;
+import dev.vality.damsel.base.Content;
+import dev.vality.damsel.domain.*;
+import dev.vality.magista.StatChargeback;
+import dev.vality.magista.StatChargebackResponse;
 import org.junit.jupiter.api.Test;
 
-import static com.rbkmoney.anapi.v2.model.ChargebackCategory.*;
+import static dev.vality.anapi.v2.model.ChargebackCategory.*;
 import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createSearchChargebackAllResponse;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomBytes;
 import static com.rbkmoney.anapi.v2.testutil.RandomUtil.randomString;

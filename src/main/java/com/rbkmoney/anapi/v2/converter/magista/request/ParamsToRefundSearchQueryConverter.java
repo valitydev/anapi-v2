@@ -1,8 +1,8 @@
 package com.rbkmoney.anapi.v2.converter.magista.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.magista.InvoicePaymentRefundStatus;
-import com.rbkmoney.magista.RefundSearchQuery;
+import dev.vality.magista.InvoicePaymentRefundStatus;
+import dev.vality.magista.RefundSearchQuery;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;

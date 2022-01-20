@@ -1,8 +1,8 @@
 package com.rbkmoney.anapi.v2.service;
 
 import com.rbkmoney.anapi.v2.exception.ReporterException;
-import com.rbkmoney.anapi.v2.model.*;
 import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.anapi.v2.model.*;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportingSrv;
 import dev.vality.reporter.StatReportRequest;
@@ -75,7 +75,7 @@ public class ReporterService {
         }
     }
 
-    private Report mapReport(Report response) {
+    private Report mapReport(dev.vality.reporter.Report response) {
         return new Report()
                 .id(response.getReportId())
                 .partyID(response.getPartyId())

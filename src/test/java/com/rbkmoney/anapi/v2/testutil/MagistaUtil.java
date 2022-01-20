@@ -1,21 +1,21 @@
 package com.rbkmoney.anapi.v2.testutil;
 
-import com.rbkmoney.bouncer.ctx.ContextFragment;
-import com.rbkmoney.bouncer.decisions.Judgement;
-import com.rbkmoney.bouncer.decisions.Resolution;
-import com.rbkmoney.bouncer.decisions.ResolutionAllowed;
-import com.rbkmoney.damsel.base.Content;
-import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
-import com.rbkmoney.damsel.domain.InvoicePaymentStatus;
-import com.rbkmoney.damsel.domain.InvoiceStatus;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.damsel.geo_ip.LocationInfo;
-import com.rbkmoney.magista.CustomerPayer;
-import com.rbkmoney.magista.InvoicePaymentFlow;
-import com.rbkmoney.magista.InvoicePaymentFlowHold;
-import com.rbkmoney.magista.InvoicePaymentFlowInstant;
-import com.rbkmoney.magista.Payer;
-import com.rbkmoney.magista.*;
+import dev.vality.bouncer.ctx.ContextFragment;
+import dev.vality.bouncer.decisions.Judgement;
+import dev.vality.bouncer.decisions.Resolution;
+import dev.vality.bouncer.decisions.ResolutionAllowed;
+import dev.vality.damsel.base.Content;
+import dev.vality.damsel.domain.InvoicePaymentRefundStatus;
+import dev.vality.damsel.domain.InvoicePaymentStatus;
+import dev.vality.damsel.domain.InvoiceStatus;
+import dev.vality.damsel.domain.*;
+import dev.vality.damsel.geo_ip.LocationInfo;
+import dev.vality.magista.CustomerPayer;
+import dev.vality.magista.InvoicePaymentFlow;
+import dev.vality.magista.InvoicePaymentFlowHold;
+import dev.vality.magista.InvoicePaymentFlowInstant;
+import dev.vality.magista.Payer;
+import dev.vality.magista.*;
 import lombok.experimental.UtilityClass;
 
 import java.time.Instant;

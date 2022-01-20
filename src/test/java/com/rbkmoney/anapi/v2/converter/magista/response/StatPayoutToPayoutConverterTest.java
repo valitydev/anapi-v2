@@ -1,10 +1,10 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.*;
-import com.rbkmoney.damsel.domain.InternationalBankAccount;
-import com.rbkmoney.damsel.domain.InternationalBankDetails;
-import com.rbkmoney.damsel.domain.*;
-import com.rbkmoney.magista.*;
+import dev.vality.anapi.v2.model.*;
+import dev.vality.damsel.domain.InternationalBankAccount;
+import dev.vality.damsel.domain.InternationalBankDetails;
+import dev.vality.damsel.domain.*;
+import dev.vality.magista.*;
 import org.junit.jupiter.api.Test;
 
 import static com.rbkmoney.anapi.v2.testutil.MagistaUtil.createSearchPayoutAllResponse;

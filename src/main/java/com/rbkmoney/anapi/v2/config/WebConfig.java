@@ -1,10 +1,10 @@
 package com.rbkmoney.anapi.v2.config;
 
-import com.rbkmoney.woody.api.flow.WFlow;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
-import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityUsernameExtensionKit;
+import dev.vality.woody.api.flow.WFlow;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityUsernameExtensionKit;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
@@ -24,8 +24,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import static com.rbkmoney.anapi.v2.util.DeadlineUtil.*;
-import static com.rbkmoney.woody.api.trace.ContextUtils.setCustomMetadataValue;
-import static com.rbkmoney.woody.api.trace.ContextUtils.setDeadline;
+import static dev.vality.woody.api.trace.ContextUtils.setCustomMetadataValue;
+import static dev.vality.woody.api.trace.ContextUtils.setDeadline;
 
 @Configuration
 @SuppressWarnings({"ParameterName", "LocalVariableName"})

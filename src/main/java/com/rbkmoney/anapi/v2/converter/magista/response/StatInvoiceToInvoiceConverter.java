@@ -1,13 +1,13 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.Invoice;
-import com.rbkmoney.anapi.v2.model.InvoiceLine;
-import com.rbkmoney.anapi.v2.model.InvoiceLineTaxMode;
-import com.rbkmoney.anapi.v2.model.InvoiceLineTaxVAT;
-import com.rbkmoney.damsel.domain.InvoiceStatus;
-import com.rbkmoney.damsel.msgpack.Value;
+import dev.vality.anapi.v2.model.Invoice;
+import dev.vality.anapi.v2.model.InvoiceLine;
+import dev.vality.anapi.v2.model.InvoiceLineTaxMode;
+import dev.vality.anapi.v2.model.InvoiceLineTaxVAT;
+import dev.vality.damsel.domain.InvoiceStatus;
+import dev.vality.damsel.msgpack.Value;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.StatInvoice;
+import dev.vality.magista.StatInvoice;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;

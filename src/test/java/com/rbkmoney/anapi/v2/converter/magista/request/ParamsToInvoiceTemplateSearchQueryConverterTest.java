@@ -1,8 +1,8 @@
 package com.rbkmoney.anapi.v2.converter.magista.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.magista.InvoiceTemplateSearchQuery;
-import com.rbkmoney.magista.InvoiceTemplateStatus;
+import dev.vality.magista.InvoiceTemplateSearchQuery;
+import dev.vality.magista.InvoiceTemplateStatus;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;

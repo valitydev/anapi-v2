@@ -1,13 +1,13 @@
 package com.rbkmoney.anapi.v2;
 
 import com.rbkmoney.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
-import com.rbkmoney.anapi.v2.model.DefaultLogicError;
+import dev.vality.anapi.v2.model.DefaultLogicError;
 import com.rbkmoney.anapi.v2.testutil.AnalyticsUtil;
 import com.rbkmoney.anapi.v2.testutil.OpenApiUtil;
-import com.rbkmoney.bouncer.decisions.ArbiterSrv;
-import com.rbkmoney.damsel.analytics.AnalyticsServiceSrv;
-import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
-import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
+import dev.vality.bouncer.decisions.ArbiterSrv;
+import dev.vality.damsel.analytics.AnalyticsServiceSrv;
+import dev.vality.damsel.vortigon.VortigonServiceSrv;
+import dev.vality.orgmanagement.AuthContextProviderSrv;
 import lombok.SneakyThrows;
 import org.apache.thrift.TException;
 import org.junit.jupiter.api.AfterEach;

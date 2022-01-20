@@ -3,10 +3,10 @@ package com.rbkmoney.anapi.v2.security;
 import com.rbkmoney.anapi.v2.config.properties.BouncerProperties;
 import com.rbkmoney.anapi.v2.service.KeycloakService;
 import com.rbkmoney.anapi.v2.service.OrgManagerService;
-import com.rbkmoney.bouncer.base.Entity;
-import com.rbkmoney.bouncer.context.v1.*;
-import com.rbkmoney.bouncer.ctx.ContextFragmentType;
-import com.rbkmoney.bouncer.decisions.Context;
+import dev.vality.bouncer.base.Entity;
+import dev.vality.bouncer.context.v1.*;
+import dev.vality.bouncer.ctx.ContextFragmentType;
+import dev.vality.bouncer.decisions.Context;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.thrift.TSerializer;
@@ -28,7 +28,7 @@ public class BouncerContextFactory {
     public Context buildContext(AnapiBouncerContext bouncerContext) {
         var contextFragment = buildContextFragment(bouncerContext);
         var serializer = new TSerializer();
-        var fragment = new com.rbkmoney.bouncer.ctx.ContextFragment()
+        var fragment = new dev.vality.bouncer.ctx.ContextFragment()
                 .setType(ContextFragmentType.v1_thrift_binary)
                 .setContent(serializer.serialize(contextFragment));
         var userFragment = orgManagerService.getUserAuthContext(

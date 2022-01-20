@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.api;
 
 import com.rbkmoney.anapi.v2.converter.magista.request.*;
-import com.rbkmoney.anapi.v2.model.*;
+import dev.vality.anapi.v2.model.*;
 import com.rbkmoney.anapi.v2.security.AccessService;
 import com.rbkmoney.anapi.v2.service.MagistaService;
 import lombok.RequiredArgsConstructor;

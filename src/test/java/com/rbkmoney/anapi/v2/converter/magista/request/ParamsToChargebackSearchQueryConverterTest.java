@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.converter.magista.request;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
-import com.rbkmoney.magista.ChargebackSearchQuery;
+import dev.vality.magista.ChargebackSearchQuery;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;

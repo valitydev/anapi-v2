@@ -1,6 +1,6 @@
 package com.rbkmoney.anapi.v2.exception;
 
-import com.rbkmoney.anapi.v2.model.DefaultLogicError;
+import dev.vality.anapi.v2.model.DefaultLogicError;
 import lombok.Getter;
 
 @Getter

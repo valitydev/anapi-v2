@@ -1,7 +1,7 @@
 package com.rbkmoney.anapi.v2.util;
 
-import com.rbkmoney.damsel.domain.BankCard;
-import com.rbkmoney.damsel.domain.MobilePhone;
+import dev.vality.damsel.domain.BankCard;
+import dev.vality.damsel.domain.MobilePhone;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

@@ -1,10 +1,10 @@
 package com.rbkmoney.anapi.v2.converter.magista.response;
 
-import com.rbkmoney.anapi.v2.model.RefundSearchResult;
-import com.rbkmoney.anapi.v2.model.RefundStatusError;
-import com.rbkmoney.damsel.domain.InvoicePaymentRefundStatus;
+import dev.vality.anapi.v2.model.RefundSearchResult;
+import dev.vality.anapi.v2.model.RefundStatusError;
+import dev.vality.damsel.domain.InvoicePaymentRefundStatus;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.magista.StatRefund;
+import dev.vality.magista.StatRefund;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
