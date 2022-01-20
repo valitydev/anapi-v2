@@ -2,8 +2,8 @@ package com.rbkmoney.anapi.v2.service;
 
 import com.rbkmoney.anapi.v2.exception.BadRequestException;
 import com.rbkmoney.anapi.v2.exception.VortigonException;
-import com.rbkmoney.damsel.vortigon.PaymentInstitutionRealm;
-import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
+import dev.vality.damsel.vortigon.PaymentInstitutionRealm;
+import dev.vality.damsel.vortigon.VortigonServiceSrv;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;

@@ -1,16 +1,16 @@
 package com.rbkmoney.anapi.v2.config;
 
 import com.rbkmoney.bouncer.decisions.ArbiterSrv;
-import com.rbkmoney.damsel.analytics.AnalyticsServiceSrv;
-import com.rbkmoney.damsel.vortigon.VortigonServiceSrv;
 import com.rbkmoney.magista.MerchantStatisticsServiceSrv;
-import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
-import com.rbkmoney.reporter.ReportingSrv;
 import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
 import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
 import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
 import com.rbkmoney.woody.api.trace.context.metadata.user.UserIdentityUsernameExtensionKit;
 import com.rbkmoney.woody.thrift.impl.http.THSpawnClientBuilder;
+import dev.vality.damsel.analytics.AnalyticsServiceSrv;
+import dev.vality.damsel.vortigon.VortigonServiceSrv;
+import dev.vality.orgmanagement.AuthContextProviderSrv;
+import dev.vality.reporter.ReportingSrv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,8 @@
 package com.rbkmoney.anapi.v2.service;
 
 import com.rbkmoney.anapi.v2.exception.OrgManagerException;
-import com.rbkmoney.bouncer.ctx.ContextFragment;
-import com.rbkmoney.orgmanagement.AuthContextProviderSrv;
+import dev.vality.bouncer.ctx.ContextFragment;
+import dev.vality.orgmanagement.AuthContextProviderSrv;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

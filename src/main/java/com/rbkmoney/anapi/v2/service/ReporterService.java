@@ -3,9 +3,9 @@ package com.rbkmoney.anapi.v2.service;
 import com.rbkmoney.anapi.v2.exception.ReporterException;
 import com.rbkmoney.anapi.v2.model.*;
 import com.rbkmoney.geck.common.util.TypeUtil;
-import com.rbkmoney.reporter.ReportRequest;
-import com.rbkmoney.reporter.ReportingSrv;
-import com.rbkmoney.reporter.StatReportRequest;
+import dev.vality.reporter.ReportRequest;
+import dev.vality.reporter.ReportingSrv;
+import dev.vality.reporter.StatReportRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TException;
@@ -75,7 +75,7 @@ public class ReporterService {
         }
     }
 
-    private Report mapReport(com.rbkmoney.reporter.Report response) {
+    private Report mapReport(Report response) {
         return new Report()
                 .id(response.getReportId())
                 .partyID(response.getPartyId())

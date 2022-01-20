@@ -6,7 +6,7 @@ import com.rbkmoney.anapi.v2.model.OffsetCount;
 import com.rbkmoney.anapi.v2.model.SplitUnit;
 import com.rbkmoney.anapi.v2.model.SubError;
 import com.rbkmoney.anapi.v2.model.*;
-import com.rbkmoney.damsel.analytics.*;
+import dev.vality.damsel.analytics.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
@@ -192,14 +192,14 @@ public class AnalyticsService {
         }
     }
 
-    private SubError getSubError(com.rbkmoney.damsel.analytics.SubError o) {
+    private SubError getSubError(SubError o) {
         return new SubError()
                 .code(o.getCode())
                 .subError(o.getSubError() != null ? getSubError(o.getSubError()) : null);
     }
 
     private SplitAmountResult createSplitAmountResult(GroupedCurrencyOffsetAmount groupedCurrencyOffsetAmount,
-                                                      com.rbkmoney.damsel.analytics.SplitUnit splitUnit) {
+                                                      SplitUnit splitUnit) {
         var splitAmountResult = new SplitAmountResult();
         splitAmountResult.setSplitUnit(SplitUnit.valueOf(splitUnit.name()));
         splitAmountResult.setCurrency(groupedCurrencyOffsetAmount.getCurrency());
@@ -210,7 +210,7 @@ public class AnalyticsService {
     }
 
     private SplitCountResult createSplitCountResult(GroupedCurrencyOffsetCount groupedCurrencyOffsetCount,
-                                                    com.rbkmoney.damsel.analytics.SplitUnit unit) {
+                                                    SplitUnit unit) {
         var splitCountResult = new SplitCountResult();
         splitCountResult.setSplitUnit(SplitUnit.valueOf(unit.name()));
         splitCountResult.setCurrency(groupedCurrencyOffsetCount.getCurrency());
@@ -229,14 +229,14 @@ public class AnalyticsService {
         return statusOffsetCount;
     }
 
-    private OffsetAmount createOffsetAmount(com.rbkmoney.damsel.analytics.OffsetAmount offsetAmount) {
+    private OffsetAmount createOffsetAmount(OffsetAmount offsetAmount) {
         var result = new OffsetAmount();
         result.setAmount(offsetAmount.getAmount());
         result.setOffset(offsetAmount.getOffset());
         return result;
     }
 
-    private OffsetCount createOffsetCount(com.rbkmoney.damsel.analytics.OffsetCount offsetCount) {
+    private OffsetCount createOffsetCount(OffsetCount offsetCount) {
         var offsetCountResult = new OffsetCount();
         offsetCountResult.setCount(offsetCount.getCount());
         offsetCountResult.setOffset(offsetCount.getOffset());
