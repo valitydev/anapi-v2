@@ -3,7 +3,7 @@ package dev.vality.anapi.v2.converter.magista.response;
 import dev.vality.anapi.v2.util.MaskUtil;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.PaymentTool;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.StatPayment;
 import dev.vality.anapi.v2.model.*;

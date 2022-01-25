@@ -2,7 +2,7 @@ package dev.vality.anapi.v2.converter.magista.response;
 
 import dev.vality.damsel.domain.CountryCode;
 import dev.vality.damsel.domain.PayoutToolInfo;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.PayoutStatus;
 import dev.vality.magista.StatPayout;
 import dev.vality.anapi.v2.model.*;

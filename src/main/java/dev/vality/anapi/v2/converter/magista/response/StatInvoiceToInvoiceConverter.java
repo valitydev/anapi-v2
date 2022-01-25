@@ -6,7 +6,7 @@ import dev.vality.anapi.v2.model.InvoiceLineTaxMode;
 import dev.vality.anapi.v2.model.InvoiceLineTaxVAT;
 import dev.vality.damsel.domain.InvoiceStatus;
 import dev.vality.damsel.msgpack.Value;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.StatInvoice;
 import org.springframework.stereotype.Component;
 

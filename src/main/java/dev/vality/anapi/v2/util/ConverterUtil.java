@@ -1,6 +1,6 @@
 package dev.vality.anapi.v2.util;
 
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.CommonSearchQueryParams;
 import lombok.experimental.UtilityClass;
 

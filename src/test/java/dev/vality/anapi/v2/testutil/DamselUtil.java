@@ -1,9 +1,9 @@
 package dev.vality.anapi.v2.testutil;
 
-import com.rbkmoney.geck.serializer.kit.mock.FieldHandler;
-import com.rbkmoney.geck.serializer.kit.mock.MockMode;
-import com.rbkmoney.geck.serializer.kit.mock.MockTBaseProcessor;
-import com.rbkmoney.geck.serializer.kit.tbase.TBaseHandler;
+import dev.vality.geck.serializer.kit.mock.FieldHandler;
+import dev.vality.geck.serializer.kit.mock.MockMode;
+import dev.vality.geck.serializer.kit.mock.MockTBaseProcessor;
+import dev.vality.geck.serializer.kit.tbase.TBaseHandler;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.thrift.TBase;

@@ -5,7 +5,7 @@ import dev.vality.anapi.v2.model.Report;
 import dev.vality.anapi.v2.model.ReportLink;
 import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.ReporterService;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.util.DeadlineUtil;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportTimeRange;

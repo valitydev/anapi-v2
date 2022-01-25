@@ -2,7 +2,7 @@ package dev.vality.anapi.v2.converter.magista.response;
 
 import dev.vality.anapi.v2.model.*;
 import dev.vality.damsel.msgpack.Value;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.InvoiceTemplateStatus;
 import dev.vality.magista.StatInvoiceTemplate;
 import org.springframework.stereotype.Component;

@@ -5,7 +5,7 @@ import dev.vality.anapi.v2.model.ChargebackCategory;
 import dev.vality.anapi.v2.model.ChargebackReason;
 import dev.vality.anapi.v2.model.Content;
 import dev.vality.damsel.domain.InvoicePaymentChargebackCategory;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.StatChargeback;
 import org.springframework.stereotype.Component;
 

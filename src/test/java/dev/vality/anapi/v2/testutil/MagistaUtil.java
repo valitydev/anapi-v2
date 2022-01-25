@@ -42,7 +42,8 @@ public class MagistaUtil {
         status.setPending(new InvoicePaymentPending());
         var cart = DamselUtil.fillRequiredTBaseObject(new InvoiceCart(), InvoiceCart.class);
         var line = DamselUtil.fillRequiredTBaseObject(new InvoiceLine(), InvoiceLine.class);
-        var instant = DamselUtil.fillRequiredTBaseObject(new InvoicePaymentFlowInstant(), InvoicePaymentFlowInstant.class);
+        var instant = DamselUtil.fillRequiredTBaseObject(new InvoicePaymentFlowInstant(),
+                InvoicePaymentFlowInstant.class);
         var locationInfo = DamselUtil.fillRequiredTBaseObject(new LocationInfo(), LocationInfo.class);
         var response = DamselUtil.fillRequiredTBaseObject(new StatPaymentResponse(), StatPaymentResponse.class);
 
@@ -58,12 +59,16 @@ public class MagistaUtil {
 
     public static StatChargebackResponse createSearchChargebackAllResponse() {
         var chargeback = DamselUtil.fillRequiredTBaseObject(new StatChargeback(), StatChargeback.class);
-        var stage = DamselUtil.fillRequiredTBaseObject(new InvoicePaymentChargebackStage(), InvoicePaymentChargebackStage.class);
+        var stage = DamselUtil.fillRequiredTBaseObject(new InvoicePaymentChargebackStage(),
+                InvoicePaymentChargebackStage.class);
         var reason =
-                DamselUtil.fillRequiredTBaseObject(new InvoicePaymentChargebackReason(), InvoicePaymentChargebackReason.class);
+                DamselUtil.fillRequiredTBaseObject(new InvoicePaymentChargebackReason(),
+                        InvoicePaymentChargebackReason.class);
         var status =
-                DamselUtil.fillRequiredTBaseObject(new InvoicePaymentChargebackStatus(), InvoicePaymentChargebackStatus.class);
-        var response = DamselUtil.fillRequiredTBaseObject(new StatChargebackResponse(), StatChargebackResponse.class);
+                DamselUtil.fillRequiredTBaseObject(new InvoicePaymentChargebackStatus(),
+                        InvoicePaymentChargebackStatus.class);
+        var response = DamselUtil.fillRequiredTBaseObject(new StatChargebackResponse(),
+                StatChargebackResponse.class);
 
         return response.setChargebacks(
                 List.of(chargeback
@@ -82,7 +87,8 @@ public class MagistaUtil {
         var cart = DamselUtil.fillRequiredTBaseObject(new InvoiceCart(), InvoiceCart.class);
         var line = DamselUtil.fillRequiredTBaseObject(new InvoiceLine(), InvoiceLine.class);
         var cash = DamselUtil.fillRequiredTBaseObject(new Cash(), Cash.class);
-        var status = DamselUtil.fillRequiredTBaseObject(new InvoicePaymentRefundStatus(), InvoicePaymentRefundStatus.class);
+        var status = DamselUtil.fillRequiredTBaseObject(new InvoicePaymentRefundStatus(),
+                InvoicePaymentRefundStatus.class);
         var response = DamselUtil.fillRequiredTBaseObject(new StatRefundResponse(), StatRefundResponse.class);
 
         return response.setRefunds(
@@ -136,7 +142,8 @@ public class MagistaUtil {
         var invoiceTemplate = DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplate(), StatInvoiceTemplate.class);
         var cash = DamselUtil.fillRequiredTBaseObject(new Cash(), Cash.class);
         var context = DamselUtil.fillRequiredTBaseObject(new Content(), Content.class);
-        var response = DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplateResponse(), StatInvoiceTemplateResponse.class);
+        var response = DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplateResponse(),
+                StatInvoiceTemplateResponse.class);
 
         return response.setInvoiceTemplates(
                 List.of(invoiceTemplate

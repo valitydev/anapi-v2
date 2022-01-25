@@ -30,6 +30,7 @@
         <spring-version>2.5.3</spring-version>
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <jaxb-version>2.3.1</jaxb-version>
+        <woody.version>1.0.4</woody.version>
     </properties>
 
     <dependencies>
@@ -44,61 +45,69 @@
             <artifactId>custom-actuator-endpoints</artifactId>
         </dependency>
         <dependency>
-            <groupId>dev.vality.woody</groupId>
-            <artifactId>woody-thrift</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.rbkmoney</groupId>
             <artifactId>shared-resources</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.64-601a6dc-server</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>bouncer-proto</artifactId>
-            <version>1.30-3b5927d</version>
+            <version>1.36-96bd74d</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>org-management-proto</artifactId>
-            <version>1.4-432e037</version>
+            <version>1.6-abb4b4d</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>payout-manager-proto</artifactId>
-            <version>1.23-5bf4fad</version>
+            <version>1.25-cfe2120</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.22-a79c146</version>
+            <version>1.24-7049d1b</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>party-shop-proto</artifactId>
-            <version>1.14-1d2e1b0</version>
+            <version>1.16-d6ebfa4</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>analytics-proto</artifactId>
-            <version>1.34-0cb9659</version>
+            <version>1.38-2472df0</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>reporter-proto</artifactId>
-            <version>1.10-dc22be9</version>
+            <version>1.12-1b6fbe9</version>
         </dependency>
 
         <dependency>
-            <groupId>com.rbkmoney.geck</groupId>
+            <groupId>dev.vality.geck</groupId>
             <artifactId>serializer</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
+            <version>1.544-dcd92dd</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.vality.woody</groupId>
+            <artifactId>woody-thrift</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.vality.woody</groupId>
+            <artifactId>woody-api</artifactId>
+            <version>1.0.4</version>
         </dependency>
 
         <!--spring-->

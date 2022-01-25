@@ -1,6 +1,5 @@
 package dev.vality.anapi.v2.service;
 
-import com.rbkmoney.anapi.v2.converter.magista.response.*;
 import dev.vality.anapi.v2.converter.magista.response.*;
 import dev.vality.anapi.v2.exception.BadRequestException;
 import dev.vality.anapi.v2.exception.MagistaException;

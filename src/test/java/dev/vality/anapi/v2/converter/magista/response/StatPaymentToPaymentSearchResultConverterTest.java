@@ -10,7 +10,7 @@ import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.PaymentResourcePayer;
 import dev.vality.damsel.domain.RecurrentPayer;
 import dev.vality.damsel.domain.*;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.CustomerPayer;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.InvoicePaymentFlowInstant;

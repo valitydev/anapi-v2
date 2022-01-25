@@ -1,7 +1,7 @@
 package dev.vality.anapi.v2.service;
 
 import dev.vality.anapi.v2.exception.ReporterException;
-import com.rbkmoney.geck.common.util.TypeUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.model.*;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportingSrv;
