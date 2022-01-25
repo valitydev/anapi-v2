@@ -102,12 +102,12 @@
         <dependency>
             <groupId>dev.vality.woody</groupId>
             <artifactId>woody-thrift</artifactId>
-            <version>1.0.4</version>
+            <version>${woody.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.vality.woody</groupId>
             <artifactId>woody-api</artifactId>
-            <version>1.0.4</version>
+            <version>${woody.version}</version>
         </dependency>
 
         <!--spring-->
