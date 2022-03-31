@@ -1,10 +1,6 @@
 server:
   port: '@server.port@'
 
-openapi:
-  valityPlatformAnalytics:
-    base-path: /anapi/v2
-
 management:
   server:
     port: '@management.port@'
