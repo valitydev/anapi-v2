@@ -27,30 +27,24 @@ public class AccessService {
     @Value("${service.bouncer.auth.enabled}")
     private boolean authEnabled;
 
-    public List<String> getAccessibleShops(String operationId, String partyId, String realm) {
-        return getAccessibleShops(operationId, partyId, null, realm);
-    }
-
-    public List<String> getAccessibleShops(
-            String operationId,
-            String partyId,
-            List<String> requestShopIds,
-            String realm) {
-        var shopIds = vortigonService.getShopIds(partyId, Objects.requireNonNullElse(realm, "live"));
-        if (requestShopIds != null && !requestShopIds.isEmpty()) {
-            shopIds = requestShopIds.stream()
+    public List<String> getAccessibleShops(AccessData accessData) {
+        var shopIds = vortigonService.getShopIds(accessData.getPartyId(),
+                Objects.requireNonNullElse(accessData.getRealm(), "live"));
+        if (accessData.getShopIds() != null && !accessData.getShopIds().isEmpty()) {
+            shopIds = accessData.getShopIds().stream()
                     .filter(shopIds::contains)
                     .collect(Collectors.toList());
         }
-        log.info("Check the user's rights to perform the operation {}", operationId);
-        var ctx = buildAnapiBouncerContext(operationId, partyId, shopIds);
+        log.info("Check the user's rights to perform the operation {}", accessData.getOperationId());
+        var ctx = buildAnapiBouncerContext(accessData, shopIds);
         var resolution = bouncerService.getResolution(ctx);
         switch (resolution.getSetField()) {
             case FORBIDDEN: {
                 if (authEnabled) {
-                    throw new AuthorizationException(String.format("No rights to perform %s", operationId));
+                    throw new AuthorizationException(
+                            String.format("No rights to perform %s", accessData.getOperationId()));
                 } else {
-                    log.warn("No rights to perform {}", operationId);
+                    log.warn("No rights to perform {}", accessData.getOperationId());
                     return List.copyOf(shopIds);
                 }
             }
@@ -60,7 +54,7 @@ public class AccessService {
                             .map(Entity::getId)
                             .collect(Collectors.toList());
                 } else {
-                    log.warn("Rights to perform {} are restricted", operationId);
+                    log.warn("Rights to perform {} are restricted", accessData.getOperationId());
                     return List.copyOf(shopIds);
                 }
             }
@@ -71,12 +65,14 @@ public class AccessService {
         }
     }
 
-    private AnapiBouncerContext buildAnapiBouncerContext(String operationId, String partyId, List<String> shopIds) {
+    private AnapiBouncerContext buildAnapiBouncerContext(AccessData accessData, List<String> allowedShopIds) {
         var token = keycloakService.getAccessToken();
         return AnapiBouncerContext.builder()
-                .operationId(operationId)
-                .partyId(partyId)
-                .shopIds(shopIds)
+                .operationId(accessData.getOperationId())
+                .partyId(accessData.getPartyId())
+                .shopIds(allowedShopIds)
+                .fileId(accessData.getFileId())
+                .reportId(accessData.getFileId())
                 .tokenExpiration(token.getExp())
                 .tokenId(token.getId())
                 .userId(token.getSubject())

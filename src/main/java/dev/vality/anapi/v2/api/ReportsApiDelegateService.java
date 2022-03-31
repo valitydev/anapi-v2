@@ -3,6 +3,7 @@ package dev.vality.anapi.v2.api;
 import dev.vality.anapi.v2.model.InlineResponse20014;
 import dev.vality.anapi.v2.model.Report;
 import dev.vality.anapi.v2.model.ReportLink;
+import dev.vality.anapi.v2.security.AccessData;
 import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.ReporterService;
 import dev.vality.geck.common.util.TypeUtil;
@@ -41,9 +42,11 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         accessService.getAccessibleShops(
-                "CancelReport",
-                partyID,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("CancelReport")
+                        .partyId(partyID)
+                        .reportId(String.valueOf(reportID))
+                        .realm(paymentInstitutionRealm).build());
         reporterService.cancelReport(reportID);
         log.info("<- Res [202]: xRequestID={}", xRequestID);
         return ResponseEntity.accepted().build();
@@ -57,7 +60,12 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         var shops = shopID != null ? List.of(shopID) : null;
-        accessService.getAccessibleShops("CreateReport", partyID, shops, paymentInstitutionRealm);
+        accessService.getAccessibleShops(
+                AccessData.builder()
+                        .operationId("CreateReport")
+                        .partyId(partyID)
+                        .shopIds(shops)
+                        .realm(paymentInstitutionRealm).build());
         var request = getReportRequest(partyID, shopID, fromTime, toTime);
         var reportId = reporterService.createReport(request, reportType);
         var response = reporterService.getReport(reportId);
@@ -72,9 +80,12 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         accessService.getAccessibleShops(
-                "DownloadFile",
-                partyID,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("DownloadFile")
+                        .partyId(partyID)
+                        .fileId(fileID)
+                        .reportId(String.valueOf(reportID))
+                        .realm(paymentInstitutionRealm).build());
         var response = reporterService.getDownloadUrl(fileID,
                 TypeUtil.temporalToString(LocalDateTime.now().plus(reportLifetimeSec, ChronoUnit.SECONDS)));
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -88,9 +99,11 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         accessService.getAccessibleShops(
-                "GetReport",
-                partyID,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetReport")
+                        .partyId(partyID)
+                        .reportId(String.valueOf(reportID))
+                        .realm(paymentInstitutionRealm).build());
         var response = reporterService.getReport(reportID);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
@@ -106,10 +119,11 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         accessService.getAccessibleShops(
-                "SearchReports",
-                partyID,
-                shopID == null ? null : List.of(shopID),
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("SearchReports")
+                        .partyId(partyID)
+                        .shopIds(shopID == null ? null : List.of(shopID))
+                        .realm(paymentInstitutionRealm).build());
         var request = getStatReportRequest(partyID, shopID, fromTime, toTime, limit, reportTypes, continuationToken);
         var response = reporterService.getReports(request);
         log.info("<- Res [200]: xRequestID={}", xRequestID);

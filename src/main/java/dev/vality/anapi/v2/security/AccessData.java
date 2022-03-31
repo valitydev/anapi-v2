@@ -3,20 +3,22 @@ package dev.vality.anapi.v2.security;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @Builder
 @Data
-public class AnapiBouncerContext {
+public class AccessData {
 
-    private final long tokenExpiration;
-    private final String tokenId;
-    private final String userId;
     private final String operationId;
+    @Nullable
     private final String partyId;
+    @Nullable
     private final List<String> shopIds;
-    private final String reportId;
+    @Nullable
     private final String fileId;
-
+    @Nullable
+    private final String reportId;
+    private final String realm;
 
 }
