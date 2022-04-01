@@ -1,6 +1,7 @@
 package dev.vality.anapi.v2.api;
 
 import dev.vality.anapi.v2.model.*;
+import dev.vality.anapi.v2.security.AccessData;
 import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.AnalyticsService;
 import dev.vality.anapi.v2.util.DeadlineUtil;
@@ -34,10 +35,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetAveragePayment",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetAveragePayment")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getAveragePayment(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -49,10 +52,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetCreditingsAmount",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetCreditingsAmount")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getCreditingsAmount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -64,10 +69,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetCurrentBalances",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetCurrentBalances")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var merchantFilter = getMerchantFilter(partyID, shopIDs, excludeShopIDs);
         var response = analyticsService.getCurrentBalances(merchantFilter);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -79,10 +86,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetCurrentShopBalances",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetCurrentShopBalances")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var merchantFilter = getMerchantFilter(partyID, shopIDs, excludeShopIDs);
         var response = analyticsService.getCurrentShopBalances(merchantFilter);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -94,10 +103,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetPaymentsAmount",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetPaymentsAmount")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsAmount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -109,10 +120,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetPaymentsCount",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetPaymentsCount")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsCount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -124,10 +137,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetPaymentsErrorDistribution",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetPaymentsErrorDistribution")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsErrorDistribution(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -139,10 +154,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetPaymentsSplitAmount",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetPaymentsSplitAmount")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var splitFilterRequest = getSplitFilterRequest(
                 partyID,
                 shopIDs, excludeShopIDs, fromTime,
@@ -159,10 +176,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetPaymentsSplitCount",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetPaymentsSplitCount")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var splitFilterRequest = getSplitFilterRequest(
                 partyID,
                 shopIDs, excludeShopIDs, fromTime,
@@ -179,10 +198,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetPaymentsSubErrorDistribution",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetPaymentsSubErrorDistribution")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsSubErrorDistribution(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -194,10 +215,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetPaymentsToolDistribution",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetPaymentsToolDistribution")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsToolDistribution(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -209,10 +232,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "GetRefundsAmount",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("GetRefundsAmount")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getRefundsAmount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);

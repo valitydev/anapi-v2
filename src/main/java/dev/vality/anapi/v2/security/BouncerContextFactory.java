@@ -73,6 +73,14 @@ public class BouncerContextFactory {
     private ContextAnalyticsAPI buildAnapiContext(AnapiBouncerContext ctx) {
         return new ContextAnalyticsAPI()
                 .setOp(new AnalyticsAPIOperation()
-                        .setId(ctx.getOperationId()));
+                        .setId(ctx.getOperationId())
+                        .setParty(ctx.getPartyId() != null
+                                ? new Entity().setId(ctx.getPartyId()) : null)
+                        .setShop(ctx.getShopIds() != null && ctx.getShopIds().size() == 1
+                                ? new Entity().setId(ctx.getShopIds().get(0)) : null)
+                        .setFile(ctx.getFileId() != null
+                                ? new Entity().setId(ctx.getFileId()) : null)
+                        .setReport(ctx.getReportId() != null
+                                ? new Entity().setId(ctx.getReportId()) : null));
     }
 }

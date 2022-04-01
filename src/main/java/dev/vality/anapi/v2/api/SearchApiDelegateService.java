@@ -2,6 +2,7 @@ package dev.vality.anapi.v2.api;
 
 import dev.vality.anapi.v2.converter.magista.request.*;
 import dev.vality.anapi.v2.model.*;
+import dev.vality.anapi.v2.security.AccessData;
 import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.MagistaService;
 import dev.vality.anapi.v2.util.ConverterUtil;
@@ -36,10 +37,12 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "SearchInvoices",
-                partyID,
-                ConverterUtil.merge(shopID, shopIDs),
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("SearchInvoices")
+                        .partyId(partyID)
+                        .shopIds(ConverterUtil.merge(shopID, shopIDs))
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = invoiceSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -64,10 +67,12 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "SearchPayments",
-                partyID,
-                ConverterUtil.merge(shopID, shopIDs),
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("SearchPayments")
+                        .partyId(partyID)
+                        .shopIds(ConverterUtil.merge(shopID, shopIDs))
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = paymentSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -106,10 +111,12 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "SearchRefunds",
-                partyID,
-                ConverterUtil.merge(shopID, shopIDs),
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("SearchRefunds")
+                        .partyId(partyID)
+                        .shopIds(ConverterUtil.merge(shopID, shopIDs))
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = refundSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -134,10 +141,12 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "SearchChargebacks",
-                partyID,
-                ConverterUtil.merge(shopID, shopIDs),
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("SearchChargebacks")
+                        .partyId(partyID)
+                        .shopIds(ConverterUtil.merge(shopID, shopIDs))
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = chargebackSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -162,10 +171,12 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "SearchPayouts",
-                partyID,
-                ConverterUtil.merge(shopID, shopIDs),
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("SearchPayouts")
+                        .partyId(partyID)
+                        .shopIds(ConverterUtil.merge(shopID, shopIDs))
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = payoutSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -185,10 +196,12 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     public ResponseEntity<InlineResponse20013> searchInvoiceTemplates(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, List<String> shopIDs, String paymentInstitutionRealm, String invoiceTemplateID, String invoiceTemplateStatus, String name, String product, OffsetDateTime invoiceValidUntil, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
         shopIDs = accessService.getAccessibleShops(
-                "SearchInvoiceTemplates",
-                partyID,
-                shopIDs,
-                paymentInstitutionRealm);
+                AccessData.builder()
+                        .operationId("SearchInvoiceTemplates")
+                        .partyId(partyID)
+                        .shopIds(shopIDs)
+                        .realm(paymentInstitutionRealm)
+                        .build());
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         var query = invoiceTemplateSearchConverter.convert(
                 partyID,
