@@ -41,7 +41,8 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .operationId("SearchInvoices")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = invoiceSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -70,7 +71,8 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .operationId("SearchPayments")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = paymentSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -113,7 +115,8 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .operationId("SearchRefunds")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = refundSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -142,7 +145,8 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .operationId("SearchChargebacks")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = chargebackSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -171,7 +175,8 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .operationId("SearchPayouts")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var query = payoutSearchConverter.convert(
                 partyID,
                 fromTime,
@@ -195,7 +200,8 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .operationId("SearchInvoiceTemplates")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         var query = invoiceTemplateSearchConverter.convert(
                 partyID,

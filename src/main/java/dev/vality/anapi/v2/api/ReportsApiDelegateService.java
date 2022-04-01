@@ -46,7 +46,8 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .operationId("CancelReport")
                         .partyId(partyID)
                         .reportId(String.valueOf(reportID))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         reporterService.cancelReport(reportID);
         log.info("<- Res [202]: xRequestID={}", xRequestID);
         return ResponseEntity.accepted().build();
@@ -65,7 +66,8 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .operationId("CreateReport")
                         .partyId(partyID)
                         .shopIds(shops)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var request = getReportRequest(partyID, shopID, fromTime, toTime);
         var reportId = reporterService.createReport(request, reportType);
         var response = reporterService.getReport(reportId);
@@ -85,7 +87,8 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .partyId(partyID)
                         .fileId(fileID)
                         .reportId(String.valueOf(reportID))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var response = reporterService.getDownloadUrl(fileID,
                 TypeUtil.temporalToString(LocalDateTime.now().plus(reportLifetimeSec, ChronoUnit.SECONDS)));
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -103,7 +106,8 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .operationId("GetReport")
                         .partyId(partyID)
                         .reportId(String.valueOf(reportID))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var response = reporterService.getReport(reportID);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
@@ -123,7 +127,8 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .operationId("SearchReports")
                         .partyId(partyID)
                         .shopIds(shopID == null ? null : List.of(shopID))
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var request = getStatReportRequest(partyID, shopID, fromTime, toTime, limit, reportTypes, continuationToken);
         var response = reporterService.getReports(request);
         log.info("<- Res [200]: xRequestID={}", xRequestID);

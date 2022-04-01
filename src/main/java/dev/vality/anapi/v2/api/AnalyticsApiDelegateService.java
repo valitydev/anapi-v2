@@ -39,7 +39,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetAveragePayment")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getAveragePayment(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -55,7 +56,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetCreditingsAmount")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getCreditingsAmount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -71,7 +73,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetCurrentBalances")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var merchantFilter = getMerchantFilter(partyID, shopIDs, excludeShopIDs);
         var response = analyticsService.getCurrentBalances(merchantFilter);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -87,7 +90,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetCurrentShopBalances")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var merchantFilter = getMerchantFilter(partyID, shopIDs, excludeShopIDs);
         var response = analyticsService.getCurrentShopBalances(merchantFilter);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -103,7 +107,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetPaymentsAmount")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsAmount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -119,7 +124,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetPaymentsCount")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsCount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -135,7 +141,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetPaymentsErrorDistribution")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsErrorDistribution(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -151,7 +158,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetPaymentsSplitAmount")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var splitFilterRequest = getSplitFilterRequest(
                 partyID,
                 shopIDs, excludeShopIDs, fromTime,
@@ -172,7 +180,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetPaymentsSplitCount")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var splitFilterRequest = getSplitFilterRequest(
                 partyID,
                 shopIDs, excludeShopIDs, fromTime,
@@ -193,7 +202,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetPaymentsSubErrorDistribution")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsSubErrorDistribution(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -209,7 +219,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetPaymentsToolDistribution")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getPaymentsToolDistribution(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
@@ -225,7 +236,8 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .operationId("GetRefundsAmount")
                         .partyId(partyID)
                         .shopIds(shopIDs)
-                        .realm(paymentInstitutionRealm).build());
+                        .realm(paymentInstitutionRealm)
+                        .build());
         var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
         var response = analyticsService.getRefundsAmount(filterRequest);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
