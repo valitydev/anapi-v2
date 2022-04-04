@@ -34,7 +34,7 @@ public class BouncerContextFactory {
                 keycloakService.getAccessToken().getSubject());
         var context = new Context();
         context.putToFragments(bouncerProperties.getContextFragmentId(), fragment);
-        context.putToFragments("user", userFragment);
+        context.putToFragments("userorg", userFragment);
         return context;
     }
 
