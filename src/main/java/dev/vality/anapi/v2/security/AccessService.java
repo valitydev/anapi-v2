@@ -72,7 +72,7 @@ public class AccessService {
                 .partyId(accessData.getPartyId())
                 .shopIds(allowedShopIds)
                 .fileId(accessData.getFileId())
-                .reportId(accessData.getFileId())
+                .reportId(accessData.getReportId())
                 .tokenExpiration(token.getExp())
                 .tokenId(token.getId())
                 .userId(token.getSubject())
