@@ -10,11 +10,10 @@ import dev.vality.bouncer.decisions.Context;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.thrift.TSerializer;
-import org.keycloak.representations.AccessToken;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
@@ -41,25 +40,22 @@ public class BouncerContextFactory {
 
     private ContextFragment buildContextFragment(AnapiBouncerContext bouncerContext) {
         var env = buildEnvironment();
-        var accessToken = keycloakService.getAccessToken();
         var contextAnalyticsApi = buildAnapiContext(bouncerContext);
+        var contextReports = buildReportContext(bouncerContext);
         return new ContextFragment()
-                .setAuth(buildAuth(bouncerContext, accessToken))
+                .setAuth(buildAuth())
                 .setEnv(env)
-                .setAnapi(contextAnalyticsApi);
+                .setAnapi(contextAnalyticsApi)
+                .setReports(contextReports);
     }
 
-    private Auth buildAuth(AnapiBouncerContext bouncerContext, AccessToken accessToken) {
+    private Auth buildAuth() {
         var auth = new Auth();
-        var authScopeSet = bouncerContext.getShopIds().stream()
-                .map(shopId -> new AuthScope()
-                        .setParty(new Entity().setId(bouncerContext.getPartyId()))
-                        .setShop(new Entity().setId(shopId)))
-                .collect(Collectors.toSet());
-        return auth.setToken(new Token().setId(accessToken.getId()))
+        var accessToken = keycloakService.getAccessToken();
+        return auth
+                .setToken(new Token().setId(accessToken.getId()))
                 .setMethod(bouncerProperties.getAuthMethod())
-                .setExpiration(Instant.ofEpochSecond(accessToken.getExp()).toString())
-                .setScope(authScopeSet);
+                .setExpiration(Instant.ofEpochSecond(accessToken.getExp()).toString());
     }
 
     private Environment buildEnvironment() {
@@ -82,5 +78,18 @@ public class BouncerContextFactory {
                                 ? new Entity().setId(ctx.getFileId()) : null)
                         .setReport(ctx.getReportId() != null
                                 ? new Entity().setId(ctx.getReportId()) : null));
+    }
+
+    private ContextReports buildReportContext(AnapiBouncerContext ctx) {
+        if (ctx.getReportId() == null) {
+            return null;
+        }
+        return new ContextReports().setReport(new Report().setId(ctx.getReportId())
+                .setParty(ctx.getPartyId() != null
+                        ? new Entity().setId(ctx.getPartyId()) : null)
+                .setShop(ctx.getShopIds() != null && ctx.getShopIds().size() == 1
+                        ? new Entity().setId(ctx.getShopIds().get(0)) : null)
+                .setFiles(ctx.getFileId() != null
+                        ? Set.of(new Entity().setId(ctx.getFileId())) : null));
     }
 }

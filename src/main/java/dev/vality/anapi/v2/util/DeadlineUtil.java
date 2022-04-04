@@ -3,6 +3,7 @@ package dev.vality.anapi.v2.util;
 import dev.vality.anapi.v2.exception.DeadlineException;
 import lombok.experimental.UtilityClass;
 
+import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("ParameterName")
 public class DeadlineUtil {
 
-    public static void checkDeadline(String xRequestDeadline, String xRequestId) {
+    public static void checkDeadline(@Nullable String xRequestDeadline, String xRequestId) {
         if (xRequestDeadline == null) {
             return;
         }
