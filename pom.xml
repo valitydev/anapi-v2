@@ -6,11 +6,11 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>1.0.7</version>
+        <version>1.0.14</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
