@@ -28,15 +28,15 @@ public class BouncerContextFactory {
 
     @SneakyThrows
     public Context buildContext(AnapiBouncerContext bouncerContext) {
-        var serializer = new TSerializer();
-        var deserializer = new TDeserializer();
-
         var contextFragment = orgManagerService.getUserAuthContext(
                 keycloakService.getAccessToken().getSubject());
         var fragment = new ContextFragment();
+        var deserializer = new TDeserializer();
         deserializer.deserialize(fragment, contextFragment.getContent());
         enrichContextFragment(bouncerContext, fragment);
         log.debug("Received user fragment from orgManager: {}", fragment.getUser());
+
+        var serializer = new TSerializer();
 
         contextFragment = new dev.vality.bouncer.ctx.ContextFragment()
                 .setType(ContextFragmentType.v1_thrift_binary)
