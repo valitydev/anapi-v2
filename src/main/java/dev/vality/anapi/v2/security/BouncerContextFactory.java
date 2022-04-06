@@ -40,6 +40,7 @@ public class BouncerContextFactory {
                 .setContent(serializer.serialize(fragment));
         var context = new Context();
         context.putToFragments(bouncerProperties.getContextFragmentId(), contextFragment);
+        context.putToFragments("user", contextFragment);
         return context;
     }
 
