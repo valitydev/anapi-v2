@@ -9,6 +9,7 @@ import dev.vality.bouncer.ctx.ContextFragmentType;
 import dev.vality.bouncer.decisions.Context;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TSerializer;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class BouncerContextFactory {
 
     private final BouncerProperties bouncerProperties;
@@ -34,13 +36,13 @@ public class BouncerContextFactory {
         var fragment = new ContextFragment();
         deserializer.deserialize(fragment, contextFragment.getContent());
         enrichContextFragment(bouncerContext, fragment);
+        log.debug("Received user fragment from orgManager: {}", fragment.getUser());
 
         contextFragment = new dev.vality.bouncer.ctx.ContextFragment()
                 .setType(ContextFragmentType.v1_thrift_binary)
                 .setContent(serializer.serialize(fragment));
         var context = new Context();
         context.putToFragments(bouncerProperties.getContextFragmentId(), contextFragment);
-        context.putToFragments("user", contextFragment);
         return context;
     }
 
