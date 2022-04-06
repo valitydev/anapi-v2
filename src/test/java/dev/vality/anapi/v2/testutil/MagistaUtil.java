@@ -16,7 +16,10 @@ import dev.vality.magista.InvoicePaymentFlowHold;
 import dev.vality.magista.InvoicePaymentFlowInstant;
 import dev.vality.magista.Payer;
 import dev.vality.magista.*;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.apache.thrift.TDeserializer;
+import org.apache.thrift.TSerializer;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -170,8 +173,11 @@ public class MagistaUtil {
         return DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplateResponse(), StatInvoiceTemplateResponse.class);
     }
 
+    @SneakyThrows
     public static ContextFragment createContextFragment() {
-        return DamselUtil.fillRequiredTBaseObject(new ContextFragment(), ContextFragment.class);
+        ContextFragment fragment = DamselUtil.fillRequiredTBaseObject(new ContextFragment(), ContextFragment.class);
+        fragment.setContent(new TSerializer().serialize(new dev.vality.bouncer.context.v1.ContextFragment()));
+        return fragment;
     }
 
     public static Judgement createJudgementAllowed() {
