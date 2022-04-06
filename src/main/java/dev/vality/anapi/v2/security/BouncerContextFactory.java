@@ -44,9 +44,19 @@ public class BouncerContextFactory {
         var contextReports = buildReportContext(bouncerContext);
         return new ContextFragment()
                 .setAuth(buildAuth())
+                .setUser(buildUser())
                 .setEnv(env)
                 .setAnapi(contextAnalyticsApi)
                 .setReports(contextReports);
+    }
+
+    private User buildUser() {
+        var user = new User();
+        var token = keycloakService.getAccessToken();
+        return user
+                .setId(token.getSubject())
+                .setEmail(token.getEmail())
+                .setRealm(new Entity().setId(bouncerProperties.getRealm()));
     }
 
     private Auth buildAuth() {
