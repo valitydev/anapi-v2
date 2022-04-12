@@ -9,7 +9,6 @@ import dev.vality.damsel.domain.InvoicePaymentRefundStatus;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.InvoiceStatus;
 import dev.vality.damsel.domain.*;
-import dev.vality.damsel.geo_ip.LocationInfo;
 import dev.vality.magista.CustomerPayer;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.InvoicePaymentFlowHold;
@@ -18,7 +17,6 @@ import dev.vality.magista.Payer;
 import dev.vality.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TSerializer;
 
 import java.time.Instant;
@@ -47,7 +45,6 @@ public class MagistaUtil {
         var line = DamselUtil.fillRequiredTBaseObject(new InvoiceLine(), InvoiceLine.class);
         var instant = DamselUtil.fillRequiredTBaseObject(new InvoicePaymentFlowInstant(),
                 InvoicePaymentFlowInstant.class);
-        var locationInfo = DamselUtil.fillRequiredTBaseObject(new LocationInfo(), LocationInfo.class);
         var response = DamselUtil.fillRequiredTBaseObject(new StatPaymentResponse(), StatPaymentResponse.class);
 
         return response.setPayments(
@@ -56,8 +53,7 @@ public class MagistaUtil {
                         .setCart(cart.setLines(List.of(line)))
                         .setFlow(InvoicePaymentFlow
                                 .instant(instant))
-                        .setPayer(Payer.customer(payer))
-                        .setLocationInfo(locationInfo)));
+                        .setPayer(Payer.customer(payer))));
     }
 
     public static StatChargebackResponse createSearchChargebackAllResponse() {
