@@ -253,7 +253,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
             String splitUnit) {
         return new SplitFilterRequest()
                 .setFilterRequest(getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime))
-                .setSplitUnit(SplitUnit.valueOf(splitUnit));
+                .setSplitUnit(SplitUnit.valueOf(splitUnit.toUpperCase()));
     }
 
     private FilterRequest getFilterRequest(
