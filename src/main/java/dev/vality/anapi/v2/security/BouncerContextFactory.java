@@ -10,7 +10,6 @@ import dev.vality.bouncer.decisions.Context;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TSerializer;
 import org.springframework.stereotype.Component;
 
@@ -28,29 +27,26 @@ public class BouncerContextFactory {
 
     @SneakyThrows
     public Context buildContext(AnapiBouncerContext bouncerContext) {
-        var contextFragment = orgManagerService.getUserAuthContext(
-                keycloakService.getAccessToken().getSubject());
-        var fragment = new ContextFragment();
-        var deserializer = new TDeserializer();
-        deserializer.deserialize(fragment, contextFragment.getContent());
-        enrichContextFragment(bouncerContext, fragment);
-        log.debug("Received user fragment from orgManager: {}", fragment.getUser());
-
+        var contextFragment = buildContextFragment(bouncerContext);
         var serializer = new TSerializer();
-
-        contextFragment = new dev.vality.bouncer.ctx.ContextFragment()
+        var fragment = new dev.vality.bouncer.ctx.ContextFragment()
                 .setType(ContextFragmentType.v1_thrift_binary)
-                .setContent(serializer.serialize(fragment));
+                .setContent(serializer.serialize(contextFragment));
+        var userFragment = orgManagerService.getUserAuthContext(
+                keycloakService.getAccessToken().getSubject());
         var context = new Context();
-        context.putToFragments(bouncerProperties.getContextFragmentId(), contextFragment);
+        context.putToFragments(bouncerProperties.getContextFragmentId(), fragment);
+        context.putToFragments("user", userFragment);
         return context;
     }
 
-    private void enrichContextFragment(AnapiBouncerContext bouncerContext, ContextFragment fragment) {
+    private ContextFragment buildContextFragment(AnapiBouncerContext bouncerContext) {
         var env = buildEnvironment();
         var contextAnalyticsApi = buildAnapiContext(bouncerContext);
         var contextReports = buildReportContext(bouncerContext);
-        fragment.setAuth(buildAuth())
+        ContextFragment fragment = new ContextFragment();
+        return fragment
+                .setAuth(buildAuth())
                 .setEnv(env)
                 .setAnapi(contextAnalyticsApi)
                 .setReports(contextReports);
