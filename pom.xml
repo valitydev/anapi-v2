@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>1.0.14</version>
+        <version>1.0.15</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
@@ -24,7 +24,7 @@
         <management.port>8023</management.port>
         <exposed.ports>${server.port} ${management.port}</exposed.ports>
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
-        <springfox-version>2.9.2</springfox-version>
+        <springfox-version>2.10.5</springfox-version>
         <servlet-api-version>2.5</servlet-api-version>
         <jackson-version>2.12.5</jackson-version>
         <spring-version>2.5.3</spring-version>
@@ -43,42 +43,42 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.64-601a6dc-server</version>
+            <version>1.66-f571365-server</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>bouncer-proto</artifactId>
-            <version>1.36-96bd74d</version>
+            <version>1.39-633ba73</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>org-management-proto</artifactId>
-            <version>1.6-abb4b4d</version>
+            <version>1.10-f433223</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>payout-manager-proto</artifactId>
-            <version>1.25-cfe2120</version>
+            <version>1.36-063163d</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.24-7049d1b</version>
+            <version>1.37-ba389d1</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>party-shop-proto</artifactId>
-            <version>1.16-d6ebfa4</version>
+            <version>1.19-72faaf6</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>analytics-proto</artifactId>
-            <version>1.38-2472df0</version>
+            <version>1.41-f691834</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>reporter-proto</artifactId>
-            <version>1.12-1b6fbe9</version>
+            <version>1.16-cc187f5</version>
         </dependency>
 
         <dependency>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.544-dcd92dd</version>
+            <version>1.558-3efe7df</version>
         </dependency>
         <dependency>
             <groupId>dev.vality.woody</groupId>
@@ -118,7 +118,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
-            <version>15.0.2</version>
+            <version>15.1.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.resteasy</groupId>
@@ -141,7 +141,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-security-adapter</artifactId>
-            <version>15.0.2</version>
+            <version>15.1.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.bouncycastle</groupId>
@@ -185,7 +185,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.6.2</version>
+            <version>1.6.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -234,13 +234,13 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.1</version>
+            <version>0.2.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.69</version>
+            <version>1.70</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -266,7 +266,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-contract-wiremock</artifactId>
-            <version>3.0.3</version>
+            <version>3.1.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -303,7 +303,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>1.7.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.shared</groupId>
