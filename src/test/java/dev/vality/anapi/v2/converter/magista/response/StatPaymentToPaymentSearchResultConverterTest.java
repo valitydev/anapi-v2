@@ -45,7 +45,6 @@ class StatPaymentToPaymentSearchResultConverterTest {
                 () -> assertEquals(magistaPayment.getExternalId(), result.getExternalID()),
                 () -> assertEquals(magistaPayment.getFee(), result.getFee()),
                 () -> assertEquals(PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT, result.getFlow().getType()),
-                () -> assertNull(result.getGeoLocationInfo()),
                 () -> assertEquals(magistaPayment.getStatusChangedAt(), result.getStatusChangedAt().toString()),
                 () -> assertEquals(magistaPayment.getId(), result.getId()),
                 () -> assertEquals(magistaPayment.getInvoiceId(), result.getInvoiceID()),
