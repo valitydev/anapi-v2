@@ -36,27 +36,32 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     public ResponseEntity<InlineResponse2008> searchInvoices(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String invoiceStatus, Long invoiceAmountFrom, Long invoiceAmountTo, String externalID, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        shopIDs = accessService.getAccessibleShops(
+        shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchInvoices")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        var query = invoiceSearchConverter.convert(
-                partyID,
-                fromTime,
-                toTime,
-                limit,
-                shopIDs,
-                invoiceIDs,
-                invoiceStatus,
-                invoiceID,
-                externalID,
-                invoiceAmountFrom,
-                invoiceAmountTo,
-                continuationToken);
-        var response = magistaService.searchInvoices(query);
+        InlineResponse2008 response;
+        if (shopIDs.isEmpty()) {
+            response = new InlineResponse2008();
+        } else {
+            var query = invoiceSearchConverter.convert(
+                    partyID,
+                    fromTime,
+                    toTime,
+                    limit,
+                    shopIDs,
+                    invoiceIDs,
+                    invoiceStatus,
+                    invoiceID,
+                    externalID,
+                    invoiceAmountFrom,
+                    invoiceAmountTo,
+                    continuationToken);
+            response = magistaService.searchInvoices(query);
+        }
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
@@ -66,41 +71,46 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     public ResponseEntity<InlineResponse2009> searchPayments(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String paymentStatus, String paymentFlow, String paymentMethod, String paymentTerminalProvider, String payerEmail, String payerIP, String payerFingerprint, String customerID, String first6, String last4, String rrn, String approvalCode, String bankCardTokenProvider, String bankCardPaymentSystem, Long paymentAmountFrom, Long paymentAmountTo, String externalID, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        shopIDs = accessService.getAccessibleShops(
+        shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchPayments")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        var query = paymentSearchConverter.convert(
-                partyID,
-                fromTime,
-                toTime,
-                limit,
-                shopIDs,
-                invoiceIDs,
-                paymentStatus, paymentFlow,
-                paymentMethod,
-                paymentTerminalProvider,
-                invoiceID,
-                paymentID,
-                externalID,
-                payerEmail,
-                payerIP,
-                payerFingerprint,
-                customerID,
-                first6,
-                last4,
-                rrn,
-                approvalCode,
-                bankCardTokenProvider,
-                bankCardPaymentSystem,
-                paymentAmountFrom,
-                paymentAmountTo,
-                excludeShopIDs,
-                continuationToken);
-        var response = magistaService.searchPayments(query);
+        InlineResponse2009 response;
+        if (shopIDs.isEmpty()) {
+            response = new InlineResponse2009();
+        } else {
+            var query = paymentSearchConverter.convert(
+                    partyID,
+                    fromTime,
+                    toTime,
+                    limit,
+                    shopIDs,
+                    invoiceIDs,
+                    paymentStatus, paymentFlow,
+                    paymentMethod,
+                    paymentTerminalProvider,
+                    invoiceID,
+                    paymentID,
+                    externalID,
+                    payerEmail,
+                    payerIP,
+                    payerFingerprint,
+                    customerID,
+                    first6,
+                    last4,
+                    rrn,
+                    approvalCode,
+                    bankCardTokenProvider,
+                    bankCardPaymentSystem,
+                    paymentAmountFrom,
+                    paymentAmountTo,
+                    excludeShopIDs,
+                    continuationToken);
+            response = magistaService.searchPayments(query);
+        }
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
@@ -110,27 +120,32 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     public ResponseEntity<InlineResponse20010> searchRefunds(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String refundID, String refundStatus, String externalID, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        shopIDs = accessService.getAccessibleShops(
+        shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchRefunds")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        var query = refundSearchConverter.convert(
-                partyID,
-                fromTime,
-                toTime,
-                limit,
-                shopIDs,
-                invoiceIDs,
-                invoiceID,
-                paymentID,
-                refundID,
-                externalID,
-                refundStatus,
-                continuationToken);
-        var response = magistaService.searchRefunds(query);
+        InlineResponse20010 response;
+        if (shopIDs.isEmpty()) {
+            response = new InlineResponse20010();
+        } else {
+            var query = refundSearchConverter.convert(
+                    partyID,
+                    fromTime,
+                    toTime,
+                    limit,
+                    shopIDs,
+                    invoiceIDs,
+                    invoiceID,
+                    paymentID,
+                    refundID,
+                    externalID,
+                    refundStatus,
+                    continuationToken);
+            response = magistaService.searchRefunds(query);
+        }
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
@@ -140,27 +155,32 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     public ResponseEntity<InlineResponse20011> searchChargebacks(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, String paymentID, String chargebackID, List<String> chargebackStatuses, List<String> chargebackStages, List<String> chargebackCategories, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        shopIDs = accessService.getAccessibleShops(
+        shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchChargebacks")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        var query = chargebackSearchConverter.convert(
-                partyID,
-                fromTime,
-                toTime,
-                limit,
-                shopIDs,
-                invoiceID,
-                paymentID,
-                chargebackID,
-                chargebackStatuses,
-                chargebackStages,
-                chargebackCategories,
-                continuationToken);
-        var response = magistaService.searchChargebacks(query);
+        InlineResponse20011 response;
+        if (shopIDs.isEmpty()) {
+            response = new InlineResponse20011();
+        } else {
+            var query = chargebackSearchConverter.convert(
+                    partyID,
+                    fromTime,
+                    toTime,
+                    limit,
+                    shopIDs,
+                    invoiceID,
+                    paymentID,
+                    chargebackID,
+                    chargebackStatuses,
+                    chargebackStages,
+                    chargebackCategories,
+                    continuationToken);
+            response = magistaService.searchChargebacks(query);
+        }
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
@@ -170,23 +190,28 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     public ResponseEntity<InlineResponse20012> searchPayouts(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String payoutID, String payoutToolType, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        shopIDs = accessService.getAccessibleShops(
+        shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchPayouts")
                         .partyId(partyID)
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        var query = payoutSearchConverter.convert(
-                partyID,
-                fromTime,
-                toTime,
-                limit,
-                shopIDs,
-                payoutID,
-                payoutToolType,
-                continuationToken);
-        var response = magistaService.searchPayouts(query);
+        InlineResponse20012 response;
+        if (shopIDs.isEmpty()) {
+            response = new InlineResponse20012();
+        } else {
+            var query = payoutSearchConverter.convert(
+                    partyID,
+                    fromTime,
+                    toTime,
+                    limit,
+                    shopIDs,
+                    payoutID,
+                    payoutToolType,
+                    continuationToken);
+            response = magistaService.searchPayouts(query);
+        }
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
@@ -195,7 +220,7 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     @Override
     public ResponseEntity<InlineResponse20013> searchInvoiceTemplates(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, List<String> shopIDs, String paymentInstitutionRealm, String invoiceTemplateID, String invoiceTemplateStatus, String name, String product, OffsetDateTime invoiceValidUntil, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
-        shopIDs = accessService.getAccessibleShops(
+        shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchInvoiceTemplates")
                         .partyId(partyID)
@@ -203,19 +228,24 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .realm(paymentInstitutionRealm)
                         .build());
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        var query = invoiceTemplateSearchConverter.convert(
-                partyID,
-                fromTime,
-                toTime,
-                limit,
-                shopIDs,
-                invoiceTemplateStatus,
-                invoiceTemplateID,
-                continuationToken,
-                name,
-                product,
-                invoiceValidUntil);
-        var response = magistaService.searchInvoiceTemplates(query);
+        InlineResponse20013 response;
+        if (shopIDs.isEmpty()) {
+            response = new InlineResponse20013();
+        } else {
+            var query = invoiceTemplateSearchConverter.convert(
+                    partyID,
+                    fromTime,
+                    toTime,
+                    limit,
+                    shopIDs,
+                    invoiceTemplateStatus,
+                    invoiceTemplateID,
+                    continuationToken,
+                    name,
+                    product,
+                    invoiceValidUntil);
+            response = magistaService.searchInvoiceTemplates(query);
+        }
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }

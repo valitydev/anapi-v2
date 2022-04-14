@@ -26,7 +26,7 @@ public class OpenApiUtil {
 
     public static MultiValueMap<String, String> getSearchPaymentAllParams() {
         MultiValueMap<String, String> params = getSearchRequiredParams();
-        params.add("shopID", randomIntegerAsString(1, 10));
+        params.add("shopID", randomIntegerAsString(1, 3));
         params.add("shopIDs", randomIntegerAsString(11, 20));
         params.add("shopIDs", randomIntegerAsString(21, 30));
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
@@ -58,7 +58,7 @@ public class OpenApiUtil {
 
     public static MultiValueMap<String, String> getSearchChargebackAllParams() {
         MultiValueMap<String, String> params = getSearchRequiredParams();
-        params.add("shopID", randomIntegerAsString(1, 10));
+        params.add("shopID", randomIntegerAsString(1, 3));
         params.add("shopIDs", randomIntegerAsString(11, 20));
         params.add("shopIDs", randomIntegerAsString(21, 30));
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
@@ -75,7 +75,7 @@ public class OpenApiUtil {
 
     public static MultiValueMap<String, String> getSearchRefundAllParams() {
         MultiValueMap<String, String> params = getSearchRequiredParams();
-        params.add("shopID", randomIntegerAsString(1, 10));
+        params.add("shopID", randomIntegerAsString(1, 3));
         params.add("shopIDs", randomIntegerAsString(11, 20));
         params.add("shopIDs", randomIntegerAsString(21, 30));
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
@@ -95,8 +95,8 @@ public class OpenApiUtil {
 
     public static MultiValueMap<String, String> getSearchInvoiceAllParams() {
         MultiValueMap<String, String> params = getSearchRequiredParams();
-        params.add("shopID", randomIntegerAsString(1, 10));
-        params.add("shopIDs", randomIntegerAsString(11, 20));
+        params.add("shopID", randomIntegerAsString(4, 20));
+        params.add("shopIDs", randomIntegerAsString(1, 3));
         params.add("shopIDs", randomIntegerAsString(21, 30));
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
         params.add("invoiceIDs", randomIntegerAsString(1, 10));
@@ -114,7 +114,7 @@ public class OpenApiUtil {
 
     public static MultiValueMap<String, String> getSearchPayoutAllParams() {
         MultiValueMap<String, String> params = getSearchRequiredParams();
-        params.add("shopID", randomIntegerAsString(1, 10));
+        params.add("shopID", randomIntegerAsString(1, 3));
         params.add("shopIDs", randomIntegerAsString(11, 20));
         params.add("shopIDs", randomIntegerAsString(21, 30));
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
@@ -137,8 +137,8 @@ public class OpenApiUtil {
 
     public static MultiValueMap<String, String> getAnalyticsAllParams() {
         MultiValueMap<String, String> params = getAnalyticsRequiredParams();
-        params.add("shopIDs", "{1,3}");
-        params.add("excludeShopIDs", "{2}");
+        params.add("shopIDs", "1,3");
+        params.add("excludeShopIDs", "2");
         params.add("paymentInstitutionRealm", PaymentInstitutionRealm.live.name());
         return params;
     }

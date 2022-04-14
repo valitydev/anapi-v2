@@ -70,7 +70,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void cancelReportRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         int reportId = randomInt(1, 1000);
@@ -84,7 +83,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$").doesNotExist());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).cancelReport(reportId);
@@ -93,7 +91,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void cancelReportRequestServerUnavailable() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         int reportId = randomInt(1, 1000);
@@ -108,7 +105,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$").doesNotExist());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).cancelReport(reportId);
@@ -117,7 +113,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void createReportRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         long reportId = randomInt(1, 1000);
@@ -133,7 +128,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).createReport(any(), any());
@@ -143,7 +137,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void downloadUrlRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         String reportId = randomIntegerAsString(1, 1000);
@@ -159,7 +152,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).generatePresignedUrl(eq(fileId), notNull());
@@ -168,7 +160,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void getReportRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         long reportId = randomInt(1, 1000);
@@ -183,7 +174,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).getReport(reportId);

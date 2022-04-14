@@ -43,7 +43,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.68-bb14531-server</version>
+            <version>SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
