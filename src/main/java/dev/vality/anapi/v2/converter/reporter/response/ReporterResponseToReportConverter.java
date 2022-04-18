@@ -36,9 +36,9 @@ public class ReporterResponseToReportConverter {
 
     private Report.ReportTypeEnum mapReportType(String type) {
         return switch (type) {
-            case "provisionOfService" -> Report.ReportTypeEnum.PROVISIONOFSERVICE;
-            case "paymentRegistry" -> Report.ReportTypeEnum.PAYMENTREGISTRY;
-            case "paymentRegistryByPayout" -> Report.ReportTypeEnum.PAYMENTREGISTRYBYPAYOUT;
+            case "provision_of_service" -> Report.ReportTypeEnum.PROVISIONOFSERVICE;
+            case "payment_registry" -> Report.ReportTypeEnum.PAYMENTREGISTRY;
+            case "payment_registry_by_payout" -> Report.ReportTypeEnum.PAYMENTREGISTRYBYPAYOUT;
             default -> throw new IllegalArgumentException("Unknown report type: " + type);
         };
     }
