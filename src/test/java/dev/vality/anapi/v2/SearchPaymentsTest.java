@@ -73,7 +73,7 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentRequiredResponse());
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())
@@ -96,7 +96,7 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentAllResponse());
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchPaymentAllParams())
@@ -117,7 +117,7 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
         params.remove("partyID");
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(params)
@@ -137,7 +137,7 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateInvoicesPaymentsReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())

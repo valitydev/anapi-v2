@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>1.0.15</version>
+        <version>1.0.16</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.68-bb14531-server</version>
+            <version>1.71-048ff68-server</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>

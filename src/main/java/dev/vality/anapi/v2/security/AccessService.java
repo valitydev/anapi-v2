@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,14 +29,26 @@ public class AccessService {
     @Value("${service.bouncer.auth.enabled}")
     private boolean authEnabled;
 
-    public List<String> getAccessibleShops(AccessData accessData) {
-        var shopIds = vortigonService.getShopIds(accessData.getPartyId(),
+    public void checkUserAccess(AccessData accessData) {
+        getRestrictedShops(accessData, null);
+    }
+
+    public List<String> getRestrictedShops(AccessData accessData) {
+        var requestedShopIds = vortigonService.getShopIds(accessData.getPartyId(),
                 Objects.requireNonNullElse(accessData.getRealm(), "live"));
         if (accessData.getShopIds() != null && !accessData.getShopIds().isEmpty()) {
-            shopIds = accessData.getShopIds().stream()
-                    .filter(shopIds::contains)
+            requestedShopIds = accessData.getShopIds().stream()
+                    .filter(requestedShopIds::contains)
                     .collect(Collectors.toList());
         }
+
+        var restrictedShopIds = getRestrictedShops(accessData, requestedShopIds);
+        return requestedShopIds.stream()
+                .filter(restrictedShopIds::contains)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getRestrictedShops(AccessData accessData, @Nullable List<String> shopIds) {
         log.info("Check the user's rights to perform the operation {}", accessData.getOperationId());
         var ctx = buildAnapiBouncerContext(accessData, shopIds);
         var resolution = bouncerService.getResolution(ctx);
@@ -45,7 +59,9 @@ public class AccessService {
                             String.format("No rights to perform %s", accessData.getOperationId()));
                 } else {
                     log.warn("No rights to perform {}", accessData.getOperationId());
-                    return List.copyOf(shopIds);
+                    return shopIds != null
+                            ? List.copyOf(shopIds)
+                            : Collections.emptyList();
                 }
             }
             case RESTRICTED: {
@@ -55,22 +71,26 @@ public class AccessService {
                             .collect(Collectors.toList());
                 } else {
                     log.warn("Rights to perform {} are restricted", accessData.getOperationId());
-                    return List.copyOf(shopIds);
+                    return shopIds != null
+                            ? List.copyOf(shopIds)
+                            : Collections.emptyList();
                 }
             }
             case ALLOWED:
-                return List.copyOf(shopIds);
+                return shopIds != null
+                        ? List.copyOf(shopIds)
+                        : Collections.emptyList();
             default:
                 throw new BouncerException(String.format("Resolution %s cannot be processed", resolution));
         }
     }
 
-    private AnapiBouncerContext buildAnapiBouncerContext(AccessData accessData, List<String> allowedShopIds) {
+    private AnapiBouncerContext buildAnapiBouncerContext(AccessData accessData, @Nullable List<String> shopIds) {
         var token = keycloakService.getAccessToken();
         return AnapiBouncerContext.builder()
                 .operationId(accessData.getOperationId())
                 .partyId(accessData.getPartyId())
-                .shopIds(allowedShopIds)
+                .shopIds(shopIds)
                 .fileId(accessData.getFileId())
                 .reportId(accessData.getReportId())
                 .tokenExpiration(token.getExp())

@@ -70,12 +70,11 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void cancelReportRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         int reportId = randomInt(1, 1000);
         mvc.perform(post("/lk/v2/reports/{reportId}/cancel", reportId)
-                        .header("Authorization", "Bearer " + generatePartyWriteJwt())
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(getReportsRequiredParams())
@@ -84,7 +83,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$").doesNotExist());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).cancelReport(reportId);
@@ -93,13 +91,12 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void cancelReportRequestServerUnavailable() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         int reportId = randomInt(1, 1000);
         doThrow(new TException()).when(reporterClient).cancelReport(reportId);
         mvc.perform(post("/lk/v2/reports/{reportId}/cancel", reportId)
-                        .header("Authorization", "Bearer " + generatePartyWriteJwt())
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(getReportsRequiredParams())
@@ -108,7 +105,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$").doesNotExist());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).cancelReport(reportId);
@@ -117,14 +113,13 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void createReportRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         long reportId = randomInt(1, 1000);
         when(reporterClient.createReport(any(), any())).thenReturn(reportId);
         when(reporterClient.getReport(reportId)).thenReturn(createReport(reportId));
         mvc.perform(post("/lk/v2/reports")
-                        .header("Authorization", "Bearer " + generatePartyWriteJwt())
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(OpenApiUtil.getCreateReportRequiredParams())
@@ -133,7 +128,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).createReport(any(), any());
@@ -143,14 +137,13 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void downloadUrlRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         String reportId = randomIntegerAsString(1, 1000);
         String fileId = randomIntegerAsString(1, 1000);
         when(reporterClient.generatePresignedUrl(eq(fileId), any())).thenReturn("www.google.ru");
         mvc.perform(get("/lk/v2/reports/{reportID}/files/{fileID}/download", reportId, fileId)
-                        .header("Authorization", "Bearer " + generatePartyReadJwt())
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(OpenApiUtil.getReportsRequiredParams())
@@ -159,7 +152,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).generatePresignedUrl(eq(fileId), notNull());
@@ -168,13 +160,12 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void getReportRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         long reportId = randomInt(1, 1000);
         when(reporterClient.getReport(reportId)).thenReturn(createReport(reportId));
         mvc.perform(get("/lk/v2/reports/{reportID}", reportId)
-                        .header("Authorization", "Bearer " + generatePartyReadJwt())
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(OpenApiUtil.getCreateReportRequiredParams())
@@ -183,7 +174,6 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).getReport(reportId);
@@ -197,7 +187,7 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(reporterClient.getReports(any())).thenReturn(createSearchReportsResponse());
         mvc.perform(get("/lk/v2/reports")
-                        .header("Authorization", "Bearer " + generatePartyReadJwt())
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(OpenApiUtil.getSearchReportsRequiredParams())
@@ -218,7 +208,7 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         var params = OpenApiUtil.getSearchReportsRequiredParams();
         params.remove("partyID");
         mvc.perform(get("/lk/v2/reports")
-                        .header("Authorization", "Bearer " + generatePartyReadJwt())
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
                         .header("X-Request-ID", randomUUID())
                         .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                         .params(params)

@@ -1,5 +1,6 @@
 package dev.vality.anapi.v2.api;
 
+import dev.vality.anapi.v2.converter.reporter.request.ParamsToStatReportRequestConverter;
 import dev.vality.anapi.v2.model.InlineResponse20014;
 import dev.vality.anapi.v2.model.Report;
 import dev.vality.anapi.v2.model.ReportLink;
@@ -10,13 +11,11 @@ import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.util.DeadlineUtil;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportTimeRange;
-import dev.vality.reporter.StatReportRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,41 +31,41 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
 
     private final AccessService accessService;
     private final ReporterService reporterService;
+
+    private final ParamsToStatReportRequestConverter statReportRequestConverter;
     @Value("${service.reporter.reportUrlLifetimeSec}")
     private long reportLifetimeSec = 60L;
 
-    @PreAuthorize("hasAuthority('party:write')")
     @Override
-    public ResponseEntity<Void> cancelReport(String xRequestID, String partyID, Long reportID, String xRequestDeadline,
-                                             String paymentInstitutionRealm) {
+    public ResponseEntity<Void> cancelReport(String xRequestID,
+                                             String partyID,
+                                             Long reportID,
+                                             String xRequestDeadline) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        accessService.getAccessibleShops(
+        accessService.checkUserAccess(
                 AccessData.builder()
                         .operationId("CancelReport")
                         .partyId(partyID)
                         .reportId(String.valueOf(reportID))
-                        .realm(paymentInstitutionRealm)
                         .build());
         reporterService.cancelReport(reportID);
         log.info("<- Res [202]: xRequestID={}", xRequestID);
         return ResponseEntity.accepted().build();
     }
 
-    @PreAuthorize("hasAuthority('party:write')")
     @Override
     public ResponseEntity<Report> createReport(String xRequestID, String partyID, OffsetDateTime fromTime,
                                                OffsetDateTime toTime, String reportType, String xRequestDeadline,
-                                               String shopID, String paymentInstitutionRealm) {
+                                               String shopID) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         var shops = shopID != null ? List.of(shopID) : null;
-        accessService.getAccessibleShops(
+        accessService.checkUserAccess(
                 AccessData.builder()
                         .operationId("CreateReport")
                         .partyId(partyID)
                         .shopIds(shops)
-                        .realm(paymentInstitutionRealm)
                         .build());
         var request = getReportRequest(partyID, shopID, fromTime, toTime);
         var reportId = reporterService.createReport(request, reportType);
@@ -75,19 +74,17 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
     public ResponseEntity<ReportLink> downloadFile(String xRequestID, String partyID, Long reportID, String fileID,
-                                                   String xRequestDeadline, String paymentInstitutionRealm) {
+                                                   String xRequestDeadline) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        accessService.getAccessibleShops(
+        accessService.checkUserAccess(
                 AccessData.builder()
                         .operationId("DownloadFile")
                         .partyId(partyID)
                         .fileId(fileID)
                         .reportId(String.valueOf(reportID))
-                        .realm(paymentInstitutionRealm)
                         .build());
         var response = reporterService.getDownloadUrl(fileID,
                 TypeUtil.temporalToString(LocalDateTime.now().plus(reportLifetimeSec, ChronoUnit.SECONDS)));
@@ -95,25 +92,21 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
-    public ResponseEntity<Report> getReport(String xRequestID, String partyID, Long reportID, String xRequestDeadline,
-                                            String paymentInstitutionRealm) {
+    public ResponseEntity<Report> getReport(String xRequestID, String partyID, Long reportID, String xRequestDeadline) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        accessService.getAccessibleShops(
+        accessService.checkUserAccess(
                 AccessData.builder()
                         .operationId("GetReport")
                         .partyId(partyID)
                         .reportId(String.valueOf(reportID))
-                        .realm(paymentInstitutionRealm)
                         .build());
         var response = reporterService.getReport(reportID);
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
     public ResponseEntity<InlineResponse20014> searchReports(String xRequestID, String partyID, OffsetDateTime fromTime,
                                                              OffsetDateTime toTime, Integer limit,
@@ -122,15 +115,22 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                                                              String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        accessService.getAccessibleShops(
+        List<String> shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchReports")
                         .partyId(partyID)
                         .shopIds(shopID == null ? null : List.of(shopID))
                         .realm(paymentInstitutionRealm)
                         .build());
-        var request = getStatReportRequest(partyID, shopID, fromTime, toTime, limit, reportTypes, continuationToken);
-        var response = reporterService.getReports(request);
+        InlineResponse20014 response;
+        if (shopID == null || shopIDs.contains(shopID)) {
+            var request =
+                    statReportRequestConverter.convert(partyID, shopID, fromTime, toTime, limit, reportTypes,
+                            continuationToken);
+            response = reporterService.getReports(request);
+        } else {
+            response = new InlineResponse20014();
+        }
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }
@@ -143,21 +143,5 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                 .setTimeRange(new ReportTimeRange()
                         .setFromTime(fromTime.toString())
                         .setToTime(toTime.toString()));
-    }
-
-    private StatReportRequest getStatReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
-                                                   OffsetDateTime toTime, Integer limit,
-                                                   List<String> reportTypes, String continuationToken) {
-        return new StatReportRequest()
-                .setRequest(
-                        new ReportRequest()
-                                .setPartyId(partyId)
-                                .setShopId(shopId)
-                                .setTimeRange(new ReportTimeRange()
-                                        .setFromTime(fromTime.toString())
-                                        .setToTime(toTime.toString())))
-                .setReportTypes(reportTypes)
-                .setLimit(limit)
-                .setContinuationToken(continuationToken);
     }
 }
