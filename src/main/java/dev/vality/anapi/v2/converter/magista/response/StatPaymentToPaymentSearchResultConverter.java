@@ -1,8 +1,15 @@
 package dev.vality.anapi.v2.converter.magista.response;
 
+import dev.vality.anapi.v2.model.ClientInfo;
+import dev.vality.anapi.v2.model.ContactInfo;
+import dev.vality.anapi.v2.model.CryptoCurrency;
+import dev.vality.anapi.v2.model.CustomerPayer;
+import dev.vality.anapi.v2.model.Payer;
+import dev.vality.anapi.v2.model.PaymentResourcePayer;
+import dev.vality.anapi.v2.model.RecurrentPayer;
+import dev.vality.anapi.v2.model.TransactionInfo;
 import dev.vality.anapi.v2.util.MaskUtil;
-import dev.vality.damsel.domain.InvoicePaymentStatus;
-import dev.vality.damsel.domain.PaymentTool;
+import dev.vality.damsel.domain.*;
 import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.StatPayment;
@@ -26,7 +33,7 @@ public class StatPaymentToPaymentSearchResultConverter {
                 .flow(mapFlow(payment.getFlow()))
                 .status(mapStatus(payment.getStatus()))
                 .error(payment.getStatus().isSetFailed()
-                        ? new PaymentError().code(payment.getStatus().getFailed().getFailure().getFailure().getCode())
+                        ? mapError(payment.getStatus().getFailed().getFailure())
                         : null)
                 .statusChangedAt(payment.isSetStatusChangedAt()
                         ? TypeUtil.stringToInstant(payment.getStatusChangedAt()).atOffset(ZoneOffset.UTC) : null)
@@ -173,5 +180,32 @@ public class StatPaymentToPaymentSearchResultConverter {
                     String.format("Payment status %s cannot be processed", status));
         }
 
+    }
+
+    protected PaymentError mapError(OperationFailure failure) {
+        var error = new PaymentError();
+        switch (failure.getSetField()) {
+            case FAILURE -> {
+                error.setCode(failure.getFailure().getCode());
+                if (failure.getFailure().isSetSub()) {
+                    SubFailure subFailure = failure.getFailure().getSub();
+                    error.setSubError(createSubError(subFailure));
+                }
+            }
+            case OPERATION_TIMEOUT -> error.setCode("timeout");
+            default -> throw new IllegalArgumentException("Unknown failure: " + failure.getSetField().getFieldName());
+        }
+
+        return error;
+    }
+
+    private SubError createSubError(SubFailure subFailure) {
+        SubError subError = new SubError();
+        subError.setCode(subFailure.getCode());
+
+        if (subFailure.isSetSub()) {
+            subError.setSubError(createSubError(subFailure.getSub()));
+        }
+        return subError;
     }
 }
