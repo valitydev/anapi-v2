@@ -161,7 +161,7 @@ public class OpenApiUtil {
         MultiValueMap<String, String> params = getReportsRequiredParams();
         params.add("fromTime", "2007-12-03T10:15:30+01:00");
         params.add("toTime", "2020-12-03T10:15:30+01:00");
-        params.add("reportTypes", "{paymentRegistry}");
+        params.add("reportTypes", "paymentRegistry");
         params.add("limit", "10");
         return params;
     }

@@ -1,7 +1,7 @@
 package dev.vality.anapi.v2.service;
 
+import dev.vality.anapi.v2.converter.reporter.response.ReporterResponseToReportConverter;
 import dev.vality.anapi.v2.exception.ReporterException;
-import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.model.*;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportingSrv;
@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,6 +19,7 @@ import java.util.stream.Collectors;
 public class ReporterService {
 
     private final ReportingSrv.Iface reporterClient;
+    private final ReporterResponseToReportConverter reporterResponseToReportConverter;
 
     public void cancelReport(long reportId) {
         try {
@@ -53,7 +52,7 @@ public class ReporterService {
 
     public Report getReport(long reportId) {
         try {
-            return mapReport(reporterClient.getReport(reportId));
+            return reporterResponseToReportConverter.convert(reporterClient.getReport(reportId));
         } catch (TException e) {
             throw new ReporterException(
                     String.format("Error while call reporterClient.getReport, reportId=%d", reportId), e);
@@ -65,7 +64,7 @@ public class ReporterService {
             var response = reporterClient.getReports(request);
             return new InlineResponse20014()
                     .result(response.getReports().stream()
-                            .map(this::mapReport)
+                            .map(reporterResponseToReportConverter::convert)
                             .collect(Collectors.toList()))
                     .continuationToken(request.getContinuationToken());
         } catch (TException e) {
@@ -73,27 +72,6 @@ public class ReporterService {
                     String.format("Error while call reporterClient.getReports, partyId=%s",
                             request.getRequest().getPartyId()), e);
         }
-    }
-
-    private Report mapReport(dev.vality.reporter.Report response) {
-        return new Report()
-                .id(response.getReportId())
-                .partyID(response.getPartyId())
-                .shopID(response.getShopId())
-                .createdAt(TypeUtil.stringToInstant(response.getCreatedAt()).atOffset(ZoneOffset.UTC))
-                .fromTime(TypeUtil.stringToInstant(response.getTimeRange().getFromTime()).atOffset(ZoneOffset.UTC))
-                .toTime(TypeUtil.stringToInstant(response.getTimeRange().getToTime()).atOffset(ZoneOffset.UTC))
-                .status(Report.StatusEnum.fromValue(response.getStatus().name()))
-                .reportType(Report.ReportTypeEnum.fromValue(response.getReportType()))
-                .files(response.getFiles() != null
-                        ? response.getFiles().stream()
-                        .map(fileReporter -> new FileMeta()
-                                .id(fileReporter.getFileId())
-                                .filename(fileReporter.getFilename())
-                                .signatures(new FileMetaSignatures()
-                                        .md5(fileReporter.getSignature().getMd5())
-                                        .sha256(fileReporter.getSignature().getSha256())))
-                        .collect(Collectors.toList()) : Collections.emptyList());
     }
 
 }

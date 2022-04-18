@@ -1,5 +1,7 @@
 package dev.vality.anapi.v2.api;
 
+import dev.vality.anapi.v2.converter.magista.request.ParamsToRefundSearchQueryConverter;
+import dev.vality.anapi.v2.converter.reporter.request.ParamsToStatReportRequestConverter;
 import dev.vality.anapi.v2.model.InlineResponse20014;
 import dev.vality.anapi.v2.model.Report;
 import dev.vality.anapi.v2.model.ReportLink;
@@ -32,6 +34,8 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
 
     private final AccessService accessService;
     private final ReporterService reporterService;
+
+    private final ParamsToStatReportRequestConverter statReportRequestConverter;
     @Value("${service.reporter.reportUrlLifetimeSec}")
     private long reportLifetimeSec = 60L;
 
@@ -129,7 +133,8 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         InlineResponse20014 response;
         if (shopID == null || shopIDs.contains(shopID)) {
             var request =
-                    getStatReportRequest(partyID, shopID, fromTime, toTime, limit, reportTypes, continuationToken);
+                    statReportRequestConverter.convert(partyID, shopID, fromTime, toTime, limit, reportTypes,
+                            continuationToken);
             response = reporterService.getReports(request);
         } else {
             response = new InlineResponse20014();
@@ -146,21 +151,5 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                 .setTimeRange(new ReportTimeRange()
                         .setFromTime(fromTime.toString())
                         .setToTime(toTime.toString()));
-    }
-
-    private StatReportRequest getStatReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
-                                                   OffsetDateTime toTime, Integer limit,
-                                                   List<String> reportTypes, String continuationToken) {
-        return new StatReportRequest()
-                .setRequest(
-                        new ReportRequest()
-                                .setPartyId(partyId)
-                                .setShopId(shopId)
-                                .setTimeRange(new ReportTimeRange()
-                                        .setFromTime(fromTime.toString())
-                                        .setToTime(toTime.toString())))
-                .setReportTypes(reportTypes)
-                .setLimit(limit)
-                .setContinuationToken(continuationToken);
     }
 }
