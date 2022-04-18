@@ -10,7 +10,6 @@ import dev.vality.anapi.v2.util.DeadlineUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -31,7 +30,6 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     private final ParamsToPayoutSearchQueryConverter payoutSearchConverter;
     private final ParamsToInvoiceTemplateSearchQueryConverter invoiceTemplateSearchConverter;
 
-    @PreAuthorize("hasAuthority('invoices:read')")
     @Override
     public ResponseEntity<InlineResponse2008> searchInvoices(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String invoiceStatus, Long invoiceAmountFrom, Long invoiceAmountTo, String externalID, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
@@ -66,7 +64,6 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('invoices:read') and hasAuthority('payments:read')")
     @Override
     public ResponseEntity<InlineResponse2009> searchPayments(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String paymentStatus, String paymentFlow, String paymentMethod, String paymentTerminalProvider, String payerEmail, String payerIP, String payerFingerprint, String customerID, String first6, String last4, String rrn, String approvalCode, String bankCardTokenProvider, String bankCardPaymentSystem, Long paymentAmountFrom, Long paymentAmountTo, String externalID, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
@@ -115,7 +112,6 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('invoices:read') and hasAuthority('payments:read')")
     @Override
     public ResponseEntity<InlineResponse20010> searchRefunds(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String refundID, String refundStatus, String externalID, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
@@ -150,7 +146,6 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
     public ResponseEntity<InlineResponse20011> searchChargebacks(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, String paymentID, String chargebackID, List<String> chargebackStatuses, List<String> chargebackStages, List<String> chargebackCategories, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
@@ -185,7 +180,6 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
     public ResponseEntity<InlineResponse20012> searchPayouts(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String payoutID, String payoutToolType, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);
@@ -216,7 +210,6 @@ public class SearchApiDelegateService implements SearchApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('invoices:read')")
     @Override
     public ResponseEntity<InlineResponse20013> searchInvoiceTemplates(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, List<String> shopIDs, String paymentInstitutionRealm, String invoiceTemplateID, String invoiceTemplateStatus, String name, String product, OffsetDateTime invoiceValidUntil, String continuationToken) {
         log.info("-> Req: xRequestID={}", xRequestID);

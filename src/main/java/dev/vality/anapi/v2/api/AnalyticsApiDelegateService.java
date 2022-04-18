@@ -13,7 +13,6 @@ import dev.vality.damsel.analytics.TimeFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -21,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
-@PreAuthorize("hasAuthority('party:read')")
 @RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings({"ParameterName", "LineLength"})

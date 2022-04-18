@@ -1,6 +1,5 @@
 package dev.vality.anapi.v2.api;
 
-import dev.vality.anapi.v2.converter.magista.request.ParamsToRefundSearchQueryConverter;
 import dev.vality.anapi.v2.converter.reporter.request.ParamsToStatReportRequestConverter;
 import dev.vality.anapi.v2.model.InlineResponse20014;
 import dev.vality.anapi.v2.model.Report;
@@ -12,13 +11,11 @@ import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.util.DeadlineUtil;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportTimeRange;
-import dev.vality.reporter.StatReportRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,7 +36,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
     @Value("${service.reporter.reportUrlLifetimeSec}")
     private long reportLifetimeSec = 60L;
 
-    @PreAuthorize("hasAuthority('party:write')")
     @Override
     public ResponseEntity<Void> cancelReport(String xRequestID,
                                              String partyID,
@@ -58,7 +54,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         return ResponseEntity.accepted().build();
     }
 
-    @PreAuthorize("hasAuthority('party:write')")
     @Override
     public ResponseEntity<Report> createReport(String xRequestID, String partyID, OffsetDateTime fromTime,
                                                OffsetDateTime toTime, String reportType, String xRequestDeadline,
@@ -79,7 +74,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
     public ResponseEntity<ReportLink> downloadFile(String xRequestID, String partyID, Long reportID, String fileID,
                                                    String xRequestDeadline) {
@@ -98,7 +92,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
     public ResponseEntity<Report> getReport(String xRequestID, String partyID, Long reportID, String xRequestDeadline) {
         log.info("-> Req: xRequestID={}", xRequestID);
@@ -114,7 +107,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority('party:read')")
     @Override
     public ResponseEntity<InlineResponse20014> searchReports(String xRequestID, String partyID, OffsetDateTime fromTime,
                                                              OffsetDateTime toTime, Integer limit,
