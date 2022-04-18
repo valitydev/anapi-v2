@@ -25,6 +25,7 @@ public class ParamsToInvoiceSearchQueryConverter {
                                       Long invoiceAmountFrom,
                                       Long invoiceAmountTo,
                                       String continuationToken) {
+        List<String> invoiceIds = ConverterUtil.merge(invoiceID, invoiceIDs);
         return new InvoiceSearchQuery()
                 .setCommonSearchQueryParams(
                         ConverterUtil.fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
@@ -32,7 +33,7 @@ public class ParamsToInvoiceSearchQueryConverter {
                         mapPaymentParams(invoiceAmountFrom, invoiceAmountTo)
                 )
                 .setInvoiceStatus(invoiceStatus != null ? mapStatus(invoiceStatus) : null)
-                .setInvoiceIds(ConverterUtil.merge(invoiceID, invoiceIDs))
+                .setInvoiceIds(invoiceIds.isEmpty() ? null : invoiceIds)
                 .setExternalId(externalID);
     }
 
