@@ -73,7 +73,7 @@ class SearchInvoiceTemplatesTest extends AbstractKeycloakOpenIdAsWiremockConfig 
         when(magistaClient.searchInvoiceTemplates(any())).thenReturn(
                 MagistaUtil.createSearchInvoiceTemplateRequiredResponse());
         mvc.perform(get("/lk/v2/invoice-templates")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())
@@ -97,7 +97,7 @@ class SearchInvoiceTemplatesTest extends AbstractKeycloakOpenIdAsWiremockConfig 
         when(magistaClient.searchInvoiceTemplates(any())).thenReturn(
                 MagistaUtil.createSearchInvoiceTemplateAllResponse());
         mvc.perform(get("/lk/v2/invoice-templates")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchInvoiceAllParams())
@@ -118,7 +118,7 @@ class SearchInvoiceTemplatesTest extends AbstractKeycloakOpenIdAsWiremockConfig 
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
         params.remove("partyID");
         mvc.perform(get("/lk/v2/invoice-templates")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(params)
@@ -138,7 +138,7 @@ class SearchInvoiceTemplatesTest extends AbstractKeycloakOpenIdAsWiremockConfig 
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchInvoiceTemplates(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/invoice-templates")
-                .header("Authorization", "Bearer " + generateInvoicesReadJwt())
+                .header("Authorization", "Bearer " + generateSimpleJwt())
                 .header("X-Request-ID", randomUUID())
                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
                 .params(OpenApiUtil.getSearchRequiredParams())
