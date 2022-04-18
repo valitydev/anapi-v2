@@ -24,11 +24,12 @@ public class ParamsToRefundSearchQueryConverter {
                                      String externalID,
                                      String refundStatus,
                                      String continuationToken) {
+        List<String> invoiceIds = ConverterUtil.merge(invoiceID, invoiceIDs);
         return new RefundSearchQuery()
                 .setCommonSearchQueryParams(
                         ConverterUtil.fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setRefundStatus(refundStatus != null ? mapStatus(refundStatus) : null)
-                .setInvoiceIds(ConverterUtil.merge(invoiceID, invoiceIDs))
+                .setInvoiceIds(invoiceIds.isEmpty() ? null : invoiceIds)
                 .setExternalId(externalID)
                 .setPaymentId(paymentID)
                 .setRefundId(refundID);

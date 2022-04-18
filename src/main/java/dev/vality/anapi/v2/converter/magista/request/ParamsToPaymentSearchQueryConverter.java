@@ -45,12 +45,13 @@ public class ParamsToPaymentSearchQueryConverter {
                                       Long paymentAmountTo,
                                       List<String> excludedShops,
                                       String continuationToken) {
+        List<String> invoiceIds = ConverterUtil.merge(invoiceID, invoiceIDs);
         PaymentSearchQuery query = new PaymentSearchQuery()
                 .setCommonSearchQueryParams(
                         ConverterUtil.fillCommonParams(fromTime, toTime, limit, partyID, shopIDs, continuationToken))
                 .setExcludedShopIds(excludedShops)
                 .setExternalId(externalID)
-                .setInvoiceIds(ConverterUtil.merge(invoiceID, invoiceIDs));
+                .setInvoiceIds(invoiceIds.isEmpty() ? null : invoiceIds);
 
         PaymentParams paymentParams = new PaymentParams()
                 .setPaymentTool(paymentMethod != null ? mapPaymentTool(paymentMethod) : null)
