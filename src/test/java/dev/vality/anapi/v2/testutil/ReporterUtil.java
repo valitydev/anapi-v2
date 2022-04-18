@@ -12,7 +12,7 @@ public class ReporterUtil {
     public static Report createReport(long reportId) {
         return fillRequiredTBaseObject(new Report(), Report.class)
                 .setReportId(reportId)
-                .setReportType("paymentRegistry");
+                .setReportType("payment_registry");
     }
 
     public static StatReportResponse createSearchReportsResponse() {
