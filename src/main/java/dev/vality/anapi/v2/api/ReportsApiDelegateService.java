@@ -66,7 +66,7 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .shopIds(shops)
                         .build());
         var request = statReportRequestConverter.mapToReportRequest(partyID, shopID, fromTime, toTime);
-        var reportId = reporterService.createReport(request, reportType);
+        var reportId = reporterService.createReport(request, statReportRequestConverter.mapReportType(reportType));
         var response = reporterService.getReport(reportId);
         log.info("<- Res [201]: xRequestID={}", xRequestID);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
