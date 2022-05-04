@@ -7,6 +7,7 @@ import dev.vality.reporter.StatReportRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,28 +18,34 @@ public class ParamsToStatReportRequestConverter {
                                      OffsetDateTime toTime, Integer limit,
                                      List<String> reportTypes, String continuationToken) {
         return new StatReportRequest()
-                .setRequest(
-                        new ReportRequest()
-                                .setPartyId(partyId)
-                                .setShopId(shopId)
-                                .setTimeRange(new ReportTimeRange()
-                                        .setFromTime(fromTime.toString())
-                                        .setToTime(toTime.toString())))
+                .setRequest(mapToReportRequest(partyId, shopId, fromTime, toTime))
                 .setReportTypes(mapReportTypes(reportTypes))
                 .setLimit(limit)
                 .setContinuationToken(continuationToken);
     }
 
+    public ReportRequest mapToReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
+                                 OffsetDateTime toTime) {
+        return new ReportRequest()
+                .setPartyId(partyId)
+                .setShopId(shopId)
+                .setTimeRange(new ReportTimeRange()
+                        .setFromTime(fromTime.format(DateTimeFormatter.ISO_INSTANT))
+                        .setToTime(toTime.format(DateTimeFormatter.ISO_INSTANT)));
+    }
+
+    public String mapReportType(String requestReportType) {
+        Report.ReportTypeEnum inputType = Report.ReportTypeEnum.fromValue(requestReportType);
+        return switch (inputType) {
+            case PAYMENTREGISTRY -> "payment_registry";
+            case PROVISIONOFSERVICE -> "provision_of_service";
+            case PAYMENTREGISTRYBYPAYOUT -> "payment_registry_by_payout";
+            default -> throw new IllegalArgumentException("Unknown report type: " + inputType.getValue());
+        };
+    }
+
     private List<String> mapReportTypes(List<String> requestReportTypes) {
-        return requestReportTypes.stream().map(input -> {
-            Report.ReportTypeEnum inputType = Report.ReportTypeEnum.fromValue(input);
-            return switch (inputType) {
-                case PAYMENTREGISTRY -> "payment_registry";
-                case PROVISIONOFSERVICE -> "provision_of_service";
-                case PAYMENTREGISTRYBYPAYOUT -> "payment_registry_by_payout";
-                default -> throw new IllegalArgumentException("Unknown report type: " + inputType.getValue());
-            };
-        }).collect(Collectors.toList());
+        return requestReportTypes.stream().map(this::mapReportType).collect(Collectors.toList());
     }
 
 }
