@@ -9,8 +9,6 @@ import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.ReporterService;
 import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.util.DeadlineUtil;
-import dev.vality.reporter.ReportRequest;
-import dev.vality.reporter.ReportTimeRange;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +65,7 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .partyId(partyID)
                         .shopIds(shops)
                         .build());
-        var request = getReportRequest(partyID, shopID, fromTime, toTime);
+        var request = statReportRequestConverter.mapToReportRequest(partyID, shopID, fromTime, toTime);
         var reportId = reporterService.createReport(request, reportType);
         var response = reporterService.getReport(reportId);
         log.info("<- Res [201]: xRequestID={}", xRequestID);
@@ -135,13 +133,4 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
         return ResponseEntity.ok(response);
     }
 
-    private ReportRequest getReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
-                                           OffsetDateTime toTime) {
-        return new ReportRequest()
-                .setPartyId(partyId)
-                .setShopId(shopId)
-                .setTimeRange(new ReportTimeRange()
-                        .setFromTime(fromTime.toString())
-                        .setToTime(toTime.toString()));
-    }
 }
