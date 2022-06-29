@@ -145,11 +145,6 @@ public class StatPaymentToPaymentSearchResultConverter {
                 return new PaymentToolDetailsMobileCommerce()
                         .phoneNumber(MaskUtil.constructPhoneNumber(mobile.getPhone()));
             }
-            case CRYPTO_CURRENCY_DEPRECATED -> {
-                var cryptoCurrency = paymentTool.getCryptoCurrencyDeprecated();
-                return new PaymentToolDetailsCryptoWallet()
-                        .cryptoCurrency(cryptoCurrency.name());
-            }
             case CRYPTO_CURRENCY -> {
                 var cryptoCurrency = paymentTool.getCryptoCurrency();
                 return new PaymentToolDetailsCryptoWallet()
@@ -162,25 +157,19 @@ public class StatPaymentToPaymentSearchResultConverter {
     private String getProvider(PaymentTerminal terminal) {
         return terminal.isSetPaymentService()
                 ? terminal.getPaymentService().getId()
-                : (terminal.isSetTerminalTypeDeprecated()
-                ? terminal.getTerminalTypeDeprecated().name()
-                : null);
+                : null;
     }
 
     private String getTokenProvider(BankCard card) {
         return card.isSetPaymentToken()
                 ? card.getPaymentToken().getId()
-                : (card.isSetTokenProviderDeprecated()
-                ? card.getTokenProviderDeprecated().name()
-                : null);
+                : null;
     }
 
     private String getPaymentSystem(BankCard card) {
         return card.isSetPaymentSystem()
                 ? card.getPaymentSystem().getId()
-                : (card.isSetPaymentSystemDeprecated()
-                ? card.getPaymentSystemDeprecated().name()
-                : null);
+                : null;
     }
 
     protected PaymentSearchResult.StatusEnum mapStatus(InvoicePaymentStatus status) {
@@ -194,7 +183,6 @@ public class StatPaymentToPaymentSearchResultConverter {
                 case REFUNDED -> REFUNDED;
                 case FAILED -> FAILED;
                 case CHARGED_BACK -> CHARGEDBACK;
-                default -> throw new IllegalArgumentException();
             };
         } catch (Exception e) {
             throw new IllegalArgumentException(

@@ -80,7 +80,6 @@
             <artifactId>reporter-proto</artifactId>
             <version>1.16-cc187f5</version>
         </dependency>
-
         <dependency>
             <groupId>dev.vality.geck</groupId>
             <artifactId>serializer</artifactId>
@@ -88,6 +87,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
+            <version>1.566-03bbf48</version>
         </dependency>
         <dependency>
             <groupId>dev.vality.woody</groupId>
