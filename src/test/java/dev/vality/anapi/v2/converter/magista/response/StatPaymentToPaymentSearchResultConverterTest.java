@@ -1,9 +1,9 @@
 package dev.vality.anapi.v2.converter.magista.response;
 
 import dev.vality.anapi.v2.model.*;
-import dev.vality.anapi.v2.util.MaskUtil;
 import dev.vality.anapi.v2.testutil.MagistaUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
+import dev.vality.anapi.v2.util.MaskUtil;
 import dev.vality.damsel.domain.ClientInfo;
 import dev.vality.damsel.domain.ContactInfo;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
@@ -81,8 +81,8 @@ class StatPaymentToPaymentSearchResultConverterTest {
                 () -> assertEquals("1111", openapiCustomerPayer.getPaymentToolToken()),
                 () -> assertEquals("1234", paymentToolDetails.getBin()),
                 () -> assertEquals("5678", paymentToolDetails.getLastDigits()),
-                () -> assertEquals("maestro", paymentToolDetails.getPaymentSystem().getValue()),
-                () -> assertEquals("applepay", paymentToolDetails.getTokenProvider().getValue())
+                () -> assertEquals("maestro", paymentToolDetails.getPaymentSystem()),
+                () -> assertEquals("applepay", paymentToolDetails.getTokenProvider())
         );
 
 
@@ -112,8 +112,8 @@ class StatPaymentToPaymentSearchResultConverterTest {
                 () -> assertEquals("88005553535", paymentResourcePayer.getContactInfo().getPhoneNumber()),
                 () -> assertEquals("1234", resourcePayerPaymentToolDetails.getBin()),
                 () -> assertEquals("5678", resourcePayerPaymentToolDetails.getLastDigits()),
-                () -> assertEquals("maestro", resourcePayerPaymentToolDetails.getPaymentSystem().getValue()),
-                () -> assertEquals("applepay", resourcePayerPaymentToolDetails.getTokenProvider().getValue())
+                () -> assertEquals("maestro", resourcePayerPaymentToolDetails.getPaymentSystem()),
+                () -> assertEquals("applepay", resourcePayerPaymentToolDetails.getTokenProvider())
         );
 
         payer = new Payer();
@@ -136,8 +136,8 @@ class StatPaymentToPaymentSearchResultConverterTest {
                 () -> assertEquals("88005553535", openapiRecurrentPayer.getContactInfo().getPhoneNumber()),
                 () -> assertEquals("1234", recurrentPayerPaymentToolDetails.getBin()),
                 () -> assertEquals("5678", recurrentPayerPaymentToolDetails.getLastDigits()),
-                () -> assertEquals("maestro", recurrentPayerPaymentToolDetails.getPaymentSystem().getValue()),
-                () -> assertEquals("applepay", recurrentPayerPaymentToolDetails.getTokenProvider().getValue())
+                () -> assertEquals("maestro", recurrentPayerPaymentToolDetails.getPaymentSystem()),
+                () -> assertEquals("applepay", recurrentPayerPaymentToolDetails.getTokenProvider())
         );
     }
 
@@ -207,9 +207,9 @@ class StatPaymentToPaymentSearchResultConverterTest {
                 () -> assertEquals(expectedCardDetails.getLastDigits(), actualCardDetails.getLastDigits()),
                 () -> assertEquals(expectedCardDetails.getBin(), actualCardDetails.getBin()),
                 () -> assertEquals(expectedCardDetails.getTokenProviderDeprecated().name(),
-                        actualCardDetails.getTokenProvider().getValue()),
+                        actualCardDetails.getTokenProvider()),
                 () -> assertEquals(expectedCardDetails.getPaymentSystemDeprecated().name(),
-                        actualCardDetails.getPaymentSystem().getValue()),
+                        actualCardDetails.getPaymentSystem()),
                 () -> assertTrue(actualCardDetails.getCardNumberMask().startsWith(expectedCardDetails.getBin())),
                 () -> assertTrue(actualCardDetails.getCardNumberMask().endsWith(expectedCardDetails.getLastDigits()))
         );
@@ -218,7 +218,7 @@ class StatPaymentToPaymentSearchResultConverterTest {
         var expectedTerminalDetails = tool.getPaymentTerminal();
         var actualTerminalDetails = (PaymentToolDetailsPaymentTerminal) converter.mapPaymentToolDetails(tool);
         assertEquals(expectedTerminalDetails.getTerminalTypeDeprecated().name(),
-                actualTerminalDetails.getProvider().getValue());
+                actualTerminalDetails.getProvider());
 
         tool = MagistaUtil.createMobileCommercePaymentTool();
         var expectedMobileDetails = tool.getMobileCommerce();
@@ -230,7 +230,7 @@ class StatPaymentToPaymentSearchResultConverterTest {
         var expectedLegacyCryptoDetails = tool.getCryptoCurrencyDeprecated();
         var actualLegacyCryptoDetails = (PaymentToolDetailsCryptoWallet) converter.mapPaymentToolDetails(tool);
         assertEquals(expectedLegacyCryptoDetails.name(),
-                actualLegacyCryptoDetails.getCryptoCurrency().getValue());
+                actualLegacyCryptoDetails.getCryptoCurrency());
 
         assertThrows(IllegalArgumentException.class,
                 () -> converter.mapPaymentToolDetails(MagistaUtil.createCryptoCurrencyPaymentTool()));
