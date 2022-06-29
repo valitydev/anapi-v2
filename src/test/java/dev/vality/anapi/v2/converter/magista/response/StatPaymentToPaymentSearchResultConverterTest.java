@@ -231,10 +231,5 @@ class StatPaymentToPaymentSearchResultConverterTest {
         var actualLegacyCryptoDetails = (PaymentToolDetailsCryptoWallet) converter.mapPaymentToolDetails(tool);
         assertEquals(expectedLegacyCryptoDetails.name(),
                 actualLegacyCryptoDetails.getCryptoCurrency());
-
-        assertThrows(IllegalArgumentException.class,
-                () -> converter.mapPaymentToolDetails(MagistaUtil.createCryptoCurrencyPaymentTool()));
-
-
     }
 }
