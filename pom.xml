@@ -24,7 +24,7 @@
         <management.port>8023</management.port>
         <exposed.ports>${server.port} ${management.port}</exposed.ports>
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
-        <springfox-version>2.10.5</springfox-version>
+        <springfox-version>3.0.0</springfox-version>
         <servlet-api-version>2.5</servlet-api-version>
         <jackson-version>2.12.5</jackson-version>
         <spring-version>2.5.3</spring-version>
