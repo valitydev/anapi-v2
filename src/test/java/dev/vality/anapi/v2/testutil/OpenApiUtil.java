@@ -5,7 +5,6 @@ import dev.vality.anapi.v2.model.ChargebackStage;
 import dev.vality.anapi.v2.model.ChargebackStatus;
 import dev.vality.anapi.v2.model.PaymentStatus;
 import dev.vality.damsel.domain.PaymentInstitutionRealm;
-import dev.vality.damsel.merch_stat.TerminalPaymentProvider;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,7 +34,7 @@ public class OpenApiUtil {
         params.add("paymentStatus", PaymentStatus.StatusEnum.PENDING.getValue());
         params.add("paymentFlow", "instant");
         params.add("paymentMethod", "paymentTerminal");
-        params.add("paymentTerminalProvider", TerminalPaymentProvider.alipay.name());
+        params.add("paymentTerminalProvider", "alipay");
         params.add("invoiceID", randomIntegerAsString(1, 1000));
         params.add("paymentID", randomIntegerAsString(1, 1000));
         params.add("externalID", randomIntegerAsString(1, 1000));

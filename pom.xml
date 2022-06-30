@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>1.0.16</version>
+        <version>1.0.17</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.71-048ff68-server</version>
+            <version>1.76-ec7a406-server</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.37-ba389d1</version>
+            <version>1.44-5352f74</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -80,26 +80,22 @@
             <artifactId>reporter-proto</artifactId>
             <version>1.16-cc187f5</version>
         </dependency>
-
         <dependency>
             <groupId>dev.vality.geck</groupId>
             <artifactId>serializer</artifactId>
-            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.558-3efe7df</version>
+            <version>1.566-03bbf48</version>
         </dependency>
         <dependency>
             <groupId>dev.vality.woody</groupId>
             <artifactId>woody-thrift</artifactId>
-            <version>${woody.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.vality.woody</groupId>
             <artifactId>woody-api</artifactId>
-            <version>${woody.version}</version>
         </dependency>
 
         <!--spring-->
@@ -261,6 +257,12 @@
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8-standalone</artifactId>
+            <version>2.33.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>

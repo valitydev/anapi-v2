@@ -3,9 +3,9 @@ package dev.vality.anapi.v2.converter.magista.request;
 import dev.vality.anapi.v2.exception.BadRequestException;
 import dev.vality.anapi.v2.model.PaymentStatus;
 import dev.vality.anapi.v2.util.ConverterUtil;
-import dev.vality.damsel.domain.LegacyBankCardPaymentSystem;
-import dev.vality.damsel.domain.LegacyBankCardTokenProvider;
-import dev.vality.damsel.domain.LegacyTerminalPaymentProvider;
+import dev.vality.damsel.domain.BankCardTokenServiceRef;
+import dev.vality.damsel.domain.PaymentServiceRef;
+import dev.vality.damsel.domain.PaymentSystemRef;
 import dev.vality.magista.*;
 import org.springframework.stereotype.Component;
 
@@ -57,9 +57,9 @@ public class ParamsToPaymentSearchQueryConverter {
                 .setPaymentTool(paymentMethod != null ? mapPaymentTool(paymentMethod) : null)
                 .setPaymentFlow(paymentFlow != null ? mapInvoicePaymentFlow(paymentFlow) : null)
                 .setPaymentTerminalProvider(
-                        paymentTerminalProvider != null ? mapTerminalProvider(paymentTerminalProvider) : null)
+                        paymentTerminalProvider != null ? new PaymentServiceRef(paymentTerminalProvider) : null)
                 .setPaymentTokenProvider(
-                        bankCardTokenProvider != null ? mapTokenProvider(bankCardTokenProvider) : null)
+                        bankCardTokenProvider != null ? new BankCardTokenServiceRef(bankCardTokenProvider) : null)
                 .setPaymentEmail(payerEmail)
                 .setPaymentApprovalCode(approvalCode)
                 .setPaymentCustomerId(customerID)
@@ -70,8 +70,7 @@ public class ParamsToPaymentSearchQueryConverter {
                 .setPaymentIp(payerIP)
                 .setPaymentRrn(rrn)
                 .setPaymentStatus(paymentStatus != null ? mapStatus(paymentStatus) : null)
-                .setPaymentSystem(bankCardPaymentSystem != null
-                        ? mapPaymentSystem(bankCardPaymentSystem) : null);
+                .setPaymentSystem(bankCardPaymentSystem != null ? new PaymentSystemRef(bankCardPaymentSystem) : null);
         if (paymentAmountFrom != null) {
             paymentParams.setPaymentAmountFrom(paymentAmountFrom);
         }
@@ -80,31 +79,6 @@ public class ParamsToPaymentSearchQueryConverter {
         }
         query.setPaymentParams(paymentParams);
         return query;
-    }
-
-    protected LegacyTerminalPaymentProvider mapTerminalProvider(String provider) {
-        try {
-            return LegacyTerminalPaymentProvider.valueOf(provider);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException(String.format("Terminal provider %s cannot be processed", provider));
-        }
-    }
-
-    protected LegacyBankCardTokenProvider mapTokenProvider(String provider) {
-        try {
-            return LegacyBankCardTokenProvider.valueOf(provider);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException(String.format("Token provider %s cannot be processed", provider));
-        }
-    }
-
-    protected LegacyBankCardPaymentSystem mapPaymentSystem(String system) {
-        try {
-            return LegacyBankCardPaymentSystem.valueOf(system);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException(
-                    String.format("Payment system %s cannot be processed", system));
-        }
     }
 
     protected PaymentToolType mapPaymentTool(String paymentMethod) {

@@ -192,19 +192,17 @@ public class MagistaUtil {
                 .setLastDigits(RandomUtil.randomString(4))
                 .setBankName(RandomUtil.randomString(4))
                 .setToken(RandomUtil.randomString(4))
-                .setPaymentSystemDeprecated(LegacyBankCardPaymentSystem.maestro)
-                .setTokenProviderDeprecated(LegacyBankCardTokenProvider.applepay)
-        );
+                .setPaymentSystem(new PaymentSystemRef("maestro"))
+                .setPaymentToken(new BankCardTokenServiceRef("applepay")));
     }
 
     public static PaymentTool createPaymentTerminalPaymentTool() {
         return PaymentTool.payment_terminal(new PaymentTerminal()
-                .setTerminalTypeDeprecated(LegacyTerminalPaymentProvider.alipay));
+                .setPaymentService(new PaymentServiceRef("alipay")));
     }
 
     public static PaymentTool createMobileCommercePaymentTool() {
-        return PaymentTool.mobile_commerce(new MobileCommerce()
-                .setOperatorDeprecated(LegacyMobileOperator.mts)
+        return PaymentTool.mobile_commerce(new MobileCommerce().setOperator(new MobileOperatorRef("mts"))
                 .setPhone(new MobilePhone()
                         .setCc("7")
                         .setCtn("1234567890")));
@@ -216,7 +214,7 @@ public class MagistaUtil {
     }
 
     public static PaymentTool createLegacyCryptoCurrencyPaymentTool() {
-        return PaymentTool.crypto_currency_deprecated(LegacyCryptoCurrency.bitcoin);
+        return PaymentTool.crypto_currency(new CryptoCurrencyRef("bitcoin"));
     }
 
 }

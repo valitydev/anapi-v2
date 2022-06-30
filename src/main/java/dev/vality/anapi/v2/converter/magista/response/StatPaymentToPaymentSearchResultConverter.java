@@ -2,18 +2,17 @@ package dev.vality.anapi.v2.converter.magista.response;
 
 import dev.vality.anapi.v2.model.ClientInfo;
 import dev.vality.anapi.v2.model.ContactInfo;
-import dev.vality.anapi.v2.model.CryptoCurrency;
 import dev.vality.anapi.v2.model.CustomerPayer;
 import dev.vality.anapi.v2.model.Payer;
 import dev.vality.anapi.v2.model.PaymentResourcePayer;
 import dev.vality.anapi.v2.model.RecurrentPayer;
 import dev.vality.anapi.v2.model.TransactionInfo;
+import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.util.MaskUtil;
 import dev.vality.damsel.domain.*;
 import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.StatPayment;
-import dev.vality.anapi.v2.model.*;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
@@ -126,40 +125,51 @@ public class StatPaymentToPaymentSearchResultConverter {
     }
 
     protected PaymentToolDetails mapPaymentToolDetails(PaymentTool paymentTool) {
-        var field = dev.vality.damsel.domain.PaymentTool._Fields.findByName(paymentTool.getSetField().getFieldName());
-        switch (field) {
+        switch (paymentTool.getSetField()) {
             case BANK_CARD -> {
                 var card = paymentTool.getBankCard();
                 return new PaymentToolDetailsBankCard()
                         .bin(card.getBin())
-                        .paymentSystem(card.isSetPaymentSystemDeprecated()
-                                ? BankCardPaymentSystem.fromValue(card.getPaymentSystemDeprecated().name())
-                                : null)
+                        .paymentSystem(getPaymentSystem(card))
                         .cardNumberMask(MaskUtil.constructCardNumber(card))
                         .lastDigits(card.getLastDigits())
-                        .tokenProvider(card.isSetTokenProviderDeprecated()
-                                ? BankCardTokenProvider.fromValue(card.getTokenProviderDeprecated().name())
-                                : null);
+                        .tokenProvider(getTokenProvider(card));
             }
             case PAYMENT_TERMINAL -> {
                 var terminal = paymentTool.getPaymentTerminal();
                 return new PaymentToolDetailsPaymentTerminal()
-                        .provider(terminal.isSetTerminalTypeDeprecated()
-                                ? PaymentTerminalProvider.fromValue(terminal.getTerminalTypeDeprecated().name())
-                                : null);
+                        .provider(getProvider(terminal));
             }
             case MOBILE_COMMERCE -> {
                 var mobile = paymentTool.getMobileCommerce();
                 return new PaymentToolDetailsMobileCommerce()
                         .phoneNumber(MaskUtil.constructPhoneNumber(mobile.getPhone()));
             }
-            case CRYPTO_CURRENCY_DEPRECATED -> {
-                var cryptoCurrency = paymentTool.getCryptoCurrencyDeprecated();
+            case CRYPTO_CURRENCY -> {
+                var cryptoCurrency = paymentTool.getCryptoCurrency();
                 return new PaymentToolDetailsCryptoWallet()
-                        .cryptoCurrency(CryptoCurrency.fromValue(cryptoCurrency.name()));
+                        .cryptoCurrency(cryptoCurrency.getId());
             }
             default -> throw new IllegalArgumentException();
         }
+    }
+
+    private String getProvider(PaymentTerminal terminal) {
+        return terminal.isSetPaymentService()
+                ? terminal.getPaymentService().getId()
+                : null;
+    }
+
+    private String getTokenProvider(BankCard card) {
+        return card.isSetPaymentToken()
+                ? card.getPaymentToken().getId()
+                : null;
+    }
+
+    private String getPaymentSystem(BankCard card) {
+        return card.isSetPaymentSystem()
+                ? card.getPaymentSystem().getId()
+                : null;
     }
 
     protected PaymentSearchResult.StatusEnum mapStatus(InvoicePaymentStatus status) {
@@ -173,7 +183,6 @@ public class StatPaymentToPaymentSearchResultConverter {
                 case REFUNDED -> REFUNDED;
                 case FAILED -> FAILED;
                 case CHARGED_BACK -> CHARGEDBACK;
-                default -> throw new IllegalArgumentException();
             };
         } catch (Exception e) {
             throw new IllegalArgumentException(

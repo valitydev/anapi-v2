@@ -2,9 +2,6 @@ package dev.vality.anapi.v2.converter.magista.request;
 
 import dev.vality.anapi.v2.exception.BadRequestException;
 import dev.vality.anapi.v2.model.PaymentStatus;
-import dev.vality.damsel.domain.LegacyBankCardPaymentSystem;
-import dev.vality.damsel.domain.LegacyBankCardTokenProvider;
-import dev.vality.damsel.domain.LegacyTerminalPaymentProvider;
 import dev.vality.magista.InvoicePaymentFlowType;
 import dev.vality.magista.PaymentSearchQuery;
 import dev.vality.magista.PaymentToolType;
@@ -72,29 +69,5 @@ class ParamsToPaymentSearchQueryConverterTest {
         }
 
         assertThrows(BadRequestException.class, () -> converter.mapStatus("unexpected"));
-    }
-
-    @Test
-    void mapTerminalProvider() {
-        for (LegacyTerminalPaymentProvider provider : LegacyTerminalPaymentProvider.values()) {
-            assertEquals(provider, converter.mapTerminalProvider(provider.name()));
-        }
-        assertThrows(BadRequestException.class, () -> converter.mapTerminalProvider("unexpected"));
-    }
-
-    @Test
-    void mapTokenProvider() {
-        for (LegacyBankCardTokenProvider provider : LegacyBankCardTokenProvider.values()) {
-            assertEquals(provider, converter.mapTokenProvider(provider.name()));
-        }
-        assertThrows(BadRequestException.class, () -> converter.mapTokenProvider("unexpected"));
-    }
-
-    @Test
-    void mapPaymentSystem() {
-        for (LegacyBankCardPaymentSystem system : LegacyBankCardPaymentSystem.values()) {
-            assertEquals(system, converter.mapPaymentSystem(system.name()));
-        }
-        assertThrows(BadRequestException.class, () -> converter.mapPaymentSystem("unexpected"));
     }
 }
