@@ -73,7 +73,8 @@ public class StatPaymentToPaymentSearchResultConverter {
                     return new CustomerPayer()
                             .customerID(customer.getCustomerId())
                             .paymentToolDetails(mapPaymentToolDetails(paymentTool))
-                            .paymentToolToken(getPaymentToolToken(paymentTool));
+                            .paymentToolToken(getPaymentToolToken(paymentTool))
+                            .payerType("CustomerPayer");
                 }
                 case PAYMENT_RESOURCE -> {
                     var resource = payer.getPaymentResource();
@@ -91,7 +92,8 @@ public class StatPaymentToPaymentSearchResultConverter {
                                     : null)
                             .contactInfo(new ContactInfo()
                                     .email(contactInfo.getEmail())
-                                    .phoneNumber(contactInfo.getPhoneNumber()));
+                                    .phoneNumber(contactInfo.getPhoneNumber()))
+                            .payerType("PaymentResourcePayer");
                 }
                 case RECURRENT -> {
                     var recurrent = payer.getRecurrent();
@@ -105,7 +107,8 @@ public class StatPaymentToPaymentSearchResultConverter {
                                     .phoneNumber(contactInfo.getPhoneNumber()))
                             .recurrentParentPayment(new PaymentRecurrentParent()
                                     .paymentID(recurrent.getRecurrentParent().getPaymentId())
-                                    .invoiceID(recurrent.getRecurrentParent().getInvoiceId()));
+                                    .invoiceID(recurrent.getRecurrentParent().getInvoiceId()))
+                            .payerType("RecurrentPayer");
                 }
                 default -> throw new IllegalArgumentException();
             }
@@ -133,22 +136,26 @@ public class StatPaymentToPaymentSearchResultConverter {
                         .paymentSystem(getPaymentSystem(card))
                         .cardNumberMask(MaskUtil.constructCardNumber(card))
                         .lastDigits(card.getLastDigits())
-                        .tokenProvider(getTokenProvider(card));
+                        .tokenProvider(getTokenProvider(card))
+                        .detailsType("PaymentToolDetailsBankCard");
             }
             case PAYMENT_TERMINAL -> {
                 var terminal = paymentTool.getPaymentTerminal();
                 return new PaymentToolDetailsPaymentTerminal()
-                        .provider(getProvider(terminal));
+                        .provider(getProvider(terminal))
+                        .detailsType("PaymentToolDetailsPaymentTerminal");
             }
             case MOBILE_COMMERCE -> {
                 var mobile = paymentTool.getMobileCommerce();
                 return new PaymentToolDetailsMobileCommerce()
-                        .phoneNumber(MaskUtil.constructPhoneNumber(mobile.getPhone()));
+                        .phoneNumber(MaskUtil.constructPhoneNumber(mobile.getPhone()))
+                        .detailsType("PaymentToolDetailsMobileCommerce");
             }
             case CRYPTO_CURRENCY -> {
                 var cryptoCurrency = paymentTool.getCryptoCurrency();
                 return new PaymentToolDetailsCryptoWallet()
-                        .cryptoCurrency(cryptoCurrency.getId());
+                        .cryptoCurrency(cryptoCurrency.getId())
+                        .detailsType("PaymentToolDetailsCryptoWallet");
             }
             default -> throw new IllegalArgumentException();
         }
