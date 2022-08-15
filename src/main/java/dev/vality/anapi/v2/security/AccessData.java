@@ -11,7 +11,6 @@ import java.util.List;
 public class AccessData {
 
     private final String operationId;
-    @Nullable
     private final String partyId;
     @Nullable
     private final List<String> shopIds;
