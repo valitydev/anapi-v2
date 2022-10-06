@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-security-adapter</artifactId>
-            <version>15.1.1</version>
+            <version>19.0.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.bouncycastle</groupId>
