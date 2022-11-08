@@ -39,7 +39,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.77-89e7ff0-server</version>
+            <version>1.78-38f360b-server</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.576-e8806ed</version>
+            <version>1.578-6655937</version>
         </dependency>
 
         <!--spring-->
