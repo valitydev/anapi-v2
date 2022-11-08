@@ -38,22 +38,18 @@
         <!--vality-->
         <dependency>
             <groupId>dev.vality</groupId>
-            <artifactId>shared-resources</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
             <version>1.77-89e7ff0-server</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>bouncer-proto</artifactId>
-            <version>1.44-6ce6d33</version>
+            <version>1.46-d5e5639</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>org-management-proto</artifactId>
-            <version>1.10-f433223</version>
+            <version>1.12-1a0110a</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -87,15 +83,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.574-6047497</version>
-        </dependency>
-        <dependency>
-            <groupId>dev.vality.woody</groupId>
-            <artifactId>woody-thrift</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>dev.vality.woody</groupId>
-            <artifactId>woody-api</artifactId>
+            <version>1.576-e8806ed</version>
         </dependency>
 
         <!--spring-->
@@ -181,7 +169,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.6.7</version>
+            <version>1.6.8</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
