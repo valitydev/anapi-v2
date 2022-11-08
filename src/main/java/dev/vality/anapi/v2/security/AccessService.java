@@ -49,9 +49,8 @@ public class AccessService {
     }
 
     private List<String> getRestrictedShops(AccessData accessData, @Nullable List<String> shopIds) {
+        log.info("Check the user's rights to perform the operation {}", accessData.getOperationId());
         var ctx = buildAnapiBouncerContext(accessData, shopIds);
-        log.info("Check the user's rights to perform the operation {} with context {}", accessData.getOperationId(),
-                ctx);
         var resolution = bouncerService.getResolution(ctx);
         switch (resolution.getSetField()) {
             case FORBIDDEN: {
