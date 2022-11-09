@@ -39,7 +39,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                                              String partyID,
                                              Long reportID,
                                              String xRequestDeadline) {
-        log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         accessService.checkUserAccess(
                 AccessData.builder()
@@ -56,7 +55,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
     public ResponseEntity<Report> createReport(String xRequestID, String partyID, OffsetDateTime fromTime,
                                                OffsetDateTime toTime, String reportType, String xRequestDeadline,
                                                String shopID) {
-        log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         var shops = shopID != null ? List.of(shopID) : null;
         accessService.checkUserAccess(
@@ -75,7 +73,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
     @Override
     public ResponseEntity<ReportLink> downloadFile(String xRequestID, String partyID, Long reportID, String fileID,
                                                    String xRequestDeadline) {
-        log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         accessService.checkUserAccess(
                 AccessData.builder()
@@ -92,7 +89,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
 
     @Override
     public ResponseEntity<Report> getReport(String xRequestID, String partyID, Long reportID, String xRequestDeadline) {
-        log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         accessService.checkUserAccess(
                 AccessData.builder()
@@ -111,7 +107,6 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                                                              List<String> reportTypes, String xRequestDeadline,
                                                              String shopID, String paymentInstitutionRealm,
                                                              String continuationToken) {
-        log.info("-> Req: xRequestID={}", xRequestID);
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         List<String> shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
