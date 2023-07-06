@@ -83,7 +83,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.578-6655937</version>
+            <version>1.597-bfedcb9</version>
         </dependency>
 
         <!--spring-->
