@@ -114,7 +114,7 @@ public class StatPaymentToPaymentSearchResultConverter {
             }
         } catch (Exception e) {
             throw new IllegalArgumentException(
-                    String.format("Payer %s cannot be processed", payer));
+                    String.format("Payer %s cannot be processed", payer), e);
         }
     }
 
@@ -156,6 +156,12 @@ public class StatPaymentToPaymentSearchResultConverter {
                 return new PaymentToolDetailsCryptoWallet()
                         .cryptoCurrency(cryptoCurrency.getId())
                         .detailsType("PaymentToolDetailsCryptoWallet");
+            }
+            case DIGITAL_WALLET -> {
+                var digitalWallet = paymentTool.getDigitalWallet();
+                return new PaymentToolDetailsDigitalWallet()
+                        .provider(digitalWallet.getId())
+                        .detailsType("PaymentToolDetailsDigitalWallet");
             }
             default -> throw new IllegalArgumentException();
         }
