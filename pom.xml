@@ -6,11 +6,11 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>1.0.19</version>
+        <version>1.0.20</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -44,32 +44,32 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>bouncer-proto</artifactId>
-            <version>1.46-d5e5639</version>
+            <version>1.51-23d1761</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>org-management-proto</artifactId>
-            <version>1.12-1a0110a</version>
+            <version>1.17-04de2f4</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>payout-manager-proto</artifactId>
-            <version>1.38-635dc24</version>
+            <version>1.40-51ebc35</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.44-5352f74</version>
+            <version>1.48-e46bba2</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>party-shop-proto</artifactId>
-            <version>1.19-72faaf6</version>
+            <version>1.20-1ed031a</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>analytics-proto</artifactId>
-            <version>1.41-f691834</version>
+            <version>1.43-2d1fdc2</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.597-bfedcb9</version>
+            <version>1.606-f718741</version>
         </dependency>
 
         <!--spring-->
@@ -173,7 +173,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.6.8</version>
+            <version>1.6.11</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -222,7 +222,7 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.3</version>
+            <version>0.2.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -248,7 +248,7 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <version>0.12.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -260,7 +260,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-contract-wiremock</artifactId>
-            <version>3.1.4</version>
+            <version>3.1.8</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -297,12 +297,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.shared</groupId>
                         <artifactId>maven-filtering</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.3.1</version>
                     </dependency>
                 </dependencies>
                 <configuration>
