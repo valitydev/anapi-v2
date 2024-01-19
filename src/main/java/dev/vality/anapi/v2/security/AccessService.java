@@ -3,7 +3,7 @@ package dev.vality.anapi.v2.security;
 import dev.vality.anapi.v2.exception.AuthorizationException;
 import dev.vality.anapi.v2.exception.BouncerException;
 import dev.vality.anapi.v2.service.BouncerService;
-import dev.vality.anapi.v2.service.KeycloakService;
+import dev.vality.anapi.v2.service.TokenKeeperService;
 import dev.vality.anapi.v2.service.VortigonService;
 import dev.vality.bouncer.base.Entity;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class AccessService {
 
     private final VortigonService vortigonService;
     private final BouncerService bouncerService;
-    private final KeycloakService keycloakService;
+    private final TokenKeeperService tokenKeeperService;
 
     @Value("${service.bouncer.auth.enabled}")
     private boolean authEnabled;
@@ -86,16 +86,13 @@ public class AccessService {
     }
 
     private AnapiBouncerContext buildAnapiBouncerContext(AccessData accessData, @Nullable List<String> shopIds) {
-        var token = keycloakService.getAccessToken();
         return AnapiBouncerContext.builder()
                 .operationId(accessData.getOperationId())
                 .partyId(accessData.getPartyId())
                 .shopIds(shopIds)
                 .fileId(accessData.getFileId())
                 .reportId(accessData.getReportId())
-                .tokenExpiration(token.getExp())
-                .tokenId(token.getId())
-                .userId(token.getSubject())
+                .authData(tokenKeeperService.getAuthData())
                 .build();
     }
 }

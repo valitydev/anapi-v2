@@ -1,9 +1,6 @@
 package dev.vality.anapi.v2.controller;
 
-import dev.vality.anapi.v2.exception.AuthorizationException;
-import dev.vality.anapi.v2.exception.BadRequestException;
-import dev.vality.anapi.v2.exception.DeadlineException;
-import dev.vality.anapi.v2.exception.NotFoundException;
+import dev.vality.anapi.v2.exception.*;
 import dev.vality.anapi.v2.model.DefaultLogicError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -84,15 +80,15 @@ public class ErrorControllerAdvice {
 
     }
 
-    @ExceptionHandler({AccessDeniedException.class})
+    @ExceptionHandler({TokenKeeperException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public void handleAccessDeniedException(AccessDeniedException e) {
+    public void handleTokenKeeperException(TokenKeeperException e) {
         log.warn("<- Res [403]: Request denied access", e);
     }
 
     @ExceptionHandler({AuthorizationException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public void handleAccessDeniedException(AuthorizationException e) {
+    public void handleAuthorizationException(AuthorizationException e) {
         log.warn("<- Res [403]: Request denied access", e);
     }
 

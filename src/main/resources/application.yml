@@ -33,6 +33,9 @@ service:
   orgManager:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
+  tokenKeeper:
+    url: http://localhost:8022/change_it
+    networkTimeout: 5000
   bouncer:
     url: http://localhost:8022/change_it
     networkTimeout: 10000
@@ -57,13 +60,3 @@ spring:
 info:
   version: '@project.version@'
   stage: dev
-
-keycloak:
-  realm: internal
-  auth-server-url: http://keycloak:8080/auth/
-  resource: common-api
-  not-before: 0
-  ssl-required: none
-  realm-public-key:
-
-auth.enabled: true
