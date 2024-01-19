@@ -1,8 +1,8 @@
 package dev.vality.anapi.v2.security;
 
 import dev.vality.anapi.v2.config.properties.BouncerProperties;
-import dev.vality.anapi.v2.service.KeycloakService;
 import dev.vality.anapi.v2.service.OrgManagerService;
+import dev.vality.anapi.v2.util.JwtUtil;
 import dev.vality.bouncer.base.Entity;
 import dev.vality.bouncer.context.v1.*;
 import dev.vality.bouncer.ctx.ContextFragmentType;
@@ -14,6 +14,7 @@ import org.apache.thrift.TSerializer;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -23,7 +24,6 @@ public class BouncerContextFactory {
 
     private final BouncerProperties bouncerProperties;
     private final OrgManagerService orgManagerService;
-    private final KeycloakService keycloakService;
 
     @SneakyThrows
     public Context buildContext(AnapiBouncerContext bouncerContext) {
@@ -32,11 +32,16 @@ public class BouncerContextFactory {
         var fragment = new dev.vality.bouncer.ctx.ContextFragment()
                 .setType(ContextFragmentType.v1_thrift_binary)
                 .setContent(serializer.serialize(contextFragment));
-        var userFragment = orgManagerService.getUserAuthContext(
-                keycloakService.getAccessToken().getSubject());
+
         var context = new Context();
-        context.putToFragments(bouncerProperties.getContextFragmentId(), fragment);
-        context.putToFragments("user", userFragment);
+        context.putToFragments("anapi", fragment);
+        context.putToFragments("token-keeper", bouncerContext.getAuthData().getContext());
+
+        Optional<String> subject = JwtUtil.getSubject(bouncerContext.getAuthData().getToken());
+        if (subject.isPresent()) {
+            var userFragment = orgManagerService.getUserAuthContext(subject.get());
+            context.putToFragments("user", userFragment);
+        }
         return context;
     }
 
@@ -46,19 +51,9 @@ public class BouncerContextFactory {
         var contextReports = buildReportContext(bouncerContext);
         ContextFragment fragment = new ContextFragment();
         return fragment
-                .setAuth(buildAuth())
                 .setEnv(env)
                 .setAnapi(contextAnalyticsApi)
                 .setReports(contextReports);
-    }
-
-    private Auth buildAuth() {
-        var auth = new Auth();
-        var accessToken = keycloakService.getAccessToken();
-        return auth
-                .setToken(new Token().setId(accessToken.getId()))
-                .setMethod(bouncerProperties.getAuthMethod())
-                .setExpiration(Instant.ofEpochSecond(accessToken.getExp()).toString());
     }
 
     private Environment buildEnvironment() {

@@ -10,9 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class KeycloakOpenIdTestConfiguration {
 
     @Bean
-    public KeycloakOpenIdStub keycloakOpenIdStub(@Value("${keycloak.auth-server-url}") String keycloakAuthServerUrl,
-                                                 @Value("${keycloak.realm}") String keycloakRealm,
-                                                 JwtTokenBuilder jwtTokenBuilder) {
-        return new KeycloakOpenIdStub(keycloakAuthServerUrl, keycloakRealm, jwtTokenBuilder);
+    public KeycloakOpenIdStub keycloakOpenIdStub(JwtTokenBuilder jwtTokenBuilder) {
+        return new KeycloakOpenIdStub(jwtTokenBuilder);
     }
 }
