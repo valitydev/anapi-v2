@@ -39,6 +39,7 @@ public class BouncerContextFactory {
 
         Optional<String> subject = JwtUtil.getSubject(bouncerContext.getAuthData().getToken());
         if (subject.isPresent()) {
+            log.debug("User context fragment will be added");
             var userFragment = orgManagerService.getUserAuthContext(subject.get());
             context.putToFragments("user", userFragment);
         }

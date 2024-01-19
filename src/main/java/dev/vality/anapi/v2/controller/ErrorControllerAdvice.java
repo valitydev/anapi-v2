@@ -82,13 +82,13 @@ public class ErrorControllerAdvice {
 
     @ExceptionHandler({TokenKeeperException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public void handleAccessDeniedException(TokenKeeperException e) {
+    public void handleTokenKeeperException(TokenKeeperException e) {
         log.warn("<- Res [403]: Request denied access", e);
     }
 
     @ExceptionHandler({AuthorizationException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public void handleAccessDeniedException(AuthorizationException e) {
+    public void handleAuthorizationException(AuthorizationException e) {
         log.warn("<- Res [403]: Request denied access", e);
     }
 
