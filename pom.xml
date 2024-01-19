@@ -44,7 +44,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>bouncer-proto</artifactId>
-            <version>1.46-d5e5639</version>
+            <version>1.51-23d1761</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
