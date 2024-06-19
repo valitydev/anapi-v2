@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>org-management-proto</artifactId>
-            <version>1.12-1a0110a</version>
+            <version>1.17-04de2f4</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
