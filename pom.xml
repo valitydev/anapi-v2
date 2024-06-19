@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>payout-manager-proto</artifactId>
-            <version>1.38-635dc24</version>
+            <version>1.41-eb4091a</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
