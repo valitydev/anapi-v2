@@ -1,17 +1,12 @@
 package dev.vality.anapi.v2.config;
 
 import dev.vality.woody.api.flow.WFlow;
-import dev.vality.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
-import dev.vality.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
-import dev.vality.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
-import dev.vality.woody.api.trace.context.metadata.user.UserIdentityUsernameExtensionKit;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.AccessToken;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -19,17 +14,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import static dev.vality.anapi.v2.util.DeadlineUtil.*;
-import static dev.vality.woody.api.trace.ContextUtils.setCustomMetadataValue;
 import static dev.vality.woody.api.trace.ContextUtils.setDeadline;
 
 @Configuration
 @SuppressWarnings({"ParameterName", "LocalVariableName"})
 public class WebConfig {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOriginPatterns("*");
+            }
+        };
+    }
 
     @Bean
     public FilterRegistrationBean woodyFilter() {
@@ -41,20 +45,15 @@ public class WebConfig {
                                             HttpServletResponse response,
                                             FilterChain filterChain) throws ServletException, IOException {
                 woodyFlow.createServiceFork(
-                        () -> {
-                            try {
-                                if (request.getUserPrincipal() != null) {
-                                    addWoodyContext(request.getUserPrincipal());
+                                () -> {
+                                    try {
+                                        setWoodyDeadline(request);
+                                        filterChain.doFilter(request, response);
+                                    } catch (IOException | ServletException e) {
+                                        sneakyThrow(e);
+                                    }
                                 }
-
-                                setWoodyDeadline(request);
-
-                                filterChain.doFilter(request, response);
-                            } catch (IOException | ServletException e) {
-                                sneakyThrow(e);
-                            }
-                        }
-                )
+                        )
                         .run();
             }
 
@@ -69,17 +68,6 @@ public class WebConfig {
         filterRegistrationBean.setName("woodyFilter");
         filterRegistrationBean.addUrlPatterns("*");
         return filterRegistrationBean;
-    }
-
-    private void addWoodyContext(Principal principal) {
-        KeycloakSecurityContext keycloakSecurityContext =
-                ((KeycloakAuthenticationToken) principal).getAccount().getKeycloakSecurityContext();
-        AccessToken accessToken = keycloakSecurityContext.getToken();
-
-        setCustomMetadataValue(UserIdentityIdExtensionKit.KEY, accessToken.getSubject());
-        setCustomMetadataValue(UserIdentityUsernameExtensionKit.KEY, accessToken.getPreferredUsername());
-        setCustomMetadataValue(UserIdentityEmailExtensionKit.KEY, accessToken.getEmail());
-        setCustomMetadataValue(UserIdentityRealmExtensionKit.KEY, keycloakSecurityContext.getRealm());
     }
 
     private void setWoodyDeadline(HttpServletRequest request) {
