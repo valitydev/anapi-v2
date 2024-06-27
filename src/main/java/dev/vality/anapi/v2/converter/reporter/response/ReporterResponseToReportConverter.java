@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZoneOffset;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 @Component
 public class ReporterResponseToReportConverter {
@@ -31,14 +30,13 @@ public class ReporterResponseToReportConverter {
                                 .signatures(new FileMetaSignatures()
                                         .md5(fileReporter.getSignature().getMd5())
                                         .sha256(fileReporter.getSignature().getSha256())))
-                        .collect(Collectors.toList()) : Collections.emptyList());
+                        .toList() : Collections.emptyList());
     }
 
     private Report.ReportTypeEnum mapReportType(String type) {
         return switch (type) {
             case "provision_of_service" -> Report.ReportTypeEnum.PROVISIONOFSERVICE;
             case "payment_registry" -> Report.ReportTypeEnum.PAYMENTREGISTRY;
-            case "payment_registry_by_payout" -> Report.ReportTypeEnum.PAYMENTREGISTRYBYPAYOUT;
             default -> throw new IllegalArgumentException("Unknown report type: " + type);
         };
     }

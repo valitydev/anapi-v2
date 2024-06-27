@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class MagistaService {
@@ -20,7 +18,6 @@ public class MagistaService {
     private final StatPaymentToPaymentSearchResultConverter paymentResponseConverter;
     private final StatChargebackToChargebackConverter chargebackResponseConverter;
     private final StatInvoiceToInvoiceConverter invoiceResponseConverter;
-    private final StatPayoutToPayoutConverter payoutResponseConverter;
     private final StatRefundToRefundSearchResultConverter refundResponseConverter;
     private final StatInvoiceTemplateToInvoiceTemplateConverter invoiceTemplateResponseConverter;
 
@@ -30,7 +27,7 @@ public class MagistaService {
             return new InlineResponse2008()
                     .result(magistaResponse.getInvoices().stream()
                             .map(invoiceResponseConverter::convert)
-                            .collect(Collectors.toList()))
+                            .toList())
                     .continuationToken(magistaResponse.getContinuationToken());
         } catch (BadContinuationToken e) {
             var message = String.format(
@@ -65,7 +62,7 @@ public class MagistaService {
             return new InlineResponse2009()
                     .result(magistaResponse.getPayments().stream()
                             .map(paymentResponseConverter::convert)
-                            .collect(Collectors.toList()))
+                            .toList())
                     .continuationToken(magistaResponse.getContinuationToken());
         } catch (BadContinuationToken e) {
             var message = String.format(
@@ -100,7 +97,7 @@ public class MagistaService {
             return new InlineResponse20010()
                     .result(magistaResponse.getRefunds().stream()
                             .map(refundResponseConverter::convert)
-                            .collect(Collectors.toList()))
+                            .toList())
                     .continuationToken(magistaResponse.getContinuationToken());
         } catch (BadContinuationToken e) {
             var message = String.format(
@@ -135,7 +132,7 @@ public class MagistaService {
             return new InlineResponse20011()
                     .result(magistaResponse.getChargebacks().stream()
                             .map(chargebackResponseConverter::convert)
-                            .collect(Collectors.toList()))
+                            .toList())
                     .continuationToken(magistaResponse.getContinuationToken());
         } catch (BadContinuationToken e) {
             var message = String.format(
@@ -164,48 +161,13 @@ public class MagistaService {
         }
     }
 
-    public InlineResponse20012 searchPayouts(PayoutSearchQuery query) {
-        try {
-            StatPayoutResponse magistaResponse = magistaClient.searchPayouts(query);
-            return new InlineResponse20012()
-                    .result(magistaResponse.getPayouts().stream()
-                            .map(payoutResponseConverter::convert)
-                            .collect(Collectors.toList()))
-                    .continuationToken(magistaResponse.getContinuationToken());
-        } catch (BadContinuationToken e) {
-            var message = String.format(
-                    "Bad token exceeded, partyId=%s, payoutId=%s",
-                    query.getCommonSearchQueryParams().getPartyId(),
-                    query.getPayoutId());
-            throw badContinuationTokenException(e, message);
-        } catch (LimitExceeded e) {
-            var message = String.format(
-                    "Limit exceeded, partyId=%s, payoutId=%s",
-                    query.getCommonSearchQueryParams().getPartyId(),
-                    query.getPayoutId());
-            throw limitExceededException(e, message);
-        } catch (InvalidRequest e) {
-            var message = String.format(
-                    "Invalid request, partyId=%s, payoutId=%s, errors=%s",
-                    query.getCommonSearchQueryParams().getPartyId(),
-                    query.getPayoutId(),
-                    String.join(", ", e.getErrors()));
-            throw invalidRequestException(e, message);
-        } catch (TException e) {
-            throw new MagistaException(
-                    String.format("Error while call magistaClient.searchPayouts, partyId=%s, payoutId=%s",
-                            query.getCommonSearchQueryParams().getPartyId(), query.getPayoutId()),
-                    e);
-        }
-    }
-
-    public InlineResponse20013 searchInvoiceTemplates(InvoiceTemplateSearchQuery query) {
+    public InlineResponse20012 searchInvoiceTemplates(InvoiceTemplateSearchQuery query) {
         try {
             StatInvoiceTemplateResponse magistaResponse = magistaClient.searchInvoiceTemplates(query);
-            return new InlineResponse20013()
+            return new InlineResponse20012()
                     .result(magistaResponse.getInvoiceTemplates().stream()
                             .map(invoiceTemplateResponseConverter::convert)
-                            .collect(Collectors.toList()))
+                            .toList())
                     .continuationToken(magistaResponse.getContinuationToken());
         } catch (BadContinuationToken e) {
             var message = String.format(

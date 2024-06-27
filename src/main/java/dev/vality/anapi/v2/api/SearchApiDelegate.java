@@ -9,7 +9,6 @@ public interface SearchApiDelegate
         PaymentsApiDelegate,
         ChargebacksApiDelegate,
         InvoicesApiDelegate,
-        PayoutsApiDelegate,
         RefundsApiDelegate,
         InvoiceTemplatesApiDelegate {
 

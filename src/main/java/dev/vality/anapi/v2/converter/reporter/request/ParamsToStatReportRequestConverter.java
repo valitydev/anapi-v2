@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class ParamsToStatReportRequestConverter {
@@ -39,13 +38,12 @@ public class ParamsToStatReportRequestConverter {
         return switch (inputType) {
             case PAYMENTREGISTRY -> "payment_registry";
             case PROVISIONOFSERVICE -> "provision_of_service";
-            case PAYMENTREGISTRYBYPAYOUT -> "payment_registry_by_payout";
             default -> throw new IllegalArgumentException("Unknown report type: " + inputType.getValue());
         };
     }
 
     private List<String> mapReportTypes(List<String> requestReportTypes) {
-        return requestReportTypes.stream().map(this::mapReportType).collect(Collectors.toList());
+        return requestReportTypes.stream().map(this::mapReportType).toList();
     }
 
 }

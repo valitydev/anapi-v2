@@ -1,14 +1,14 @@
 package dev.vality.anapi.v2.api;
 
 import dev.vality.anapi.v2.converter.reporter.request.ParamsToStatReportRequestConverter;
-import dev.vality.anapi.v2.model.InlineResponse20014;
+import dev.vality.anapi.v2.model.InlineResponse20013;
 import dev.vality.anapi.v2.model.Report;
 import dev.vality.anapi.v2.model.ReportLink;
 import dev.vality.anapi.v2.security.AccessData;
 import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.ReporterService;
-import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.util.DeadlineUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +27,7 @@ import java.util.List;
 @SuppressWarnings({"ParameterName"})
 public class ReportsApiDelegateService implements ReportsApiDelegate {
 
+    public static final String RES_LOG_200 = "<- Res [200]: xRequestID={}";
     private final AccessService accessService;
     private final ReporterService reporterService;
 
@@ -83,7 +84,7 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .build());
         var response = reporterService.getDownloadUrl(fileID,
                 TypeUtil.temporalToString(LocalDateTime.now().plus(reportLifetimeSec, ChronoUnit.SECONDS)));
-        log.info("<- Res [200]: xRequestID={}", xRequestID);
+        log.info(RES_LOG_200, xRequestID);
         return ResponseEntity.ok(response);
     }
 
@@ -97,12 +98,12 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .reportId(String.valueOf(reportID))
                         .build());
         var response = reporterService.getReport(reportID);
-        log.info("<- Res [200]: xRequestID={}", xRequestID);
+        log.info(RES_LOG_200, xRequestID);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<InlineResponse20014> searchReports(String xRequestID, String partyID, OffsetDateTime fromTime,
+    public ResponseEntity<InlineResponse20013> searchReports(String xRequestID, String partyID, OffsetDateTime fromTime,
                                                              OffsetDateTime toTime, Integer limit,
                                                              List<String> reportTypes, String xRequestDeadline,
                                                              String shopID, String paymentInstitutionRealm,
@@ -115,16 +116,16 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .shopIds(shopID == null ? null : List.of(shopID))
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse20014 response;
+        InlineResponse20013 response;
         if (shopID == null || shopIDs.contains(shopID)) {
             var request =
                     statReportRequestConverter.convert(partyID, shopID, fromTime, toTime, limit, reportTypes,
                             continuationToken);
             response = reporterService.getReports(request);
         } else {
-            response = new InlineResponse20014();
+            response = new InlineResponse20013();
         }
-        log.info("<- Res [200]: xRequestID={}", xRequestID);
+        log.info(RES_LOG_200, xRequestID);
         return ResponseEntity.ok(response);
     }
 

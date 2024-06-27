@@ -2,7 +2,9 @@ package dev.vality.anapi.v2.service;
 
 import dev.vality.anapi.v2.converter.reporter.response.ReporterResponseToReportConverter;
 import dev.vality.anapi.v2.exception.ReporterException;
-import dev.vality.anapi.v2.model.*;
+import dev.vality.anapi.v2.model.InlineResponse20013;
+import dev.vality.anapi.v2.model.Report;
+import dev.vality.anapi.v2.model.ReportLink;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportingSrv;
 import dev.vality.reporter.StatReportRequest;
@@ -10,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TException;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -59,13 +59,13 @@ public class ReporterService {
         }
     }
 
-    public InlineResponse20014 getReports(StatReportRequest request) {
+    public InlineResponse20013 getReports(StatReportRequest request) {
         try {
             var response = reporterClient.getReports(request);
-            return new InlineResponse20014()
+            return new InlineResponse20013()
                     .result(response.getReports().stream()
                             .map(reporterResponseToReportConverter::convert)
-                            .collect(Collectors.toList()))
+                            .toList())
                     .continuationToken(request.getContinuationToken());
         } catch (TException e) {
             throw new ReporterException(
