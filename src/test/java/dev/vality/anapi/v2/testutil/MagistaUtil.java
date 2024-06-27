@@ -113,24 +113,6 @@ public class MagistaUtil {
         );
     }
 
-    public static StatPayoutResponse createSearchPayoutRequiredResponse() {
-        return DamselUtil.fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
-    }
-
-    public static StatPayoutResponse createSearchPayoutAllResponse() {
-        var payout = DamselUtil.fillRequiredTBaseObject(new StatPayout(), StatPayout.class);
-        var toolInfo = DamselUtil.fillRequiredTBaseObject(new PayoutToolInfo(), PayoutToolInfo.class);
-        var bank = DamselUtil.fillRequiredTBaseObject(new RussianBankAccount(), RussianBankAccount.class);
-        var status = DamselUtil.fillRequiredTBaseObject(new PayoutStatus(), PayoutStatus.class);
-        var response = DamselUtil.fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
-        toolInfo.setRussianBankAccount(bank);
-        return response.setPayouts(
-                List.of(payout
-                        .setPayoutToolInfo(toolInfo)
-                        .setStatus(status))
-        );
-    }
-
     public static StatInvoiceTemplateResponse createSearchInvoiceTemplateAllResponse() {
         var invoiceTemplate = DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplate(), StatInvoiceTemplate.class);
         var cash = DamselUtil.fillRequiredTBaseObject(new Cash(), Cash.class);
