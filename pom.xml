@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2</artifactId>
-            <version>1.81-8f1ba21-server</version>
+            <version>1.87-dc90399-server</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
