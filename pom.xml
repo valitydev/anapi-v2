@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.6.12</version>
+            <version>1.6.16</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -256,12 +256,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-remote-resources-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.shared</groupId>
                         <artifactId>maven-filtering</artifactId>
-                        <version>3.3.1</version>
+                        <version>3.4.0</version>
                     </dependency>
                 </dependencies>
                 <configuration>
