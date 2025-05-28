@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>bouncer-proto</artifactId>
-            <version>1.51-23d1761</version>
+            <version>1.57-31866c3</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
