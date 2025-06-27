@@ -1,6 +1,6 @@
 package dev.vality.anapi.v2;
 
-import dev.vality.anapi.v2.config.AbstractConfig;
+import dev.vality.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
 import dev.vality.anapi.v2.model.DefaultLogicError;
 import dev.vality.anapi.v2.testutil.MagistaUtil;
 import dev.vality.anapi.v2.testutil.OpenApiUtil;
@@ -8,7 +8,6 @@ import dev.vality.bouncer.decisions.ArbiterSrv;
 import dev.vality.damsel.vortigon.VortigonServiceSrv;
 import dev.vality.magista.MerchantStatisticsServiceSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
-import dev.vality.token.keeper.TokenAuthenticatorSrv;
 import lombok.SneakyThrows;
 import org.apache.thrift.TException;
 import org.junit.jupiter.api.AfterEach;
@@ -25,9 +24,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import static dev.vality.anapi.v2.testutil.BouncerUtil.createContextFragment;
-import static dev.vality.anapi.v2.testutil.BouncerUtil.createJudgementAllowed;
-import static dev.vality.anapi.v2.testutil.TokenKeeperUtil.createAuthData;
+import static dev.vality.anapi.v2.testutil.MagistaUtil.createContextFragment;
+import static dev.vality.anapi.v2.testutil.MagistaUtil.createJudgementAllowed;
 import static java.util.UUID.randomUUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-class SearchChargebacksTest extends AbstractConfig {
+class SearchChargebacksTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @MockBean
     public MerchantStatisticsServiceSrv.Iface magistaClient;
@@ -47,8 +45,6 @@ class SearchChargebacksTest extends AbstractConfig {
     public AuthContextProviderSrv.Iface orgManagerClient;
     @MockBean
     public ArbiterSrv.Iface bouncerClient;
-    @MockBean
-    public TokenAuthenticatorSrv.Iface tokenKeeperClient;
 
     @Autowired
     private MockMvc mvc;
@@ -60,7 +56,7 @@ class SearchChargebacksTest extends AbstractConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[]{magistaClient, vortigonClient, orgManagerClient, bouncerClient, tokenKeeperClient};
+        preparedMocks = new Object[]{magistaClient, vortigonClient, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -73,7 +69,6 @@ class SearchChargebacksTest extends AbstractConfig {
     @SneakyThrows
     void searchChargebacksRequiredParamsRequestSuccess() {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(tokenKeeperClient.authenticate(any(), any())).thenReturn(createAuthData(generateSimpleJwt()));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchChargebacks(any())).thenReturn(MagistaUtil.createSearchChargebackRequiredResponse());
@@ -88,7 +83,6 @@ class SearchChargebacksTest extends AbstractConfig {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(tokenKeeperClient, times(1)).authenticate(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchChargebacks(any());
@@ -98,7 +92,6 @@ class SearchChargebacksTest extends AbstractConfig {
     @SneakyThrows
     void searchChargebacksAllParamsRequestSuccess() {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(tokenKeeperClient.authenticate(any(), any())).thenReturn(createAuthData(generateSimpleJwt()));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchChargebacks(any())).thenReturn(MagistaUtil.createSearchChargebackAllResponse());
@@ -113,7 +106,6 @@ class SearchChargebacksTest extends AbstractConfig {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(tokenKeeperClient, times(1)).authenticate(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchChargebacks(any());
@@ -141,7 +133,6 @@ class SearchChargebacksTest extends AbstractConfig {
     @SneakyThrows
     void searchChargebacksRequestMagistaUnavailable() {
         when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
-        when(tokenKeeperClient.authenticate(any(), any())).thenReturn(createAuthData(generateSimpleJwt()));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenThrow(TException.class);
@@ -155,7 +146,6 @@ class SearchChargebacksTest extends AbstractConfig {
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
         verify(vortigonClient, times(1)).getShopsIds(any(), any());
-        verify(tokenKeeperClient, times(1)).authenticate(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchChargebacks(any());

@@ -1,5 +1,9 @@
 package dev.vality.anapi.v2.testutil;
 
+import dev.vality.bouncer.ctx.ContextFragment;
+import dev.vality.bouncer.decisions.Judgement;
+import dev.vality.bouncer.decisions.Resolution;
+import dev.vality.bouncer.decisions.ResolutionAllowed;
 import dev.vality.damsel.base.Content;
 import dev.vality.damsel.domain.InvoicePaymentRefundStatus;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
@@ -11,7 +15,9 @@ import dev.vality.magista.InvoicePaymentFlowHold;
 import dev.vality.magista.InvoicePaymentFlowInstant;
 import dev.vality.magista.Payer;
 import dev.vality.magista.*;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.apache.thrift.TSerializer;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -161,6 +167,19 @@ public class MagistaUtil {
 
     public static StatInvoiceTemplateResponse createSearchInvoiceTemplateRequiredResponse() {
         return DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplateResponse(), StatInvoiceTemplateResponse.class);
+    }
+
+    @SneakyThrows
+    public static ContextFragment createContextFragment() {
+        ContextFragment fragment = DamselUtil.fillRequiredTBaseObject(new ContextFragment(), ContextFragment.class);
+        fragment.setContent(new TSerializer().serialize(new dev.vality.bouncer.context.v1.ContextFragment()));
+        return fragment;
+    }
+
+    public static Judgement createJudgementAllowed() {
+        Resolution resolution = new Resolution();
+        resolution.setAllowed(new ResolutionAllowed());
+        return new Judgement().setResolution(resolution);
     }
 
     public static InvoicePaymentFlow createInvoicePaymentFlowHold() {
