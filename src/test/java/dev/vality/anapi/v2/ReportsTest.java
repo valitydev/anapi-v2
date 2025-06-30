@@ -1,10 +1,10 @@
 package dev.vality.anapi.v2;
 
 import dev.vality.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
+import dev.vality.anapi.v2.service.DominantService;
 import dev.vality.anapi.v2.testutil.OpenApiUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
 import dev.vality.bouncer.decisions.ArbiterSrv;
-import dev.vality.damsel.vortigon.VortigonServiceSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
 import dev.vality.reporter.ReportingSrv;
 import lombok.SneakyThrows;
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @MockitoBean
-    public VortigonServiceSrv.Iface vortigonClient;
+    public DominantService dominantService;
     @MockitoBean
     public AuthContextProviderSrv.Iface orgManagerClient;
     @MockitoBean
@@ -58,7 +58,7 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[] {reporterClient, vortigonClient, orgManagerClient, bouncerClient};
+        preparedMocks = new Object[] {reporterClient, dominantService, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -182,7 +182,7 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void getSearchReportsRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(reporterClient.getReports(any())).thenReturn(createSearchReportsResponse());
@@ -196,7 +196,7 @@ class ReportsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(reporterClient, times(1)).getReports(notNull());

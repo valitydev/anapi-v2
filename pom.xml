@@ -58,11 +58,6 @@
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
-            <artifactId>party-shop-proto</artifactId>
-            <version>1.19-72faaf6</version>
-        </dependency>
-        <dependency>
-            <groupId>dev.vality</groupId>
             <artifactId>analytics-proto</artifactId>
             <version>1.41-f691834</version>
         </dependency>
@@ -78,7 +73,6 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.597-bfedcb9</version>
         </dependency>
 
         <!--spring-->

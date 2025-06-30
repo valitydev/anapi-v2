@@ -2,7 +2,7 @@ package dev.vality.anapi.v2.config;
 
 import dev.vality.bouncer.decisions.ArbiterSrv;
 import dev.vality.damsel.analytics.AnalyticsServiceSrv;
-import dev.vality.damsel.vortigon.VortigonServiceSrv;
+import dev.vality.damsel.domain_config_v2.RepositoryClientSrv;
 import dev.vality.magista.MerchantStatisticsServiceSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
 import dev.vality.reporter.ReportingSrv;
@@ -43,13 +43,13 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public VortigonServiceSrv.Iface vortigonClient(
-            @Value("${service.vortigon.url}") Resource resource,
-            @Value("${service.vortigon.networkTimeout}") int networkTimeout) throws IOException {
+    public RepositoryClientSrv.Iface dominantClient(
+            @Value("${service.dominant.url}") Resource resource,
+            @Value("${service.dominant.networkTimeout}") int networkTimeout) throws IOException {
         return new THSpawnClientBuilder()
                 .withNetworkTimeout(networkTimeout)
                 .withAddress(resource.getURI())
-                .build(VortigonServiceSrv.Iface.class);
+                .build(RepositoryClientSrv.Iface.class);
     }
 
     @Bean

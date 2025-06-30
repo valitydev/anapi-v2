@@ -4,11 +4,11 @@ import dev.vality.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
 import dev.vality.anapi.v2.converter.magista.request.ParamsToRefundSearchQueryConverter;
 import dev.vality.anapi.v2.exception.BadRequestException;
 import dev.vality.anapi.v2.model.DefaultLogicError;
+import dev.vality.anapi.v2.service.DominantService;
 import dev.vality.anapi.v2.testutil.MagistaUtil;
 import dev.vality.anapi.v2.testutil.OpenApiUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
 import dev.vality.bouncer.decisions.ArbiterSrv;
-import dev.vality.damsel.vortigon.VortigonServiceSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @MockitoBean
     private ParamsToRefundSearchQueryConverter refundSearchConverter;
     @MockitoBean
-    public VortigonServiceSrv.Iface vortigonClient;
+    public DominantService dominantService;
     @MockitoBean
     public AuthContextProviderSrv.Iface orgManagerClient;
     @MockitoBean
@@ -52,7 +52,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[]{refundSearchConverter, vortigonClient, orgManagerClient, bouncerClient};
+        preparedMocks = new Object[]{refundSearchConverter, dominantService, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -82,7 +82,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Test
     void testBadRequestException() throws Exception {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(MagistaUtil.createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(MagistaUtil.createJudgementAllowed());
         String message = "Error!";
@@ -105,7 +105,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALID_REQUEST.getValue()))
                 .andExpect(jsonPath("$.message").value(message));
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(refundSearchConverter, times(1))
@@ -152,7 +152,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @Test
     void testInternalException() throws Exception {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(MagistaUtil.createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(MagistaUtil.createJudgementAllowed());
         doThrow(new RuntimeException()).when(refundSearchConverter)
@@ -173,7 +173,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$").doesNotExist());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(refundSearchConverter, times(1))

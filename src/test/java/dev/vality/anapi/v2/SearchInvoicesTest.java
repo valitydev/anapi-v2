@@ -2,11 +2,11 @@ package dev.vality.anapi.v2;
 
 import dev.vality.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
 import dev.vality.anapi.v2.model.DefaultLogicError;
+import dev.vality.anapi.v2.service.DominantService;
 import dev.vality.anapi.v2.testutil.MagistaUtil;
 import dev.vality.anapi.v2.testutil.OpenApiUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
 import dev.vality.bouncer.decisions.ArbiterSrv;
-import dev.vality.damsel.vortigon.VortigonServiceSrv;
 import dev.vality.magista.MerchantStatisticsServiceSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
 import lombok.SneakyThrows;
@@ -39,7 +39,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @MockitoBean
     public MerchantStatisticsServiceSrv.Iface magistaClient;
     @MockitoBean
-    public VortigonServiceSrv.Iface vortigonClient;
+    public DominantService dominantService;
     @MockitoBean
     public AuthContextProviderSrv.Iface orgManagerClient;
     @MockitoBean
@@ -55,7 +55,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[]{magistaClient, vortigonClient, orgManagerClient, bouncerClient};
+        preparedMocks = new Object[]{magistaClient, dominantService, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -67,7 +67,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void searchInvoicesRequiredParamsRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchInvoices(any())).thenReturn(MagistaUtil.createSearchInvoiceRequiredResponse());
@@ -81,7 +81,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchInvoices(any());
@@ -90,7 +90,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void searchInvoicesAllParamsRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchInvoices(any())).thenReturn(MagistaUtil.createSearchInvoiceAllResponse());
@@ -104,7 +104,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchInvoices(any());
@@ -131,7 +131,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void searchInvoicesRequestMagistaUnavailable() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchInvoices(any())).thenThrow(TException.class);
@@ -144,7 +144,7 @@ class SearchInvoicesTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .content(""))
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(magistaClient, times(1)).searchInvoices(any());

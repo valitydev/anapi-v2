@@ -2,12 +2,13 @@ package dev.vality.anapi.v2;
 
 import dev.vality.anapi.v2.config.AbstractKeycloakOpenIdAsWiremockConfig;
 import dev.vality.anapi.v2.model.DefaultLogicError;
+import dev.vality.anapi.v2.service.DominantService;
 import dev.vality.anapi.v2.testutil.AnalyticsUtil;
 import dev.vality.anapi.v2.testutil.OpenApiUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
 import dev.vality.bouncer.decisions.ArbiterSrv;
 import dev.vality.damsel.analytics.AnalyticsServiceSrv;
-import dev.vality.damsel.vortigon.VortigonServiceSrv;
+import dev.vality.damsel.domain_config_v2.RepositoryClientSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
 import lombok.SneakyThrows;
 import org.apache.thrift.TException;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
 
     @MockitoBean
-    public VortigonServiceSrv.Iface vortigonClient;
+    public DominantService dominantService;
     @MockitoBean
     public AuthContextProviderSrv.Iface orgManagerClient;
     @MockitoBean
@@ -55,7 +56,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[]{analyticsClient, vortigonClient, orgManagerClient, bouncerClient};
+        preparedMocks = new Object[]{analyticsClient, dominantService, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -67,7 +68,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void getAveragePaymentRequiredParamsRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenReturn(AnalyticsUtil.createAveragePaymentRequiredResponse());
@@ -81,7 +82,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(analyticsClient, times(1)).getAveragePayment(any());
@@ -90,7 +91,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void getAveragePaymentAllParamsRequestSuccess() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenReturn(AnalyticsUtil.createAveragePaymentAllResponse());
@@ -104,7 +105,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(analyticsClient, times(1)).getAveragePayment(any());
@@ -131,7 +132,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     @SneakyThrows
     void getAveragePaymentRequestServerUnavailable() {
-        when(vortigonClient.getShopsIds(any(), any())).thenReturn(List.of("1", "2", "3"));
+        when(dominantService.getShopIds(any(), any())).thenReturn(List.of("1", "2", "3"));
         when(orgManagerClient.getUserContext(any())).thenReturn(createContextFragment());
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenThrow(TException.class);
@@ -144,7 +145,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                 .content(""))
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
-        verify(vortigonClient, times(1)).getShopsIds(any(), any());
+        verify(dominantService, times(1)).getShopIds(any(), any());
         verify(orgManagerClient, times(1)).getUserContext(any());
         verify(bouncerClient, times(1)).judge(any(), any());
         verify(analyticsClient, times(1)).getAveragePayment(any());

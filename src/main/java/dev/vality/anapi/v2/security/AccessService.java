@@ -3,7 +3,7 @@ package dev.vality.anapi.v2.security;
 import dev.vality.anapi.v2.exception.AuthorizationException;
 import dev.vality.anapi.v2.exception.BouncerException;
 import dev.vality.anapi.v2.service.BouncerService;
-import dev.vality.anapi.v2.service.VortigonService;
+import dev.vality.anapi.v2.service.DominantService;
 import dev.vality.bouncer.base.Entity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class AccessService {
 
-    private final VortigonService vortigonService;
+    private final DominantService dominantService;
     private final BouncerService bouncerService;
 
     @Value("${service.bouncer.auth.enabled}")
@@ -34,7 +34,7 @@ public class AccessService {
     }
 
     public List<String> getRestrictedShops(AccessData accessData) {
-        var requestedShopIds = vortigonService.getShopIds(accessData.getPartyId(),
+        var requestedShopIds = dominantService.getShopIds(accessData.getPartyId(),
                 Objects.requireNonNullElse(accessData.getRealm(), "live"));
         if (accessData.getShopIds() != null && !accessData.getShopIds().isEmpty()) {
             requestedShopIds = accessData.getShopIds().stream()

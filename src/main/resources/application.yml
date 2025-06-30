@@ -27,7 +27,7 @@ service:
   analytics:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
-  vortigon:
+  dominant:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
   orgManager:
