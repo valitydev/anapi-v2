@@ -1,9 +1,9 @@
 package dev.vality.anapi.v2.security;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 @Builder

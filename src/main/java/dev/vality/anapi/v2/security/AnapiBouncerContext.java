@@ -9,7 +9,6 @@ import java.util.List;
 @Data
 public class AnapiBouncerContext {
 
-    private final long tokenExpiration;
     private final String tokenId;
     private final String userId;
     private final String operationId;

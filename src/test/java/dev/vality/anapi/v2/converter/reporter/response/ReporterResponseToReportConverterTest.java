@@ -5,7 +5,7 @@ import dev.vality.anapi.v2.testutil.ReporterUtil;
 import dev.vality.reporter.StatReportResponse;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ReporterResponseToReportConverterTest {
 

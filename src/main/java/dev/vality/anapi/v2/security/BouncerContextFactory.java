@@ -1,7 +1,6 @@
 package dev.vality.anapi.v2.security;
 
 import dev.vality.anapi.v2.config.properties.BouncerProperties;
-import dev.vality.anapi.v2.service.KeycloakService;
 import dev.vality.anapi.v2.service.OrgManagerService;
 import dev.vality.bouncer.base.Entity;
 import dev.vality.bouncer.context.v1.*;
@@ -11,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TSerializer;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -23,7 +24,6 @@ public class BouncerContextFactory {
 
     private final BouncerProperties bouncerProperties;
     private final OrgManagerService orgManagerService;
-    private final KeycloakService keycloakService;
 
     @SneakyThrows
     public Context buildContext(AnapiBouncerContext bouncerContext) {
@@ -33,7 +33,7 @@ public class BouncerContextFactory {
                 .setType(ContextFragmentType.v1_thrift_binary)
                 .setContent(serializer.serialize(contextFragment));
         var userFragment = orgManagerService.getUserAuthContext(
-                keycloakService.getAccessToken().getSubject());
+                bouncerContext.getUserId());
         var context = new Context();
         context.putToFragments(bouncerProperties.getContextFragmentId(), fragment);
         context.putToFragments("user", userFragment);
@@ -54,11 +54,11 @@ public class BouncerContextFactory {
 
     private Auth buildAuth() {
         var auth = new Auth();
-        var accessToken = keycloakService.getAccessToken();
+        var token = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         return auth
-                .setToken(new Token().setId(accessToken.getId()))
+                .setToken(new Token().setId(token.getToken().getId()))
                 .setMethod(bouncerProperties.getAuthMethod())
-                .setExpiration(Instant.ofEpochSecond(accessToken.getExp()).toString());
+                .setExpiration(Instant.ofEpochSecond(token.getToken().getExpiresAt().getEpochSecond()).toString());
     }
 
     private Environment buildEnvironment() {
@@ -76,7 +76,7 @@ public class BouncerContextFactory {
                         .setParty(ctx.getPartyId() != null
                                 ? new Entity().setId(ctx.getPartyId()) : null)
                         .setShop(ctx.getShopIds() != null && ctx.getShopIds().size() == 1
-                                ? new Entity().setId(ctx.getShopIds().get(0)) : null)
+                                ? new Entity().setId(ctx.getShopIds().getFirst()) : null)
                         .setFile(ctx.getFileId() != null
                                 ? new Entity().setId(ctx.getFileId()) : null)
                         .setReport(ctx.getReportId() != null
@@ -91,7 +91,7 @@ public class BouncerContextFactory {
                 .setParty(ctx.getPartyId() != null
                         ? new Entity().setId(ctx.getPartyId()) : null)
                 .setShop(ctx.getShopIds() != null && ctx.getShopIds().size() == 1
-                        ? new Entity().setId(ctx.getShopIds().get(0)) : null)
+                        ? new Entity().setId(ctx.getShopIds().getFirst()) : null)
                 .setFiles(ctx.getFileId() != null
                         ? Set.of(new Entity().setId(ctx.getFileId())) : null));
     }

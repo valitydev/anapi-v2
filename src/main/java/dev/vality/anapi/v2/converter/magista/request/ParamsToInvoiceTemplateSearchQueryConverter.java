@@ -1,8 +1,8 @@
 package dev.vality.anapi.v2.converter.magista.request;
 
 import dev.vality.anapi.v2.exception.BadRequestException;
-import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.anapi.v2.util.ConverterUtil;
+import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.InvoiceTemplateSearchQuery;
 import dev.vality.magista.InvoiceTemplateStatus;
 import org.springframework.stereotype.Component;

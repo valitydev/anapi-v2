@@ -1,5 +1,6 @@
 package dev.vality.anapi.v2.converter.magista.response;
 
+import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.model.ClientInfo;
 import dev.vality.anapi.v2.model.ContactInfo;
 import dev.vality.anapi.v2.model.CustomerPayer;
@@ -7,7 +8,6 @@ import dev.vality.anapi.v2.model.Payer;
 import dev.vality.anapi.v2.model.PaymentResourcePayer;
 import dev.vality.anapi.v2.model.RecurrentPayer;
 import dev.vality.anapi.v2.model.TransactionInfo;
-import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.util.MaskUtil;
 import dev.vality.damsel.domain.*;
 import dev.vality.geck.common.util.TypeUtil;
@@ -56,10 +56,10 @@ public class StatPaymentToPaymentSearchResultConverter {
                     .heldUntil(TypeUtil.stringToInstant(hold.getHeldUntil()).atOffset(ZoneOffset.UTC))
                     .onHoldExpiration(
                             PaymentFlowHold.OnHoldExpirationEnum.fromValue(hold.getOnHoldExpiration().name()))
-                    .type(PaymentFlow.TypeEnum.PAYMENTFLOWHOLD);
+                    .type(PaymentFlow.TypeEnum.PAYMENT_FLOW_HOLD);
         } else {
             return new PaymentFlowInstant()
-                    .type(PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT);
+                    .type(PaymentFlow.TypeEnum.PAYMENT_FLOW_INSTANT);
         }
     }
 

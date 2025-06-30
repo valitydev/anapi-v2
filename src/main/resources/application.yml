@@ -1,9 +1,9 @@
 server:
-  port: '@server.port@'
+  port: ${server.port}
 
 management:
   server:
-    port: '@management.port@'
+    port: ${management.port}
   metrics:
     export:
       prometheus:
@@ -54,16 +54,17 @@ spring:
   output:
     ansi:
       enabled: always
+  security:
+    oauth2:
+      resourceserver:
+        url: https://auth.domain
+        jwt:
+          realm: internal
+          issuer-uri: >
+            ${spring.security.oauth2.resourceserver.url}/auth/realms/
+            ${spring.security.oauth2.resourceserver.jwt.realm}
 info:
   version: '@project.version@'
   stage: dev
-
-keycloak:
-  realm: internal
-  auth-server-url: http://keycloak:8080/auth/
-  resource: common-api
-  not-before: 0
-  ssl-required: none
-  realm-public-key:
 
 auth.enabled: true

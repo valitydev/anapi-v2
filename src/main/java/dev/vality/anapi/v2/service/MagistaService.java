@@ -20,14 +20,13 @@ public class MagistaService {
     private final StatPaymentToPaymentSearchResultConverter paymentResponseConverter;
     private final StatChargebackToChargebackConverter chargebackResponseConverter;
     private final StatInvoiceToInvoiceConverter invoiceResponseConverter;
-    private final StatPayoutToPayoutConverter payoutResponseConverter;
     private final StatRefundToRefundSearchResultConverter refundResponseConverter;
     private final StatInvoiceTemplateToInvoiceTemplateConverter invoiceTemplateResponseConverter;
 
-    public InlineResponse2008 searchInvoices(InvoiceSearchQuery query) {
+    public SearchInvoices200Response searchInvoices(InvoiceSearchQuery query) {
         try {
             StatInvoiceResponse magistaResponse = magistaClient.searchInvoices(query);
-            return new InlineResponse2008()
+            return new SearchInvoices200Response()
                     .result(magistaResponse.getInvoices().stream()
                             .map(invoiceResponseConverter::convert)
                             .collect(Collectors.toList()))
@@ -59,10 +58,10 @@ public class MagistaService {
         }
     }
 
-    public InlineResponse2009 searchPayments(PaymentSearchQuery query) {
+    public SearchPayments200Response searchPayments(PaymentSearchQuery query) {
         try {
             StatPaymentResponse magistaResponse = magistaClient.searchPayments(query);
-            return new InlineResponse2009()
+            return new SearchPayments200Response()
                     .result(magistaResponse.getPayments().stream()
                             .map(paymentResponseConverter::convert)
                             .collect(Collectors.toList()))
@@ -94,10 +93,10 @@ public class MagistaService {
         }
     }
 
-    public InlineResponse20010 searchRefunds(RefundSearchQuery query) {
+    public SearchRefunds200Response searchRefunds(RefundSearchQuery query) {
         try {
             StatRefundResponse magistaResponse = magistaClient.searchRefunds(query);
-            return new InlineResponse20010()
+            return new SearchRefunds200Response()
                     .result(magistaResponse.getRefunds().stream()
                             .map(refundResponseConverter::convert)
                             .collect(Collectors.toList()))
@@ -129,10 +128,10 @@ public class MagistaService {
         }
     }
 
-    public InlineResponse20011 searchChargebacks(ChargebackSearchQuery query) {
+    public SearchChargebacks200Response searchChargebacks(ChargebackSearchQuery query) {
         try {
             StatChargebackResponse magistaResponse = magistaClient.searchChargebacks(query);
-            return new InlineResponse20011()
+            return new SearchChargebacks200Response()
                     .result(magistaResponse.getChargebacks().stream()
                             .map(chargebackResponseConverter::convert)
                             .collect(Collectors.toList()))
@@ -164,45 +163,10 @@ public class MagistaService {
         }
     }
 
-    public InlineResponse20012 searchPayouts(PayoutSearchQuery query) {
-        try {
-            StatPayoutResponse magistaResponse = magistaClient.searchPayouts(query);
-            return new InlineResponse20012()
-                    .result(magistaResponse.getPayouts().stream()
-                            .map(payoutResponseConverter::convert)
-                            .collect(Collectors.toList()))
-                    .continuationToken(magistaResponse.getContinuationToken());
-        } catch (BadContinuationToken e) {
-            var message = String.format(
-                    "Bad token exceeded, partyId=%s, payoutId=%s",
-                    query.getCommonSearchQueryParams().getPartyId(),
-                    query.getPayoutId());
-            throw badContinuationTokenException(e, message);
-        } catch (LimitExceeded e) {
-            var message = String.format(
-                    "Limit exceeded, partyId=%s, payoutId=%s",
-                    query.getCommonSearchQueryParams().getPartyId(),
-                    query.getPayoutId());
-            throw limitExceededException(e, message);
-        } catch (InvalidRequest e) {
-            var message = String.format(
-                    "Invalid request, partyId=%s, payoutId=%s, errors=%s",
-                    query.getCommonSearchQueryParams().getPartyId(),
-                    query.getPayoutId(),
-                    String.join(", ", e.getErrors()));
-            throw invalidRequestException(e, message);
-        } catch (TException e) {
-            throw new MagistaException(
-                    String.format("Error while call magistaClient.searchPayouts, partyId=%s, payoutId=%s",
-                            query.getCommonSearchQueryParams().getPartyId(), query.getPayoutId()),
-                    e);
-        }
-    }
-
-    public InlineResponse20013 searchInvoiceTemplates(InvoiceTemplateSearchQuery query) {
+    public SearchInvoiceTemplates200Response searchInvoiceTemplates(InvoiceTemplateSearchQuery query) {
         try {
             StatInvoiceTemplateResponse magistaResponse = magistaClient.searchInvoiceTemplates(query);
-            return new InlineResponse20013()
+            return new SearchInvoiceTemplates200Response()
                     .result(magistaResponse.getInvoiceTemplates().stream()
                             .map(invoiceTemplateResponseConverter::convert)
                             .collect(Collectors.toList()))
@@ -237,21 +201,21 @@ public class MagistaService {
 
     private BadRequestException badContinuationTokenException(BadContinuationToken e, String message) {
         var error = new SearchRequestError()
-                .code(SearchRequestError.CodeEnum.BADCONTINUATIONTOKEN)
+                .code(SearchRequestError.CodeEnum.BAD_CONTINUATION_TOKEN)
                 .message(message);
         return new BadRequestException(message, e, error);
     }
 
     private BadRequestException limitExceededException(LimitExceeded e, String message) {
         var error = new SearchRequestError()
-                .code(SearchRequestError.CodeEnum.LIMITEXCEEDED)
+                .code(SearchRequestError.CodeEnum.LIMIT_EXCEEDED)
                 .message(message);
         return new BadRequestException(message, e, error);
     }
 
     private BadRequestException invalidRequestException(InvalidRequest e, String message) {
         var error = new SearchRequestError()
-                .code(SearchRequestError.CodeEnum.INVALIDREQUEST)
+                .code(SearchRequestError.CodeEnum.INVALID_REQUEST)
                 .message(message);
         return new BadRequestException(message, e, error);
     }

@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
+import static java.util.UUID.randomUUID;
+
 @UtilityClass
 public class RandomUtil {
 
@@ -26,6 +28,10 @@ public class RandomUtil {
         byte[] array = new byte[length];
         new Random().nextBytes(array);
         return array;
+    }
+
+    public static String randomRequestId() {
+        return randomUUID().toString().substring(0, 32);
     }
 
 }

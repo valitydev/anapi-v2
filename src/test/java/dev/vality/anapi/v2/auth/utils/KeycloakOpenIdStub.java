@@ -1,5 +1,12 @@
 package dev.vality.anapi.v2.auth.utils;
 
+import dev.vality.anapi.v2.testutil.GenerateSelfSigned;
+import dev.vality.anapi.v2.testutil.PublicKeyUtil;
+import lombok.SneakyThrows;
+
+import java.security.KeyPair;
+import java.util.Base64;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class KeycloakOpenIdStub {
@@ -7,8 +14,10 @@ public class KeycloakOpenIdStub {
     private final String keycloakRealm;
     private final String issuer;
     private final String openidConfig;
+    private final String jwkConfig;
     private final JwtTokenBuilder jwtTokenBuilder;
 
+    @SneakyThrows
     public KeycloakOpenIdStub(String keycloakAuthServerUrl, String keycloakRealm, JwtTokenBuilder jwtTokenBuilder) {
         this.keycloakRealm = keycloakRealm;
         this.jwtTokenBuilder = jwtTokenBuilder;
@@ -34,6 +43,30 @@ public class KeycloakOpenIdStub {
                 "  \"introspection_endpoint\": \"" + keycloakAuthServerUrl + "/realms/" + keycloakRealm +
                 "/protocol/openid-connect/token/introspect\"\n" +
                 "}";
+        this.jwkConfig = """
+                {
+                    "keys": [
+                        {
+                            "alg": "RS256",
+                            "e": "%s",
+                            "kid": "BZdHlAdlt3F1XatlYtZg3f1Cfpk5IpEINuIgviUW59s",
+                            "kty": "RSA",
+                            "n": "%s",
+                            "use": "sig",
+                            "x5c": [
+                                "%s"
+                            ],
+                            "x5t": "9APiqOME1mVmyv8hak6HB_PTezA",
+                            "x5t#S256": "kweH93DnMHKD_NrAZF-mgpAM3Njv_8-oxaDAzki4t48"
+                        }
+                    ]
+                }
+                """.formatted(
+                PublicKeyUtil.getExponent(jwtTokenBuilder.getPublicKey()),
+                PublicKeyUtil.getModulus(jwtTokenBuilder.getPublicKey()),
+                Base64.getEncoder().encodeToString(
+                        GenerateSelfSigned.generateCertificate(new KeyPair(jwtTokenBuilder.getPublicKey(),
+                                jwtTokenBuilder.getPrivateKey())).getEncoded()));
     }
 
     public void givenStub() {
@@ -43,6 +76,11 @@ public class KeycloakOpenIdStub {
                         .withBody(openidConfig)
                 )
         );
+        stubFor(get(urlEqualTo(String.format("/auth/realms/%s/protocol/openid-connect/certs", keycloakRealm)))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(jwkConfig)
+                ));
     }
 
     public String generateJwt(String... roles) {

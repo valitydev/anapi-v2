@@ -5,6 +5,7 @@ import dev.vality.anapi.v2.exception.BadRequestException;
 import dev.vality.anapi.v2.exception.DeadlineException;
 import dev.vality.anapi.v2.exception.NotFoundException;
 import dev.vality.anapi.v2.model.DefaultLogicError;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.validation.ConstraintViolationException;
 import java.net.http.HttpTimeoutException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,7 +49,7 @@ public class ErrorControllerAdvice {
     public Object handleDeadlineException(DeadlineException e) {
         log.warn("<- Res [400]: Not valid", e);
         return new DefaultLogicError()
-                .code(DefaultLogicError.CodeEnum.INVALIDDEADLINE)
+                .code(DefaultLogicError.CodeEnum.INVALID_DEADLINE)
                 .message(e.getMessage());
     }
 
@@ -61,7 +61,7 @@ public class ErrorControllerAdvice {
                 .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
                 .collect(Collectors.joining(", "));
         return new DefaultLogicError()
-                .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                .code(DefaultLogicError.CodeEnum.INVALID_REQUEST)
                 .message(errorMessage);
     }
 
@@ -70,7 +70,7 @@ public class ErrorControllerAdvice {
     public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.warn("<- Res [400]: MethodArgument not valid", e);
         return new DefaultLogicError()
-                .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                .code(DefaultLogicError.CodeEnum.INVALID_REQUEST)
                 .message(e.getMessage());
     }
 
@@ -79,7 +79,7 @@ public class ErrorControllerAdvice {
     public Object handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         log.warn("<- Res [400]: Missing ServletRequestParameter", e);
         return new DefaultLogicError()
-                .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                .code(DefaultLogicError.CodeEnum.INVALID_REQUEST)
                 .message(e.getMessage());
 
     }

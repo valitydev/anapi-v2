@@ -5,16 +5,16 @@ import dev.vality.bouncer.decisions.Judgement;
 import dev.vality.bouncer.decisions.Resolution;
 import dev.vality.bouncer.decisions.ResolutionAllowed;
 import dev.vality.damsel.base.Content;
+import dev.vality.damsel.domain.*;
 import dev.vality.damsel.domain.InvoicePaymentRefundStatus;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.InvoiceStatus;
-import dev.vality.damsel.domain.*;
+import dev.vality.magista.*;
 import dev.vality.magista.CustomerPayer;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.InvoicePaymentFlowHold;
 import dev.vality.magista.InvoicePaymentFlowInstant;
 import dev.vality.magista.Payer;
-import dev.vality.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.thrift.TSerializer;
@@ -115,24 +115,6 @@ public class MagistaUtil {
                 List.of(invoice
                         .setCart(cart
                                 .setLines(List.of(line.setPrice(cash))))
-                        .setStatus(status))
-        );
-    }
-
-    public static StatPayoutResponse createSearchPayoutRequiredResponse() {
-        return DamselUtil.fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
-    }
-
-    public static StatPayoutResponse createSearchPayoutAllResponse() {
-        var payout = DamselUtil.fillRequiredTBaseObject(new StatPayout(), StatPayout.class);
-        var toolInfo = DamselUtil.fillRequiredTBaseObject(new PayoutToolInfo(), PayoutToolInfo.class);
-        var bank = DamselUtil.fillRequiredTBaseObject(new RussianBankAccount(), RussianBankAccount.class);
-        var status = DamselUtil.fillRequiredTBaseObject(new PayoutStatus(), PayoutStatus.class);
-        var response = DamselUtil.fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
-        toolInfo.setRussianBankAccount(bank);
-        return response.setPayouts(
-                List.of(payout
-                        .setPayoutToolInfo(toolInfo)
                         .setStatus(status))
         );
     }
