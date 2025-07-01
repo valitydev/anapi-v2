@@ -1,9 +1,9 @@
 package dev.vality.anapi.v2.util;
 
 import dev.vality.anapi.v2.exception.DeadlineException;
+import jakarta.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 
-import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;

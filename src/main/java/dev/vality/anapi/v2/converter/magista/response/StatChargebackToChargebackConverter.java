@@ -39,7 +39,7 @@ public class StatChargebackToChargebackConverter {
                 case DISPUTE -> ChargebackCategory.DISPUTE;
                 case AUTHORISATION -> ChargebackCategory.AUTHORISATION;
                 case PROCESSING_ERROR -> ChargebackCategory.PROCESSING_ERROR;
-                default -> throw new IllegalArgumentException();
+                case SYSTEM_SET -> ChargebackCategory.SYSTEM_SET;
             };
         } catch (Exception e) {
             throw new IllegalArgumentException(

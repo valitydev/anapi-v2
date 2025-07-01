@@ -5,6 +5,7 @@ import dev.vality.anapi.v2.exception.BouncerException;
 import dev.vality.anapi.v2.service.BouncerService;
 import dev.vality.anapi.v2.service.DominantService;
 import dev.vality.bouncer.base.Entity;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;

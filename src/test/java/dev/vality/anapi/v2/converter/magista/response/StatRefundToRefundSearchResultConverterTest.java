@@ -20,7 +20,7 @@ class StatRefundToRefundSearchResultConverterTest {
     @Test
     void convert() {
         StatRefundResponse magistaResponse = MagistaUtil.createSearchRefundAllResponse();
-        StatRefund magistaRefund = magistaResponse.getRefunds().get(0);
+        StatRefund magistaRefund = magistaResponse.getRefunds().getFirst();
         RefundSearchResult result = converter.convert(magistaRefund);
         assertAll(
                 () -> assertEquals(magistaRefund.getAmount(), result.getAmount()),

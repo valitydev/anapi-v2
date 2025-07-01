@@ -14,7 +14,7 @@ class ReporterResponseToReportConverterTest {
     @Test
     void convert() {
         StatReportResponse response = ReporterUtil.createSearchReportsResponse();
-        Report report = converter.convert(response.getReports().get(0));
+        Report report = converter.convert(response.getReports().getFirst());
         assertNotNull(report);
     }
 }

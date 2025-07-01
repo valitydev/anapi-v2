@@ -8,7 +8,6 @@ import dev.vality.anapi.v2.testutil.OpenApiUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
 import dev.vality.bouncer.decisions.ArbiterSrv;
 import dev.vality.damsel.analytics.AnalyticsServiceSrv;
-import dev.vality.damsel.domain_config_v2.RepositoryClientSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
 import lombok.SneakyThrows;
 import org.apache.thrift.TException;
