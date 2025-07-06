@@ -32,8 +32,8 @@
         <!--vality-->
         <dependency>
             <groupId>dev.vality</groupId>
-            <artifactId>swag-anapi-v2</artifactId>
-            <version>SNAPSHOT</version>
+            <artifactId>swag-anapi-v2-server</artifactId>
+            <version>1.101-adc5097</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
