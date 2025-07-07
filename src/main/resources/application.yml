@@ -54,6 +54,9 @@ spring:
   output:
     ansi:
       enabled: always
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   security:
     oauth2:
       resourceserver:
