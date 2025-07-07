@@ -29,9 +29,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 (authorize) -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/*/health/liveness").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/*/health/readiness").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/*/actuator/prometheus").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/**/health/liveness").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/**/health/readiness").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/**/actuator/prometheus").permitAll()
                         .anyRequest().authenticated());
         http.oauth2ResourceServer(server -> server.jwt(token -> token.jwtAuthenticationConverter(jwtAuthConverter)));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -46,7 +46,7 @@ public class SecurityConfig {
         configuration.addAllowedMethod(HttpMethod.DELETE);
         configuration.addAllowedMethod(HttpMethod.OPTIONS);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/*", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
