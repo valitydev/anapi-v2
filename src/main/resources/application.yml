@@ -1,24 +1,24 @@
 server:
-  port: '@server.port@'
+  port: ${server.port}
 
 management:
   server:
-    port: '@management.port@'
-  metrics:
-    export:
-      prometheus:
-        enabled: false
+    port: ${management.port}
   endpoint:
     health:
       show-details: always
     metrics:
-      enabled: true
+      access: unrestricted
     prometheus:
-      enabled: true
+      access: unrestricted
   endpoints:
     web:
       exposure:
         include: health,info,prometheus
+  prometheus:
+    metrics:
+      export:
+        enabled: false
 
 service:
   magista:
@@ -27,13 +27,10 @@ service:
   analytics:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
-  vortigon:
+  dominant:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
   orgManager:
-    url: http://localhost:8022/change_it
-    networkTimeout: 5000
-  tokenKeeper:
     url: http://localhost:8022/change_it
     networkTimeout: 5000
   bouncer:
@@ -57,6 +54,17 @@ spring:
   output:
     ansi:
       enabled: always
+  security:
+    oauth2:
+      resourceserver:
+        url: https://auth.domain
+        jwt:
+          realm: internal
+          issuer-uri: >
+            ${spring.security.oauth2.resourceserver.url}/auth/realms/
+            ${spring.security.oauth2.resourceserver.jwt.realm}
 info:
   version: '@project.version@'
   stage: dev
+
+auth.enabled: true

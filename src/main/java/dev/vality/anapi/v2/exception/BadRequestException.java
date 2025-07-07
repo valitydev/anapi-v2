@@ -21,7 +21,7 @@ public class BadRequestException extends AnapiV24xxException {
     public BadRequestException(String message) {
         super(message);
         this.response = new DefaultLogicError()
-                .code(DefaultLogicError.CodeEnum.INVALIDREQUEST)
+                .code(DefaultLogicError.CodeEnum.INVALID_REQUEST)
                 .message(message);
     }
 }

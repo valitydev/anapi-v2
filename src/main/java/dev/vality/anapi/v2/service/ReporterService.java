@@ -2,7 +2,9 @@ package dev.vality.anapi.v2.service;
 
 import dev.vality.anapi.v2.converter.reporter.response.ReporterResponseToReportConverter;
 import dev.vality.anapi.v2.exception.ReporterException;
-import dev.vality.anapi.v2.model.*;
+import dev.vality.anapi.v2.model.Report;
+import dev.vality.anapi.v2.model.ReportLink;
+import dev.vality.anapi.v2.model.SearchReports200Response;
 import dev.vality.reporter.ReportRequest;
 import dev.vality.reporter.ReportingSrv;
 import dev.vality.reporter.StatReportRequest;
@@ -59,10 +61,10 @@ public class ReporterService {
         }
     }
 
-    public InlineResponse20014 getReports(StatReportRequest request) {
+    public SearchReports200Response getReports(StatReportRequest request) {
         try {
             var response = reporterClient.getReports(request);
-            return new InlineResponse20014()
+            return new SearchReports200Response()
                     .result(response.getReports().stream()
                             .map(reporterResponseToReportConverter::convert)
                             .collect(Collectors.toList()))

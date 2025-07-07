@@ -2,11 +2,10 @@ package dev.vality.anapi.v2.config;
 
 import dev.vality.bouncer.decisions.ArbiterSrv;
 import dev.vality.damsel.analytics.AnalyticsServiceSrv;
-import dev.vality.damsel.vortigon.VortigonServiceSrv;
+import dev.vality.damsel.domain_config_v2.RepositoryClientSrv;
 import dev.vality.magista.MerchantStatisticsServiceSrv;
 import dev.vality.orgmanagement.AuthContextProviderSrv;
 import dev.vality.reporter.ReportingSrv;
-import dev.vality.token.keeper.TokenAuthenticatorSrv;
 import dev.vality.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
 import dev.vality.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
 import dev.vality.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
@@ -44,13 +43,13 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public VortigonServiceSrv.Iface vortigonClient(
-            @Value("${service.vortigon.url}") Resource resource,
-            @Value("${service.vortigon.networkTimeout}") int networkTimeout) throws IOException {
+    public RepositoryClientSrv.Iface dominantClient(
+            @Value("${service.dominant.url}") Resource resource,
+            @Value("${service.dominant.networkTimeout}") int networkTimeout) throws IOException {
         return new THSpawnClientBuilder()
                 .withNetworkTimeout(networkTimeout)
                 .withAddress(resource.getURI())
-                .build(VortigonServiceSrv.Iface.class);
+                .build(RepositoryClientSrv.Iface.class);
     }
 
     @Bean
@@ -86,15 +85,5 @@ public class ApplicationConfig {
                 .withNetworkTimeout(networkTimeout)
                 .withAddress(resource.getURI())
                 .build(ReportingSrv.Iface.class);
-    }
-
-    @Bean
-    public TokenAuthenticatorSrv.Iface tokenKeeperClient(
-            @Value("${service.tokenKeeper.url}") Resource resource,
-            @Value("${service.tokenKeeper.networkTimeout}") int networkTimeout) throws IOException {
-        return new THSpawnClientBuilder()
-                .withNetworkTimeout(networkTimeout)
-                .withAddress(resource.getURI())
-                .build(TokenAuthenticatorSrv.Iface.class);
     }
 }

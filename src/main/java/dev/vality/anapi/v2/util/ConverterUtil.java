@@ -2,9 +2,9 @@ package dev.vality.anapi.v2.util;
 
 import dev.vality.geck.common.util.TypeUtil;
 import dev.vality.magista.CommonSearchQueryParams;
+import jakarta.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 
-import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;

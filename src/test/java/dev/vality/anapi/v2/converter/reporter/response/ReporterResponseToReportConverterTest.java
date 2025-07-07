@@ -5,7 +5,7 @@ import dev.vality.anapi.v2.testutil.ReporterUtil;
 import dev.vality.reporter.StatReportResponse;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ReporterResponseToReportConverterTest {
 
@@ -14,7 +14,7 @@ class ReporterResponseToReportConverterTest {
     @Test
     void convert() {
         StatReportResponse response = ReporterUtil.createSearchReportsResponse();
-        Report report = converter.convert(response.getReports().get(0));
+        Report report = converter.convert(response.getReports().getFirst());
         assertNotNull(report);
     }
 }

@@ -1,39 +1,37 @@
 package dev.vality.anapi.v2.config;
 
 import dev.vality.woody.api.flow.WFlow;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityEmailExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityIdExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityRealmExtensionKit;
+import dev.vality.woody.api.trace.context.metadata.user.UserIdentityUsernameExtensionKit;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import static dev.vality.anapi.v2.util.DeadlineUtil.*;
+import static dev.vality.woody.api.trace.ContextUtils.setCustomMetadataValue;
 import static dev.vality.woody.api.trace.ContextUtils.setDeadline;
 
+@Slf4j
 @Configuration
 @SuppressWarnings({"ParameterName", "LocalVariableName"})
 public class WebConfig {
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOriginPatterns("*");
-            }
-        };
-    }
 
     @Bean
     public FilterRegistrationBean woodyFilter() {
@@ -43,17 +41,22 @@ public class WebConfig {
             @Override
             protected void doFilterInternal(HttpServletRequest request,
                                             HttpServletResponse response,
-                                            FilterChain filterChain) throws ServletException, IOException {
+                                            FilterChain filterChain) {
                 woodyFlow.createServiceFork(
-                                () -> {
-                                    try {
-                                        setWoodyDeadline(request);
-                                        filterChain.doFilter(request, response);
-                                    } catch (IOException | ServletException e) {
-                                        sneakyThrow(e);
-                                    }
+                        () -> {
+                            try {
+                                var auth = SecurityContextHolder.getContext().getAuthentication();
+                                if (auth instanceof JwtAuthenticationToken) {
+                                    addWoodyContext((JwtAuthenticationToken) auth);
                                 }
-                        )
+                                setWoodyDeadline(request);
+
+                                filterChain.doFilter(request, response);
+                            } catch (IOException | ServletException e) {
+                                sneakyThrow(e);
+                            }
+                        }
+                )
                         .run();
             }
 
@@ -70,11 +73,28 @@ public class WebConfig {
         return filterRegistrationBean;
     }
 
+    private void addWoodyContext(JwtAuthenticationToken token) {
+        setCustomMetadataValue(UserIdentityIdExtensionKit.KEY, token.getToken().getClaimAsString(JwtClaimNames.SUB));
+        setCustomMetadataValue(UserIdentityUsernameExtensionKit.KEY,
+                ((Jwt)token.getPrincipal()).getClaimAsString("preferred_username"));
+        setCustomMetadataValue(UserIdentityEmailExtensionKit.KEY, token.getToken().getClaimAsString("email"));
+        setCustomMetadataValue(UserIdentityRealmExtensionKit.KEY, extractRealm(token.getToken()));
+    }
+
+    private String extractRealm(Jwt token) {
+        var iss =  token.getClaimAsString("iss");
+        return iss.substring(iss.lastIndexOf("/"));
+    }
+
     private void setWoodyDeadline(HttpServletRequest request) {
         String xRequestDeadline = request.getHeader("X-Request-Deadline");
         String xRequestId = request.getHeader("X-Request-ID");
         if (xRequestDeadline != null) {
-            setDeadline(getInstant(xRequestDeadline, xRequestId));
+            try {
+                setDeadline(getInstant(xRequestDeadline, xRequestId));
+            } catch (Exception e) {
+                log.warn("Unable to parse 'X-Request-Deadline' header value '{}'", xRequestDeadline);
+            }
         }
     }
 

@@ -3,15 +3,16 @@ package dev.vality.anapi.v2.security;
 import dev.vality.anapi.v2.exception.AuthorizationException;
 import dev.vality.anapi.v2.exception.BouncerException;
 import dev.vality.anapi.v2.service.BouncerService;
-import dev.vality.anapi.v2.service.TokenKeeperService;
-import dev.vality.anapi.v2.service.VortigonService;
+import dev.vality.anapi.v2.service.DominantService;
 import dev.vality.bouncer.base.Entity;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -22,9 +23,8 @@ import java.util.stream.Collectors;
 @Service
 public class AccessService {
 
-    private final VortigonService vortigonService;
+    private final DominantService dominantService;
     private final BouncerService bouncerService;
-    private final TokenKeeperService tokenKeeperService;
 
     @Value("${service.bouncer.auth.enabled}")
     private boolean authEnabled;
@@ -34,7 +34,7 @@ public class AccessService {
     }
 
     public List<String> getRestrictedShops(AccessData accessData) {
-        var requestedShopIds = vortigonService.getShopIds(accessData.getPartyId(),
+        var requestedShopIds = dominantService.getShopIds(accessData.getPartyId(),
                 Objects.requireNonNullElse(accessData.getRealm(), "live"));
         if (accessData.getShopIds() != null && !accessData.getShopIds().isEmpty()) {
             requestedShopIds = accessData.getShopIds().stream()
@@ -86,13 +86,15 @@ public class AccessService {
     }
 
     private AnapiBouncerContext buildAnapiBouncerContext(AccessData accessData, @Nullable List<String> shopIds) {
+        var token = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         return AnapiBouncerContext.builder()
                 .operationId(accessData.getOperationId())
                 .partyId(accessData.getPartyId())
                 .shopIds(shopIds)
                 .fileId(accessData.getFileId())
                 .reportId(accessData.getReportId())
-                .authData(tokenKeeperService.getAuthData())
+                .tokenId(token.getToken().getId())
+                .userId(token.getToken().getSubject())
                 .build();
     }
 }

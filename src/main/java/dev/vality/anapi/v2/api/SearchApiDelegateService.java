@@ -27,11 +27,10 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     private final ParamsToPaymentSearchQueryConverter paymentSearchConverter;
     private final ParamsToRefundSearchQueryConverter refundSearchConverter;
     private final ParamsToChargebackSearchQueryConverter chargebackSearchConverter;
-    private final ParamsToPayoutSearchQueryConverter payoutSearchConverter;
     private final ParamsToInvoiceTemplateSearchQueryConverter invoiceTemplateSearchConverter;
 
     @Override
-    public ResponseEntity<InlineResponse2008> searchInvoices(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String invoiceStatus, Long invoiceAmountFrom, Long invoiceAmountTo, String externalID, String continuationToken) {
+    public ResponseEntity<SearchInvoices200Response> searchInvoices(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String invoiceStatus, Long invoiceAmountFrom, Long invoiceAmountTo, String externalID, String continuationToken) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -40,9 +39,9 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2008 response;
+        SearchInvoices200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2008();
+            response = new SearchInvoices200Response();
         } else {
             var query = invoiceSearchConverter.convert(
                     partyID,
@@ -64,7 +63,7 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2009> searchPayments(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String paymentStatus, String paymentFlow, String paymentMethod, String paymentTerminalProvider, String payerEmail, String payerIP, String payerFingerprint, String customerID, String first6, String last4, String rrn, String approvalCode, String bankCardTokenProvider, String bankCardPaymentSystem, Long paymentAmountFrom, Long paymentAmountTo, String externalID, String continuationToken) {
+    public ResponseEntity<SearchPayments200Response> searchPayments(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String paymentStatus, String paymentFlow, String paymentMethod, String paymentTerminalProvider, String payerEmail, String payerIP, String payerFingerprint, String customerID, String first6, String last4, String rrn, String approvalCode, String bankCardTokenProvider, String bankCardPaymentSystem, Long paymentAmountFrom, Long paymentAmountTo, String externalID, String continuationToken) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -73,9 +72,9 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2009 response;
+        SearchPayments200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2009();
+            response = new SearchPayments200Response();
         } else {
             var query = paymentSearchConverter.convert(
                     partyID,
@@ -111,7 +110,7 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse20010> searchRefunds(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String refundID, String refundStatus, String externalID, String continuationToken) {
+    public ResponseEntity<SearchRefunds200Response> searchRefunds(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, List<String> invoiceIDs, String paymentID, String refundID, String refundStatus, String externalID, String continuationToken) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -120,9 +119,9 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse20010 response;
+        SearchRefunds200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse20010();
+            response = new SearchRefunds200Response();
         } else {
             var query = refundSearchConverter.convert(
                     partyID,
@@ -144,7 +143,7 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse20011> searchChargebacks(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, String paymentID, String chargebackID, List<String> chargebackStatuses, List<String> chargebackStages, List<String> chargebackCategories, String continuationToken) {
+    public ResponseEntity<SearchChargebacks200Response> searchChargebacks(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String invoiceID, String paymentID, String chargebackID, List<String> chargebackStatuses, List<String> chargebackStages, List<String> chargebackCategories, String continuationToken) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -153,9 +152,9 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .shopIds(ConverterUtil.merge(shopID, shopIDs))
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse20011 response;
+        SearchChargebacks200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse20011();
+            response = new SearchChargebacks200Response();
         } else {
             var query = chargebackSearchConverter.convert(
                     partyID,
@@ -177,36 +176,7 @@ public class SearchApiDelegateService implements SearchApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse20012> searchPayouts(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, String shopID, List<String> shopIDs, String paymentInstitutionRealm, String payoutID, String payoutToolType, String continuationToken) {
-        DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        shopIDs = accessService.getRestrictedShops(
-                AccessData.builder()
-                        .operationId("SearchPayouts")
-                        .partyId(partyID)
-                        .shopIds(ConverterUtil.merge(shopID, shopIDs))
-                        .realm(paymentInstitutionRealm)
-                        .build());
-        InlineResponse20012 response;
-        if (shopIDs.isEmpty()) {
-            response = new InlineResponse20012();
-        } else {
-            var query = payoutSearchConverter.convert(
-                    partyID,
-                    fromTime,
-                    toTime,
-                    limit,
-                    shopIDs,
-                    payoutID,
-                    payoutToolType,
-                    continuationToken);
-            response = magistaService.searchPayouts(query);
-        }
-        log.info("<- Res [200]: xRequestID={}", xRequestID);
-        return ResponseEntity.ok(response);
-    }
-
-    @Override
-    public ResponseEntity<InlineResponse20013> searchInvoiceTemplates(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, List<String> shopIDs, String paymentInstitutionRealm, String invoiceTemplateID, String invoiceTemplateStatus, String name, String product, OffsetDateTime invoiceValidUntil, String continuationToken) {
+    public ResponseEntity<SearchInvoiceTemplates200Response> searchInvoiceTemplates(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, Integer limit, String xRequestDeadline, List<String> shopIDs, String paymentInstitutionRealm, String invoiceTemplateID, String invoiceTemplateStatus, String name, String product, OffsetDateTime invoiceValidUntil, String continuationToken) {
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
                         .operationId("SearchInvoiceTemplates")
@@ -215,9 +185,9 @@ public class SearchApiDelegateService implements SearchApiDelegate {
                         .realm(paymentInstitutionRealm)
                         .build());
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
-        InlineResponse20013 response;
+        SearchInvoiceTemplates200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse20013();
+            response = new SearchInvoiceTemplates200Response();
         } else {
             var query = invoiceTemplateSearchConverter.convert(
                     partyID,

@@ -5,11 +5,8 @@ import dev.vality.anapi.v2.security.AccessData;
 import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.AnalyticsService;
 import dev.vality.anapi.v2.util.DeadlineUtil;
-import dev.vality.damsel.analytics.FilterRequest;
-import dev.vality.damsel.analytics.MerchantFilter;
-import dev.vality.damsel.analytics.SplitFilterRequest;
+import dev.vality.damsel.analytics.*;
 import dev.vality.damsel.analytics.SplitUnit;
-import dev.vality.damsel.analytics.TimeFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +26,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     private final AnalyticsService analyticsService;
 
     @Override
-    public ResponseEntity<InlineResponse200> getAveragePayment(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getAveragePayment(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -38,9 +35,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse200 response;
+        GetPaymentsAmount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse200();
+            response = new GetPaymentsAmount200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getAveragePayment(filterRequest);
@@ -50,7 +47,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse200> getCreditingsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getCreditingsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -59,9 +56,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse200 response;
+        GetPaymentsAmount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse200();
+            response = new GetPaymentsAmount200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getCreditingsAmount(filterRequest);
@@ -71,7 +68,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse200> getCurrentBalances(String xRequestID, String partyID, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getCurrentBalances(String xRequestID, String partyID, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -80,9 +77,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse200 response;
+        GetPaymentsAmount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse200();
+            response = new GetPaymentsAmount200Response();
         } else {
             var merchantFilter = getMerchantFilter(partyID, shopIDs, excludeShopIDs);
             response = analyticsService.getCurrentBalances(merchantFilter);
@@ -92,7 +89,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2007> getCurrentShopBalances(String xRequestID, String partyID, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetCurrentShopBalances200Response> getCurrentShopBalances(String xRequestID, String partyID, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -101,9 +98,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2007 response;
+        GetCurrentShopBalances200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2007();
+            response = new GetCurrentShopBalances200Response();
         } else {
             var merchantFilter = getMerchantFilter(partyID, shopIDs, excludeShopIDs);
             response = analyticsService.getCurrentShopBalances(merchantFilter);
@@ -113,7 +110,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse200> getPaymentsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getPaymentsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -122,9 +119,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse200 response;
+        GetPaymentsAmount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse200();
+            response = new GetPaymentsAmount200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getPaymentsAmount(filterRequest);
@@ -134,7 +131,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2001> getPaymentsCount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsCount200Response> getPaymentsCount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -143,9 +140,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2001 response;
+        GetPaymentsCount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2001();
+            response = new GetPaymentsCount200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getPaymentsCount(filterRequest);
@@ -155,7 +152,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2002> getPaymentsErrorDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsErrorDistribution200Response> getPaymentsErrorDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -164,9 +161,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2002 response;
+        GetPaymentsErrorDistribution200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2002();
+            response = new GetPaymentsErrorDistribution200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getPaymentsErrorDistribution(filterRequest);
@@ -176,7 +173,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2003> getPaymentsSplitAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String splitUnit, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsSplitAmount200Response> getPaymentsSplitAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String splitUnit, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -185,9 +182,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2003 response;
+        GetPaymentsSplitAmount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2003();
+            response = new GetPaymentsSplitAmount200Response();
         } else {
             var splitFilterRequest = getSplitFilterRequest(
                     partyID,
@@ -202,7 +199,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2004> getPaymentsSplitCount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String splitUnit, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsSplitCount200Response> getPaymentsSplitCount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String splitUnit, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -211,9 +208,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2004 response;
+        GetPaymentsSplitCount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2004();
+            response = new GetPaymentsSplitCount200Response();
         } else {
             var splitFilterRequest = getSplitFilterRequest(
                     partyID,
@@ -228,7 +225,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2005> getPaymentsSubErrorDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsSubErrorDistribution200Response> getPaymentsSubErrorDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -237,9 +234,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2005 response;
+        GetPaymentsSubErrorDistribution200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2005();
+            response = new GetPaymentsSubErrorDistribution200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getPaymentsSubErrorDistribution(filterRequest);
@@ -249,7 +246,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse2006> getPaymentsToolDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsToolDistribution200Response> getPaymentsToolDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -258,9 +255,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse2006 response;
+        GetPaymentsToolDistribution200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse2006();
+            response = new GetPaymentsToolDistribution200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getPaymentsToolDistribution(filterRequest);
@@ -270,7 +267,7 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<InlineResponse200> getRefundsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getRefundsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -279,9 +276,9 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
                         .shopIds(shopIDs)
                         .realm(paymentInstitutionRealm)
                         .build());
-        InlineResponse200 response;
+        GetPaymentsAmount200Response response;
         if (shopIDs.isEmpty()) {
-            response = new InlineResponse200();
+            response = new GetPaymentsAmount200Response();
         } else {
             var filterRequest = getFilterRequest(partyID, shopIDs, excludeShopIDs, fromTime, toTime);
             response = analyticsService.getRefundsAmount(filterRequest);

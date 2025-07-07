@@ -37,10 +37,8 @@ public class ParamsToStatReportRequestConverter {
     public String mapReportType(String requestReportType) {
         Report.ReportTypeEnum inputType = Report.ReportTypeEnum.fromValue(requestReportType);
         return switch (inputType) {
-            case PAYMENTREGISTRY -> "payment_registry";
-            case PROVISIONOFSERVICE -> "provision_of_service";
-            case PAYMENTREGISTRYBYPAYOUT -> "payment_registry_by_payout";
-            default -> throw new IllegalArgumentException("Unknown report type: " + inputType.getValue());
+            case PAYMENT_REGISTRY -> "payment_registry";
+            case PROVISION_OF_SERVICE -> "provision_of_service";
         };
     }
 

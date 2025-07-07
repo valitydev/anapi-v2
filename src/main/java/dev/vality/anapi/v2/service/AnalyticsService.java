@@ -1,11 +1,11 @@
 package dev.vality.anapi.v2.service;
 
 import dev.vality.anapi.v2.exception.AnalytycsException;
+import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.model.OffsetAmount;
 import dev.vality.anapi.v2.model.OffsetCount;
 import dev.vality.anapi.v2.model.SplitUnit;
 import dev.vality.anapi.v2.model.SubError;
-import dev.vality.anapi.v2.model.*;
 import dev.vality.damsel.analytics.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;
@@ -19,10 +19,10 @@ public class AnalyticsService {
 
     private final AnalyticsServiceSrv.Iface analyticsClient;
 
-    public InlineResponse2006 getPaymentsToolDistribution(FilterRequest filterRequest) {
+    public GetPaymentsToolDistribution200Response getPaymentsToolDistribution(FilterRequest filterRequest) {
         try {
             var distribution = analyticsClient.getPaymentsToolDistribution(filterRequest);
-            return new InlineResponse2006()
+            return new GetPaymentsToolDistribution200Response()
                     .result(distribution.getPaymentToolsDistributions().stream()
                             .map(o -> new PaymentsToolDistributionResult()
                                     .name(o.getName())
@@ -33,10 +33,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse200 getPaymentsAmount(FilterRequest filterRequest) {
+    public GetPaymentsAmount200Response getPaymentsAmount(FilterRequest filterRequest) {
         try {
             var paymentsAmount = analyticsClient.getPaymentsAmount(filterRequest);
-            return new InlineResponse200()
+            return new GetPaymentsAmount200Response()
                     .result(paymentsAmount.getGroupsAmount().stream()
                             .map(o -> new AmountResult()
                                     .amount(o.getAmount())
@@ -47,10 +47,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse200 getCreditingsAmount(FilterRequest filterRequest) {
+    public GetPaymentsAmount200Response getCreditingsAmount(FilterRequest filterRequest) {
         try {
             var creditingsAmount = analyticsClient.getCreditingsAmount(filterRequest);
-            return new InlineResponse200()
+            return new GetPaymentsAmount200Response()
                     .result(creditingsAmount.getGroupsAmount().stream()
                             .map(o -> new AmountResult()
                                     .amount(o.getAmount())
@@ -61,10 +61,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse200 getAveragePayment(FilterRequest filterRequest) {
+    public GetPaymentsAmount200Response getAveragePayment(FilterRequest filterRequest) {
         try {
             var averagePayment = analyticsClient.getAveragePayment(filterRequest);
-            return new InlineResponse200()
+            return new GetPaymentsAmount200Response()
                     .result(averagePayment.getGroupsAmount().stream()
                             .map(o -> new AmountResult()
                                     .amount(o.getAmount())
@@ -75,10 +75,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse2001 getPaymentsCount(FilterRequest filterRequest) {
+    public GetPaymentsCount200Response getPaymentsCount(FilterRequest filterRequest) {
         try {
             var paymentsCount = analyticsClient.getPaymentsCount(filterRequest);
-            return new InlineResponse2001()
+            return new GetPaymentsCount200Response()
                     .result(paymentsCount.getGroupsCount().stream()
                             .map(o -> new CountResult()
                                     .count(o.getCount())
@@ -89,10 +89,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse2002 getPaymentsErrorDistribution(FilterRequest filterRequest) {
+    public GetPaymentsErrorDistribution200Response getPaymentsErrorDistribution(FilterRequest filterRequest) {
         try {
             var distribution = analyticsClient.getPaymentsErrorDistribution(filterRequest);
-            return new InlineResponse2002()
+            return new GetPaymentsErrorDistribution200Response()
                     .result(distribution.getErrorDistributions().stream()
                             .map(o -> new PaymentsErrorsDistributionResult()
                                     .error(o.getName())
@@ -103,10 +103,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse2005 getPaymentsSubErrorDistribution(FilterRequest filterRequest) {
+    public GetPaymentsSubErrorDistribution200Response getPaymentsSubErrorDistribution(FilterRequest filterRequest) {
         try {
             var distribution = analyticsClient.getPaymentsSubErrorDistribution(filterRequest);
-            return new InlineResponse2005()
+            return new GetPaymentsSubErrorDistribution200Response()
                     .result(distribution.getErrorDistributions().stream()
                             .map(o -> new PaymentsSubErrorsDistributionResult()
                                     .error(getSubError(o.getError()))
@@ -117,10 +117,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse2003 getPaymentsSplitAmount(SplitFilterRequest splitFilterRequest) {
+    public GetPaymentsSplitAmount200Response getPaymentsSplitAmount(SplitFilterRequest splitFilterRequest) {
         try {
             var paymentsSplitAmount = analyticsClient.getPaymentsSplitAmount(splitFilterRequest);
-            return new InlineResponse2003()
+            return new GetPaymentsSplitAmount200Response()
                     .result(paymentsSplitAmount.getGroupedCurrencyAmounts().stream()
                             .map(o -> createSplitAmountResult(o, paymentsSplitAmount.getResultSplitUnit()))
                             .collect(Collectors.toList()));
@@ -129,10 +129,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse2004 getPaymentsSplitCount(SplitFilterRequest splitFilterRequest) {
+    public GetPaymentsSplitCount200Response getPaymentsSplitCount(SplitFilterRequest splitFilterRequest) {
         try {
             var paymentsSplitCount = analyticsClient.getPaymentsSplitCount(splitFilterRequest);
-            return new InlineResponse2004()
+            return new GetPaymentsSplitCount200Response()
                     .result(paymentsSplitCount.getPaymentToolsDestrobutions().stream()
                             .map(o -> createSplitCountResult(o, paymentsSplitCount.getResultSplitUnit()))
                             .collect(Collectors.toList()));
@@ -141,10 +141,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse200 getRefundsAmount(FilterRequest filterRequest) {
+    public GetPaymentsAmount200Response getRefundsAmount(FilterRequest filterRequest) {
         try {
             var refundsAmount = analyticsClient.getRefundsAmount(filterRequest);
-            return new InlineResponse200()
+            return new GetPaymentsAmount200Response()
                     .result(refundsAmount.getGroupsAmount().stream()
                             .map(o -> new AmountResult()
                                     .amount(o.getAmount())
@@ -155,10 +155,10 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse200 getCurrentBalances(MerchantFilter merchantFilter) {
+    public GetPaymentsAmount200Response getCurrentBalances(MerchantFilter merchantFilter) {
         try {
             var refundsAmount = analyticsClient.getCurrentBalances(merchantFilter);
-            return new InlineResponse200()
+            return new GetPaymentsAmount200Response()
                     .result(refundsAmount.getGroupsAmount().stream()
                             .map(o -> new AmountResult()
                                     .amount(o.getAmount())
@@ -169,7 +169,7 @@ public class AnalyticsService {
         }
     }
 
-    public InlineResponse2007 getCurrentShopBalances(MerchantFilter merchantFilter) {
+    public GetCurrentShopBalances200Response getCurrentShopBalances(MerchantFilter merchantFilter) {
         try {
             var currentShopBalances = analyticsClient.getCurrentShopBalances(merchantFilter);
             var shopAmountResults = currentShopBalances.getGroupsAmount().stream()
@@ -185,7 +185,7 @@ public class AnalyticsService {
                             .id(entry.getKey())
                             .amountResults(entry.getValue()))
                     .collect(Collectors.toList());
-            return new InlineResponse2007()
+            return new GetCurrentShopBalances200Response()
                     .result(shopAmountResults);
         } catch (TException e) {
             throw new AnalytycsException("Error while call analyticsClient.getCurrentShopBalances", e);

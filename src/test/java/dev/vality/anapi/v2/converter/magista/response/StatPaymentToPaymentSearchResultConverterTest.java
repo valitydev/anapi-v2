@@ -4,18 +4,18 @@ import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.testutil.MagistaUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
 import dev.vality.anapi.v2.util.MaskUtil;
+import dev.vality.damsel.domain.*;
 import dev.vality.damsel.domain.ClientInfo;
 import dev.vality.damsel.domain.ContactInfo;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.PaymentResourcePayer;
 import dev.vality.damsel.domain.RecurrentPayer;
-import dev.vality.damsel.domain.*;
 import dev.vality.geck.common.util.TypeUtil;
+import dev.vality.magista.*;
 import dev.vality.magista.CustomerPayer;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.InvoicePaymentFlowInstant;
 import dev.vality.magista.Payer;
-import dev.vality.magista.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +44,7 @@ class StatPaymentToPaymentSearchResultConverterTest {
                 () -> assertEquals(magistaPayment.getCurrencySymbolicCode(), result.getCurrency()),
                 () -> assertEquals(magistaPayment.getExternalId(), result.getExternalID()),
                 () -> assertEquals(magistaPayment.getFee(), result.getFee()),
-                () -> assertEquals(PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT, result.getFlow().getType()),
+                () -> assertEquals(PaymentFlow.TypeEnum.PAYMENT_FLOW_INSTANT, result.getFlow().getType()),
                 () -> assertEquals(magistaPayment.getStatusChangedAt(), result.getStatusChangedAt().toString()),
                 () -> assertEquals(magistaPayment.getId(), result.getId()),
                 () -> assertEquals(magistaPayment.getInvoiceId(), result.getInvoiceID()),
@@ -104,9 +104,9 @@ class StatPaymentToPaymentSearchResultConverterTest {
         assertAll(
                 () -> assertEquals("1111", paymentResourcePayer.getPaymentToolToken()),
                 () -> assertEquals("1111", paymentResourcePayer.getPaymentSession()),
-                () -> assertEquals("print", paymentResourcePayer.getClientInfo().get().getFingerprint()),
-                () -> assertTrue(paymentResourcePayer.getClientInfo().isPresent()),
-                () -> assertEquals("127.0.0.1", paymentResourcePayer.getClientInfo().get().getIp()),
+                () -> assertEquals("print", paymentResourcePayer.getClientInfo().getFingerprint()),
+                () -> assertNotNull(paymentResourcePayer.getClientInfo()),
+                () -> assertEquals("127.0.0.1", paymentResourcePayer.getClientInfo().getIp()),
                 () -> assertEquals("mail@mail.com", paymentResourcePayer.getContactInfo().getEmail()),
                 () -> assertEquals("88005553535", paymentResourcePayer.getContactInfo().getPhoneNumber()),
                 () -> assertEquals("1234", resourcePayerPaymentToolDetails.getBin()),
@@ -170,12 +170,12 @@ class StatPaymentToPaymentSearchResultConverterTest {
     void mapFlow() {
         InvoicePaymentFlow flow = InvoicePaymentFlow.instant(new InvoicePaymentFlowInstant());
         PaymentFlow instantFlow = converter.mapFlow(flow);
-        assertEquals(PaymentFlow.TypeEnum.PAYMENTFLOWINSTANT, instantFlow.getType());
+        assertEquals(PaymentFlow.TypeEnum.PAYMENT_FLOW_INSTANT, instantFlow.getType());
 
         InvoicePaymentFlow magistaFlow = MagistaUtil.createInvoicePaymentFlowHold();
         var holdFlow = (PaymentFlowHold) converter.mapFlow(magistaFlow);
         assertAll(
-                () -> assertEquals(PaymentFlow.TypeEnum.PAYMENTFLOWHOLD, holdFlow.getType()),
+                () -> assertEquals(PaymentFlow.TypeEnum.PAYMENT_FLOW_HOLD, holdFlow.getType()),
                 () -> assertEquals(magistaFlow.getHold().getHeldUntil(), holdFlow.getHeldUntil().toString()),
                 () -> assertEquals(magistaFlow.getHold().getOnHoldExpiration().name(),
                         holdFlow.getOnHoldExpiration().getValue())

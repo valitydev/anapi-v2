@@ -1,17 +1,23 @@
 package dev.vality.anapi.v2.testutil;
 
+import dev.vality.bouncer.ctx.ContextFragment;
+import dev.vality.bouncer.decisions.Judgement;
+import dev.vality.bouncer.decisions.Resolution;
+import dev.vality.bouncer.decisions.ResolutionAllowed;
 import dev.vality.damsel.base.Content;
+import dev.vality.damsel.domain.*;
 import dev.vality.damsel.domain.InvoicePaymentRefundStatus;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.InvoiceStatus;
-import dev.vality.damsel.domain.*;
+import dev.vality.magista.*;
 import dev.vality.magista.CustomerPayer;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.InvoicePaymentFlowHold;
 import dev.vality.magista.InvoicePaymentFlowInstant;
 import dev.vality.magista.Payer;
-import dev.vality.magista.*;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.apache.thrift.TSerializer;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -113,24 +119,6 @@ public class MagistaUtil {
         );
     }
 
-    public static StatPayoutResponse createSearchPayoutRequiredResponse() {
-        return DamselUtil.fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
-    }
-
-    public static StatPayoutResponse createSearchPayoutAllResponse() {
-        var payout = DamselUtil.fillRequiredTBaseObject(new StatPayout(), StatPayout.class);
-        var toolInfo = DamselUtil.fillRequiredTBaseObject(new PayoutToolInfo(), PayoutToolInfo.class);
-        var bank = DamselUtil.fillRequiredTBaseObject(new RussianBankAccount(), RussianBankAccount.class);
-        var status = DamselUtil.fillRequiredTBaseObject(new PayoutStatus(), PayoutStatus.class);
-        var response = DamselUtil.fillRequiredTBaseObject(new StatPayoutResponse(), StatPayoutResponse.class);
-        toolInfo.setRussianBankAccount(bank);
-        return response.setPayouts(
-                List.of(payout
-                        .setPayoutToolInfo(toolInfo)
-                        .setStatus(status))
-        );
-    }
-
     public static StatInvoiceTemplateResponse createSearchInvoiceTemplateAllResponse() {
         var invoiceTemplate = DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplate(), StatInvoiceTemplate.class);
         var cash = DamselUtil.fillRequiredTBaseObject(new Cash(), Cash.class);
@@ -161,6 +149,19 @@ public class MagistaUtil {
 
     public static StatInvoiceTemplateResponse createSearchInvoiceTemplateRequiredResponse() {
         return DamselUtil.fillRequiredTBaseObject(new StatInvoiceTemplateResponse(), StatInvoiceTemplateResponse.class);
+    }
+
+    @SneakyThrows
+    public static ContextFragment createContextFragment() {
+        ContextFragment fragment = DamselUtil.fillRequiredTBaseObject(new ContextFragment(), ContextFragment.class);
+        fragment.setContent(new TSerializer().serialize(new dev.vality.bouncer.context.v1.ContextFragment()));
+        return fragment;
+    }
+
+    public static Judgement createJudgementAllowed() {
+        Resolution resolution = new Resolution();
+        resolution.setAllowed(new ResolutionAllowed());
+        return new Judgement().setResolution(resolution);
     }
 
     public static InvoicePaymentFlow createInvoicePaymentFlowHold() {
