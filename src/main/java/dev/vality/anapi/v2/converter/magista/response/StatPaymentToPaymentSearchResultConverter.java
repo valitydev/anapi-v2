@@ -1,13 +1,12 @@
 package dev.vality.anapi.v2.converter.magista.response;
 
-import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.model.ClientInfo;
 import dev.vality.anapi.v2.model.ContactInfo;
-import dev.vality.anapi.v2.model.CustomerPayer;
 import dev.vality.anapi.v2.model.Payer;
 import dev.vality.anapi.v2.model.PaymentResourcePayer;
 import dev.vality.anapi.v2.model.RecurrentPayer;
 import dev.vality.anapi.v2.model.TransactionInfo;
+import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.util.MaskUtil;
 import dev.vality.damsel.domain.*;
 import dev.vality.geck.common.util.TypeUtil;

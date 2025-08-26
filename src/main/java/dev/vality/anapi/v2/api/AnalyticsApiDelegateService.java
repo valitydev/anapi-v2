@@ -5,8 +5,8 @@ import dev.vality.anapi.v2.security.AccessData;
 import dev.vality.anapi.v2.security.AccessService;
 import dev.vality.anapi.v2.service.AnalyticsService;
 import dev.vality.anapi.v2.util.DeadlineUtil;
-import dev.vality.damsel.analytics.*;
 import dev.vality.damsel.analytics.SplitUnit;
+import dev.vality.damsel.analytics.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     private final AnalyticsService analyticsService;
 
     @Override
-    public ResponseEntity<GetPaymentsAmount200Response> getAveragePayment(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getAveragePayment(String xRequestID, String partyID,
+                                                                          OffsetDateTime fromTime,
+                                                                          OffsetDateTime toTime,
+                                                                          String xRequestDeadline, List<String> shopIDs,
+                                                                          List<String> excludeShopIDs,
+                                                                          String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -47,7 +52,13 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsAmount200Response> getCreditingsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getCreditingsAmount(String xRequestID, String partyID,
+                                                                            OffsetDateTime fromTime,
+                                                                            OffsetDateTime toTime,
+                                                                            String xRequestDeadline,
+                                                                            List<String> shopIDs,
+                                                                            List<String> excludeShopIDs,
+                                                                            String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -68,7 +79,11 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsAmount200Response> getCurrentBalances(String xRequestID, String partyID, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getCurrentBalances(String xRequestID, String partyID,
+                                                                           String xRequestDeadline,
+                                                                           List<String> shopIDs,
+                                                                           List<String> excludeShopIDs,
+                                                                           String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -89,7 +104,11 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetCurrentShopBalances200Response> getCurrentShopBalances(String xRequestID, String partyID, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetCurrentShopBalances200Response> getCurrentShopBalances(String xRequestID, String partyID,
+                                                                                    String xRequestDeadline,
+                                                                                    List<String> shopIDs,
+                                                                                    List<String> excludeShopIDs,
+                                                                                    String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -110,7 +129,12 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsAmount200Response> getPaymentsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getPaymentsAmount(String xRequestID, String partyID,
+                                                                          OffsetDateTime fromTime,
+                                                                          OffsetDateTime toTime,
+                                                                          String xRequestDeadline, List<String> shopIDs,
+                                                                          List<String> excludeShopIDs,
+                                                                          String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -131,7 +155,11 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsCount200Response> getPaymentsCount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsCount200Response> getPaymentsCount(String xRequestID, String partyID,
+                                                                        OffsetDateTime fromTime, OffsetDateTime toTime,
+                                                                        String xRequestDeadline, List<String> shopIDs,
+                                                                        List<String> excludeShopIDs,
+                                                                        String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -152,7 +180,14 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsErrorDistribution200Response> getPaymentsErrorDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsErrorDistribution200Response> getPaymentsErrorDistribution(String xRequestID,
+                                                                                                String partyID,
+                                                                                                OffsetDateTime fromTime,
+                                                                                                OffsetDateTime toTime,
+                                                                                                String xRequestDeadline,
+                                                                                                List<String> shopIDs,
+                                                                                                List<String> excludeShopIDs,
+                                                                                                String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -173,7 +208,14 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsSplitAmount200Response> getPaymentsSplitAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String splitUnit, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsSplitAmount200Response> getPaymentsSplitAmount(String xRequestID, String partyID,
+                                                                                    OffsetDateTime fromTime,
+                                                                                    OffsetDateTime toTime,
+                                                                                    String splitUnit,
+                                                                                    String xRequestDeadline,
+                                                                                    List<String> shopIDs,
+                                                                                    List<String> excludeShopIDs,
+                                                                                    String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -199,7 +241,14 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsSplitCount200Response> getPaymentsSplitCount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String splitUnit, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsSplitCount200Response> getPaymentsSplitCount(String xRequestID, String partyID,
+                                                                                  OffsetDateTime fromTime,
+                                                                                  OffsetDateTime toTime,
+                                                                                  String splitUnit,
+                                                                                  String xRequestDeadline,
+                                                                                  List<String> shopIDs,
+                                                                                  List<String> excludeShopIDs,
+                                                                                  String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -225,7 +274,14 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsSubErrorDistribution200Response> getPaymentsSubErrorDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsSubErrorDistribution200Response> getPaymentsSubErrorDistribution(String xRequestID,
+                                                                                                      String partyID,
+                                                                                                      OffsetDateTime fromTime,
+                                                                                                      OffsetDateTime toTime,
+                                                                                                      String xRequestDeadline,
+                                                                                                      List<String> shopIDs,
+                                                                                                      List<String> excludeShopIDs,
+                                                                                                      String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -246,7 +302,14 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsToolDistribution200Response> getPaymentsToolDistribution(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsToolDistribution200Response> getPaymentsToolDistribution(String xRequestID,
+                                                                                              String partyID,
+                                                                                              OffsetDateTime fromTime,
+                                                                                              OffsetDateTime toTime,
+                                                                                              String xRequestDeadline,
+                                                                                              List<String> shopIDs,
+                                                                                              List<String> excludeShopIDs,
+                                                                                              String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()
@@ -267,7 +330,11 @@ public class AnalyticsApiDelegateService implements AnalyticsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GetPaymentsAmount200Response> getRefundsAmount(String xRequestID, String partyID, OffsetDateTime fromTime, OffsetDateTime toTime, String xRequestDeadline, List<String> shopIDs, List<String> excludeShopIDs, String paymentInstitutionRealm) {
+    public ResponseEntity<GetPaymentsAmount200Response> getRefundsAmount(String xRequestID, String partyID,
+                                                                         OffsetDateTime fromTime, OffsetDateTime toTime,
+                                                                         String xRequestDeadline, List<String> shopIDs,
+                                                                         List<String> excludeShopIDs,
+                                                                         String paymentInstitutionRealm) {
         DeadlineUtil.checkDeadline(xRequestDeadline, xRequestID);
         shopIDs = accessService.getRestrictedShops(
                 AccessData.builder()

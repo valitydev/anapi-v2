@@ -1,11 +1,11 @@
 package dev.vality.anapi.v2.service;
 
 import dev.vality.anapi.v2.exception.AnalytycsException;
-import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.model.OffsetAmount;
 import dev.vality.anapi.v2.model.OffsetCount;
 import dev.vality.anapi.v2.model.SplitUnit;
 import dev.vality.anapi.v2.model.SubError;
+import dev.vality.anapi.v2.model.*;
 import dev.vality.damsel.analytics.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.thrift.TException;

@@ -55,7 +55,7 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[]{analyticsClient, dominantService, orgManagerClient, bouncerClient};
+        preparedMocks = new Object[] {analyticsClient, dominantService, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -72,12 +72,12 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenReturn(AnalyticsUtil.createAveragePaymentRequiredResponse());
         mvc.perform(get("/lk/v2/analytics/payments/average")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(OpenApiUtil.getAnalyticsRequiredParams())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(OpenApiUtil.getAnalyticsRequiredParams())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
@@ -95,12 +95,12 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenReturn(AnalyticsUtil.createAveragePaymentAllResponse());
         mvc.perform(get("/lk/v2/analytics/payments/average")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(OpenApiUtil.getAnalyticsAllParams())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(OpenApiUtil.getAnalyticsAllParams())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
@@ -116,12 +116,12 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         MultiValueMap<String, String> params = OpenApiUtil.getAnalyticsRequiredParams();
         params.remove("partyID");
         mvc.perform(get("/lk/v2/analytics/payments/average")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(params)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALID_REQUEST.getValue()))
@@ -136,12 +136,12 @@ class AnalyticsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(analyticsClient.getAveragePayment(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/analytics/payments/average")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(OpenApiUtil.getAnalyticsRequiredParams())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(OpenApiUtil.getAnalyticsRequiredParams())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
         verify(dominantService, times(1)).getShopIds(any(), any());

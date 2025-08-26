@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -32,7 +31,7 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
 
     private final ParamsToStatReportRequestConverter statReportRequestConverter;
     @Value("${service.reporter.reportUrlLifetimeSec}")
-    private long reportLifetimeSec = 60L;
+    private final long reportLifetimeSec = 60L;
 
     @Override
     public ResponseEntity<Void> cancelReport(String xRequestID,
@@ -82,7 +81,7 @@ public class ReportsApiDelegateService implements ReportsApiDelegate {
                         .reportId(String.valueOf(reportID))
                         .build());
         var response = reporterService.getDownloadUrl(fileID,
-                TypeUtil.temporalToString(LocalDateTime.now().plus(reportLifetimeSec, ChronoUnit.SECONDS)));
+                TypeUtil.temporalToString(LocalDateTime.now().plusSeconds(reportLifetimeSec)));
         log.info("<- Res [200]: xRequestID={}", xRequestID);
         return ResponseEntity.ok(response);
     }

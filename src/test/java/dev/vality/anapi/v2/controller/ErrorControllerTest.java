@@ -52,7 +52,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[]{refundSearchConverter, dominantService, orgManagerClient, bouncerClient};
+        preparedMocks = new Object[] {refundSearchConverter, dominantService, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -70,10 +70,10 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
                         get("/lk/v2/payments")
                                 .header("Authorization", "Bearer " + generateSimpleJwt())
                                 .header("X-Request-ID", RandomUtil.randomRequestId())
-                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(""))
+                                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                                .params(params)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(""))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALID_REQUEST.getValue()))
@@ -94,7 +94,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
 
         mockMvc.perform(
-                get("/lk/v2/refunds")
+                        get("/lk/v2/refunds")
                                 .header("Authorization", "Bearer " + generateSimpleJwt())
                                 .header("X-Request-ID", RandomUtil.randomRequestId())
                                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -121,13 +121,13 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         params.remove("limit");
 
         mockMvc.perform(
-                get("/lk/v2/refunds")
-                        .header("Authorization", "Bearer " + generateSimpleJwt())
-                        .header("X-Request-ID", RandomUtil.randomRequestId())
-                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(""))
+                        get("/lk/v2/refunds")
+                                .header("Authorization", "Bearer " + generateSimpleJwt())
+                                .header("X-Request-ID", RandomUtil.randomRequestId())
+                                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                                .params(params)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(""))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALID_REQUEST.getValue()))
@@ -137,13 +137,13 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testDeadlineException() throws Exception {
         mockMvc.perform(
-                get("/lk/v2/refunds")
-                        .header("Authorization", "Bearer " + generateSimpleJwt())
-                        .header("X-Request-ID", RandomUtil.randomRequestId())
-                        .header("X-Request-Deadline", "fail")
-                        .params(OpenApiUtil.getSearchRequiredParams())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(""))
+                        get("/lk/v2/refunds")
+                                .header("Authorization", "Bearer " + generateSimpleJwt())
+                                .header("X-Request-ID", RandomUtil.randomRequestId())
+                                .header("X-Request-Deadline", "fail")
+                                .params(OpenApiUtil.getSearchRequiredParams())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(""))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALID_DEADLINE.getValue()))
@@ -163,7 +163,7 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
 
         mockMvc.perform(
-                get("/lk/v2/refunds")
+                        get("/lk/v2/refunds")
                                 .header("Authorization", "Bearer " + generateSimpleJwt())
                                 .header("X-Request-ID", RandomUtil.randomRequestId())
                                 .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
@@ -185,12 +185,12 @@ class ErrorControllerTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @Test
     void testUnauthorizedException() throws Exception {
         mockMvc.perform(
-                get("/lk/v2/refunds")
-                        .header("X-Request-ID", RandomUtil.randomRequestId())
-                        .header("X-Request-Deadline", "fail")
-                        .params(OpenApiUtil.getSearchRequiredParams())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(""))
+                        get("/lk/v2/refunds")
+                                .header("X-Request-ID", RandomUtil.randomRequestId())
+                                .header("X-Request-Deadline", "fail")
+                                .params(OpenApiUtil.getSearchRequiredParams())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(""))
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$").doesNotExist());

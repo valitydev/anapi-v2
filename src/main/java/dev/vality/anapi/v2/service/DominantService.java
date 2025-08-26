@@ -25,7 +25,7 @@ public class DominantService {
             List<ShopConfigObject> shopsObjects = getShopConfigObjects(shopsRefs);
             var shopIds = shopsObjects.stream()
                     .filter(shopConfigObject -> realmMatches(realm, shopConfigObject))
-                    .map(shopConfigObject -> shopConfigObject.getData().getId()).toList();
+                    .map(shopConfigObject -> shopConfigObject.getRef().getId()).toList();
             log.info("Found {} shops, partyId={}, realm={}", shopIds.size(), partyId, realm);
             return shopIds;
         } catch (TException e) {

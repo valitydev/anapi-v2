@@ -104,7 +104,7 @@ class StatInvoiceTemplateToInvoiceTemplateConverterTest {
     void mapPrice() {
         assertEquals("fixed",
                 converter.mapPrice(InvoiceTemplateProductPrice.fixed(
-                        DamselUtil.fillRequiredTBaseObject(new Cash(), Cash.class)))
+                                DamselUtil.fillRequiredTBaseObject(new Cash(), Cash.class)))
                         .getCostType());
         assertEquals("range",
                 converter.mapPrice(

@@ -43,20 +43,20 @@ public class WebConfig {
                                             HttpServletResponse response,
                                             FilterChain filterChain) {
                 woodyFlow.createServiceFork(
-                        () -> {
-                            try {
-                                var auth = SecurityContextHolder.getContext().getAuthentication();
-                                if (auth instanceof JwtAuthenticationToken) {
-                                    addWoodyContext((JwtAuthenticationToken) auth);
-                                }
-                                setWoodyDeadline(request);
+                                () -> {
+                                    try {
+                                        var auth = SecurityContextHolder.getContext().getAuthentication();
+                                        if (auth instanceof JwtAuthenticationToken) {
+                                            addWoodyContext((JwtAuthenticationToken) auth);
+                                        }
+                                        setWoodyDeadline(request);
 
-                                filterChain.doFilter(request, response);
-                            } catch (IOException | ServletException e) {
-                                sneakyThrow(e);
-                            }
-                        }
-                )
+                                        filterChain.doFilter(request, response);
+                                    } catch (IOException | ServletException e) {
+                                        sneakyThrow(e);
+                                    }
+                                }
+                        )
                         .run();
             }
 
@@ -76,13 +76,13 @@ public class WebConfig {
     private void addWoodyContext(JwtAuthenticationToken token) {
         setCustomMetadataValue(UserIdentityIdExtensionKit.KEY, token.getToken().getClaimAsString(JwtClaimNames.SUB));
         setCustomMetadataValue(UserIdentityUsernameExtensionKit.KEY,
-                ((Jwt)token.getPrincipal()).getClaimAsString("preferred_username"));
+                ((Jwt) token.getPrincipal()).getClaimAsString("preferred_username"));
         setCustomMetadataValue(UserIdentityEmailExtensionKit.KEY, token.getToken().getClaimAsString("email"));
         setCustomMetadataValue(UserIdentityRealmExtensionKit.KEY, extractRealm(token.getToken()));
     }
 
     private String extractRealm(Jwt token) {
-        var iss =  token.getClaimAsString("iss");
+        var iss = token.getClaimAsString("iss");
         return iss.substring(iss.lastIndexOf("/"));
     }
 

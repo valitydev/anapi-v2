@@ -55,7 +55,7 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
     @BeforeEach
     public void init() {
         mocks = MockitoAnnotations.openMocks(this);
-        preparedMocks = new Object[]{magistaClient, dominantService, orgManagerClient, bouncerClient};
+        preparedMocks = new Object[] {magistaClient, dominantService, orgManagerClient, bouncerClient};
     }
 
     @AfterEach
@@ -72,12 +72,12 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentRequiredResponse());
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(OpenApiUtil.getSearchRequiredParams())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(OpenApiUtil.getSearchRequiredParams())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
@@ -95,12 +95,12 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenReturn(MagistaUtil.createSearchPaymentAllResponse());
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(OpenApiUtil.getSearchPaymentAllParams())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(OpenApiUtil.getSearchPaymentAllParams())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$").exists());
@@ -116,12 +116,12 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         MultiValueMap<String, String> params = OpenApiUtil.getSearchRequiredParams();
         params.remove("partyID");
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(params)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.code").value(DefaultLogicError.CodeEnum.INVALID_REQUEST.getValue()))
@@ -136,12 +136,12 @@ class SearchPaymentsTest extends AbstractKeycloakOpenIdAsWiremockConfig {
         when(bouncerClient.judge(any(), any())).thenReturn(createJudgementAllowed());
         when(magistaClient.searchPayments(any())).thenThrow(TException.class);
         mvc.perform(get("/lk/v2/payments")
-                .header("Authorization", "Bearer " + generateSimpleJwt())
-                .header("X-Request-ID", RandomUtil.randomRequestId())
-                .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
-                .params(OpenApiUtil.getSearchRequiredParams())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .header("Authorization", "Bearer " + generateSimpleJwt())
+                        .header("X-Request-ID", RandomUtil.randomRequestId())
+                        .header("X-Request-Deadline", Instant.now().plus(1, ChronoUnit.DAYS).toString())
+                        .params(OpenApiUtil.getSearchRequiredParams())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andDo(print())
                 .andExpect(status().is5xxServerError());
         verify(dominantService, times(1)).getShopIds(any(), any());

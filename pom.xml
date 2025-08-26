@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.6</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2-server</artifactId>
-            <version>1.101-adc5097</version>
+            <version>1.102-4c69a2f</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -124,11 +124,6 @@
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <scope>provided</scope>
@@ -138,14 +133,6 @@
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <!--test-->
@@ -173,9 +160,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-contract-wiremock</artifactId>
-            <version>4.3.0</version>
+            <groupId>org.wiremock.integrations</groupId>
+            <artifactId>wiremock-spring-boot</artifactId>
+            <version>3.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
