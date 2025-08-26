@@ -25,7 +25,7 @@ public class ParamsToStatReportRequestConverter {
     }
 
     public ReportRequest mapToReportRequest(String partyId, String shopId, OffsetDateTime fromTime,
-                                 OffsetDateTime toTime) {
+                                            OffsetDateTime toTime) {
         return new ReportRequest()
                 .setPartyId(partyId)
                 .setShopId(shopId)

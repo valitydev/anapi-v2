@@ -85,6 +85,6 @@ class StatInvoiceToInvoiceConverterTest {
         String taxMode = "10%";
         Map<String, Value> metadata = new HashMap<>();
         metadata.put("TaxMode", Value.str(taxMode));
-        assertEquals(taxMode, ((InvoiceLineTaxVAT)converter.mapTaxMode(metadata)).getRate().getValue());
+        assertEquals(taxMode, ((InvoiceLineTaxVAT) converter.mapTaxMode(metadata)).getRate().getValue());
     }
 }
