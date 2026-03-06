@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>anapi-v2</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <packaging>jar</packaging>
 
     <name>anapi-v2</name>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.55-bbdee33</version>
+            <version>1.60-6cafe01</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
