@@ -5,15 +5,15 @@ import dev.vality.bouncer.decisions.Judgement;
 import dev.vality.bouncer.decisions.Resolution;
 import dev.vality.bouncer.decisions.ResolutionAllowed;
 import dev.vality.damsel.base.Content;
+import dev.vality.damsel.domain.*;
 import dev.vality.damsel.domain.InvoicePaymentRefundStatus;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.InvoiceStatus;
-import dev.vality.damsel.domain.*;
+import dev.vality.magista.*;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.InvoicePaymentFlowHold;
 import dev.vality.magista.InvoicePaymentFlowInstant;
 import dev.vality.magista.Payer;
-import dev.vality.magista.*;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.thrift.TSerializer;
@@ -34,9 +34,13 @@ public class MagistaUtil {
     }
 
     public static StatPaymentResponse createSearchPaymentAllResponse() {
-        var payer = DamselUtil.fillRequiredTBaseObject(new CustomerPayer(), CustomerPayer.class);
-        payer.setPaymentTool(createBankCardPaymentTool())
-                .setCustomerId(RandomUtil.randomString(3));
+        var payer = DamselUtil.fillRequiredTBaseObject(
+                new PaymentResourcePayer(),
+                PaymentResourcePayer.class);
+        payer.setResource(new DisposablePaymentResource()
+                        .setPaymentTool(createBankCardPaymentTool())
+                        .setPaymentSessionId(RandomUtil.randomString(3)))
+                .setContactInfo(DamselUtil.fillRequiredTBaseObject(new ContactInfo(), ContactInfo.class));
         var payment = DamselUtil.fillRequiredTBaseObject(new StatPayment(), StatPayment.class);
         var status = new InvoicePaymentStatus();
         status.setPending(new InvoicePaymentPending());
@@ -52,7 +56,7 @@ public class MagistaUtil {
                         .setCart(cart.setLines(List.of(line)))
                         .setFlow(InvoicePaymentFlow
                                 .instant(instant))
-                        .setPayer(Payer.customer(payer))));
+                        .setPayer(Payer.payment_resource(payer))));
     }
 
     public static StatChargebackResponse createSearchChargebackAllResponse() {

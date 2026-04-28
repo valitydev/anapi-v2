@@ -45,6 +45,9 @@ public class ParamsToPaymentSearchQueryConverter {
                                       Long paymentAmountTo,
                                       List<String> excludedShops,
                                       String continuationToken) {
+        if (customerID != null) {
+            throw new BadRequestException("Customer ID payment search is not supported by current magista protocol");
+        }
         List<String> invoiceIds = ConverterUtil.merge(invoiceID, invoiceIDs);
         PaymentSearchQuery query = new PaymentSearchQuery()
                 .setCommonSearchQueryParams(
@@ -62,7 +65,6 @@ public class ParamsToPaymentSearchQueryConverter {
                         bankCardTokenProvider != null ? new BankCardTokenServiceRef(bankCardTokenProvider) : null)
                 .setPaymentEmail(payerEmail)
                 .setPaymentApprovalCode(approvalCode)
-                .setPaymentCustomerId(customerID)
                 .setPaymentFingerprint(payerFingerprint)
                 .setPaymentFirst6(first6)
                 .setPaymentLast4(last4)
