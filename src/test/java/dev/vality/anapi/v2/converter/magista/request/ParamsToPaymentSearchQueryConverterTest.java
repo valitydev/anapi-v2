@@ -34,7 +34,7 @@ class ParamsToPaymentSearchQueryConverterTest {
                 "mail@mail.com",
                 "127.0.0.1",
                 "fingerprint",
-                "1",
+                null,
                 "123456",
                 "7890",
                 "012345678",
@@ -46,6 +46,37 @@ class ParamsToPaymentSearchQueryConverterTest {
                 List.of("1", "2", "3"),
                 "test");
         assertNotNull(query);
+    }
+
+    @Test
+    void convertWithCustomerId() {
+        assertThrows(BadRequestException.class, () -> converter.convert("1",
+                OffsetDateTime.MIN,
+                OffsetDateTime.MAX,
+                10,
+                List.of("1", "2", "3"),
+                List.of("1", "2", "3"),
+                "cancelled",
+                "hold",
+                "paymentTerminal",
+                "euroset",
+                "1",
+                "1",
+                "1",
+                "mail@mail.com",
+                "127.0.0.1",
+                "fingerprint",
+                "1",
+                "123456",
+                "7890",
+                "012345678",
+                "123456",
+                "applepay",
+                "mastercard",
+                0L,
+                1000L,
+                List.of("1", "2", "3"),
+                "test"));
     }
 
     @Test

@@ -4,18 +4,17 @@ import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.testutil.MagistaUtil;
 import dev.vality.anapi.v2.testutil.RandomUtil;
 import dev.vality.anapi.v2.util.MaskUtil;
+import dev.vality.damsel.domain.*;
 import dev.vality.damsel.domain.ClientInfo;
 import dev.vality.damsel.domain.ContactInfo;
 import dev.vality.damsel.domain.InvoicePaymentStatus;
 import dev.vality.damsel.domain.PaymentResourcePayer;
 import dev.vality.damsel.domain.RecurrentPayer;
-import dev.vality.damsel.domain.*;
 import dev.vality.geck.common.util.TypeUtil;
-import dev.vality.magista.CustomerPayer;
+import dev.vality.magista.*;
 import dev.vality.magista.InvoicePaymentFlow;
 import dev.vality.magista.InvoicePaymentFlowInstant;
 import dev.vality.magista.Payer;
-import dev.vality.magista.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -60,9 +59,6 @@ class StatPaymentToPaymentSearchResultConverterTest {
 
     @Test
     void mapPayer() {
-        Payer payer = new Payer();
-        CustomerPayer customerPayer = new CustomerPayer();
-        payer.setCustomer(customerPayer);
         PaymentTool tool = new PaymentTool();
         tool.setBankCard(new BankCard().setBin("1234")
                 .setLastDigits("5678")
@@ -70,22 +66,8 @@ class StatPaymentToPaymentSearchResultConverterTest {
                 .setToken("1111")
                 .setPaymentSystem(new PaymentSystemRef("maestro"))
                 .setPaymentToken(new BankCardTokenServiceRef("applepay")));
-        customerPayer.setPaymentTool(tool)
-                .setCustomerId("1");
-        var openapiCustomerPayer =
-                (dev.vality.anapi.v2.model.CustomerPayer) converter.mapPayer(payer);
-        var paymentToolDetails = (PaymentToolDetailsBankCard) openapiCustomerPayer.getPaymentToolDetails();
-        assertAll(
-                () -> assertEquals("1", openapiCustomerPayer.getCustomerID()),
-                () -> assertEquals("1111", openapiCustomerPayer.getPaymentToolToken()),
-                () -> assertEquals("1234", paymentToolDetails.getBin()),
-                () -> assertEquals("5678", paymentToolDetails.getLastDigits()),
-                () -> assertEquals("maestro", paymentToolDetails.getPaymentSystem()),
-                () -> assertEquals("applepay", paymentToolDetails.getTokenProvider())
-        );
 
-
-        payer = new Payer();
+        Payer payer = new Payer();
         var contactInfo = new ContactInfo()
                 .setEmail("mail@mail.com")
                 .setPhoneNumber("88005553535");

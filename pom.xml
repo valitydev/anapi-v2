@@ -48,7 +48,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>magista-proto</artifactId>
-            <version>1.55-bbdee33</version>
+            <version>1.60-6cafe01</version>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -67,6 +67,7 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
+            <version>1.685-5c25c2e</version>
         </dependency>
 
         <!--spring-->

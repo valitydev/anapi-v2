@@ -1,12 +1,12 @@
 package dev.vality.anapi.v2.converter.magista.response;
 
+import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.model.ClientInfo;
 import dev.vality.anapi.v2.model.ContactInfo;
 import dev.vality.anapi.v2.model.Payer;
 import dev.vality.anapi.v2.model.PaymentResourcePayer;
 import dev.vality.anapi.v2.model.RecurrentPayer;
 import dev.vality.anapi.v2.model.TransactionInfo;
-import dev.vality.anapi.v2.model.*;
 import dev.vality.anapi.v2.util.MaskUtil;
 import dev.vality.damsel.domain.*;
 import dev.vality.geck.common.util.TypeUtil;
@@ -66,15 +66,6 @@ public class StatPaymentToPaymentSearchResultConverter {
         try {
             var field = dev.vality.magista.Payer._Fields.findByName(payer.getSetField().getFieldName());
             switch (field) {
-                case CUSTOMER -> {
-                    var customer = payer.getCustomer();
-                    var paymentTool = customer.getPaymentTool();
-                    return new CustomerPayer()
-                            .customerID(customer.getCustomerId())
-                            .paymentToolDetails(mapPaymentToolDetails(paymentTool))
-                            .paymentToolToken(getPaymentToolToken(paymentTool))
-                            .payerType("CustomerPayer");
-                }
                 case PAYMENT_RESOURCE -> {
                     var resource = payer.getPaymentResource();
                     var clientInfo = resource.getResource().getClientInfo();
