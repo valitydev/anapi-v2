@@ -2,6 +2,7 @@ package dev.vality.anapi.v2.service;
 
 import dev.vality.anapi.v2.exception.DominantException;
 import dev.vality.damsel.domain.*;
+import dev.vality.damsel.domain_config_v2.Head;
 import dev.vality.damsel.domain_config_v2.RepositoryClientSrv;
 import dev.vality.damsel.domain_config_v2.VersionReference;
 import dev.vality.damsel.domain_config_v2.VersionedObject;
@@ -36,9 +37,10 @@ public class DominantService {
     private List<ShopConfigObject> getShopConfigObjects(String partyId) throws TException {
         var partyReference = Reference.party_config(new PartyConfigRef(partyId));
         var versionedObjectWithReferences =
-                dominantClient.checkoutObjectWithReferences(new VersionReference(), partyReference);
+                dominantClient.checkoutObjectWithReferences(VersionReference.head(new Head()), partyReference);
         var shopConfigObjects = versionedObjectWithReferences.getReferencedBy().stream()
                 .map(VersionedObject::getObject)
+                .filter(DomainObject::isSetShopConfig)
                 .map(DomainObject::getShopConfig)
                 .toList();
         log.debug("Receive shops for partyId: {}, shopConfigObjects ='{}'", partyId, shopConfigObjects);
