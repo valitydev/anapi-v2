@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.vality</groupId>
         <artifactId>service-parent-pom</artifactId>
-        <version>3.1.7</version>
+        <version>4.0.0</version>
     </parent>
 
     <artifactId>anapi-v2</artifactId>
@@ -19,12 +19,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <server.port>8022</server.port>
         <management.port>8023</management.port>
         <exposed.ports>${server.port} ${management.port}</exposed.ports>
         <dockerfile.registry>${env.REGISTRY}</dockerfile.registry>
-        <jjwt-version>0.12.6</jjwt-version>
+        <jjwt-version>0.13.0</jjwt-version>
     </properties>
 
     <dependencies>
@@ -33,7 +33,11 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>swag-anapi-v2-server</artifactId>
-            <version>1.102-4c69a2f</version>
+            <version>1.106-9906edb</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.vality.woody</groupId>
+            <artifactId>woody-thrift</artifactId>
         </dependency>
         <dependency>
             <groupId>dev.vality</groupId>
@@ -67,7 +71,6 @@
         <dependency>
             <groupId>dev.vality</groupId>
             <artifactId>damsel</artifactId>
-            <version>1.685-5c25c2e</version>
         </dependency>
 
         <!--spring-->
@@ -77,7 +80,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -97,13 +100,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-validator</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -121,6 +118,11 @@
 
         <!--third party-->
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
@@ -132,14 +134,14 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
+            <version>0.2.11</version>
             <scope>provided</scope>
         </dependency>
 
         <!--test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -163,13 +165,13 @@
         <dependency>
             <groupId>org.wiremock.integrations</groupId>
             <artifactId>wiremock-spring-boot</artifactId>
-            <version>3.8.2</version>
+            <version>4.2.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
-            <version>1.79</version>
+            <version>1.84</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -191,6 +193,7 @@
                 <filtering>true</filtering>
                 <excludes>
                     <exclude>Dockerfile</exclude>
+                    <exclude>opentelemetry-javaagent.jar</exclude>
                 </excludes>
             </resource>
             <resource>
@@ -199,6 +202,19 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
