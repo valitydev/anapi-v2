@@ -3,6 +3,9 @@ package dev.vality.anapi.v2.config;
 import dev.vality.anapi.v2.security.converter.JwtAuthConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,9 +32,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 (authorize) -> authorize
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/**/health/liveness").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/**/health/readiness").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/**/actuator/prometheus").permitAll()
+                        .requestMatchers(RequestMatchers.allOf(
+                                EndpointRequest.to("health", "prometheus"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/**"))).permitAll()
                         .anyRequest().authenticated());
         http.oauth2ResourceServer(server -> server.jwt(token -> token.jwtAuthenticationConverter(jwtAuthConverter)));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
